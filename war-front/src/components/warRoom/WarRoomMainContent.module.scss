@@ -1,0 +1,163 @@
+@import '../../styles/main.scss';
+
+.Container {
+  @include flex-column;
+  gap: $spacing-xl;
+  padding: $spacing-lg 0;
+}
+
+.Tabs {
+  display: flex;
+  justify-content: center;
+  gap: $spacing-md;
+  border-bottom: 2px solid var(--border-light);
+  padding-bottom: $spacing-xs;
+
+  @include media-down($breakpoint-md) {
+    gap: $spacing-sm;
+    overflow-x: auto;
+  }
+}
+
+.Tab {
+  @include button-reset;
+  @include flex-center;
+  flex-direction: column;
+  gap: $spacing-xs;
+  padding: $spacing-md $spacing-lg;
+  color: var(--text-secondary);
+  background: transparent;
+  border: none;
+  border-bottom: 3px solid transparent;
+  transition: all $transition-base;
+  cursor: pointer;
+
+  &:hover {
+    color: var(--primary-500);
+  }
+
+  @include media-down($breakpoint-md) {
+    padding: $spacing-sm $spacing-md;
+  }
+}
+
+.TabActive {
+  color: var(--primary-500);
+  border-bottom-color: var(--primary-500);
+}
+
+.TabIcon {
+  @include flex-center;
+  
+  svg {
+    width: 28px;
+    height: 28px;
+
+    @include media-down($breakpoint-md) {
+      width: 24px;
+      height: 24px;
+    }
+  }
+}
+
+.TabLabel {
+  font-size: $font-size-base;
+  font-weight: $font-weight-semibold;
+
+  @include media-down($breakpoint-md) {
+    font-size: $font-size-sm;
+  }
+}
+
+.Content {
+  padding: 0 $spacing-xl;
+
+  @include media-down($breakpoint-md) {
+    padding: 0 $spacing-md;
+  }
+}
+
+.Grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: $spacing-lg;
+
+  @include media-down($breakpoint-md) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.Card {
+  background: var(--background-paper);
+  border-radius: $border-radius-lg;
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+  transition: all $transition-base;
+
+  &:hover {
+    box-shadow: var(--shadow-lg);
+    transform: translateY(-4px);
+  }
+
+  &:focus-visible {
+    outline: 3px solid var(--primary-500);
+    outline-offset: 2px;
+  }
+}
+
+.CardImage {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  display: block;
+
+  @include media-down($breakpoint-sm) {
+    height: 180px;
+  }
+}
+
+.CardContent {
+  padding: $spacing-lg;
+  @include flex-column;
+  gap: $spacing-md;
+}
+
+.CardTitle {
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-bold;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.CardDescription {
+  font-size: $font-size-base;
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: 1.6;
+}
+
+.PlayButton {
+  @include button-reset;
+  @include flex-center;
+  gap: $spacing-sm;
+  padding: $spacing-sm $spacing-lg;
+  font-size: $font-size-base;
+  font-weight: $font-weight-semibold;
+  color: var(--primary-500);
+  background: transparent;
+  border: 2px solid var(--primary-500);
+  border-radius: $border-radius-md;
+  transition: all $transition-base;
+  margin-top: auto;
+
+  &:hover {
+    background: var(--primary-500);
+    color: var(--text-inverse);
+    transform: translateY(-2px);
+  }
+
+  svg {
+    width: 20px;
+    height: 20px;
+  }
+}

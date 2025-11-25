@@ -1,0 +1,231 @@
+@import '../../styles/main.scss';
+
+.Container {
+  min-height: 100vh;
+  padding: $spacing-xl 0;
+  background: var(--gradient-primary);
+  @include flex-column;
+  gap: $spacing-xl;
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 30% 40%, rgba(0, 212, 255, 0.08) 0%, transparent 50%);
+    pointer-events: none;
+  }
+}
+
+.Loading {
+  @include flex-center;
+  min-height: 50vh;
+  font-size: $font-size-xl;
+  color: var(--text-secondary);
+  
+  .material-icons {
+    font-size: 48px;
+    animation: spin 1s linear infinite;
+  }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.Tabs {
+  @include glass-panel;
+  display: flex;
+  justify-content: center;
+  gap: $spacing-md;
+  padding: $spacing-md $spacing-lg;
+  margin: 0 $spacing-lg;
+  border-bottom: none;
+
+  @include media-down($breakpoint-md) {
+    gap: $spacing-sm;
+    overflow-x: auto;
+    justify-content: flex-start;
+  }
+}
+
+.Tab {
+  @include button-reset;
+  padding: $spacing-md $spacing-xl;
+  font-size: $font-size-base;
+  font-weight: $font-weight-semibold;
+  color: var(--text-secondary);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: $border-radius-md;
+  transition: all $transition-base;
+  cursor: pointer;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-sm;
+
+  &:hover {
+    color: var(--text-primary);
+    background: var(--background-glass-hover);
+    border-color: var(--border-light);
+  }
+
+  @include media-down($breakpoint-md) {
+    padding: $spacing-sm $spacing-lg;
+    font-size: $font-size-sm;
+  }
+  
+  .material-icons {
+    font-size: 20px;
+  }
+}
+
+.TabActive {
+  color: var(--text-accent);
+  background: var(--background-glass-active);
+  border-color: var(--border-glow);
+  box-shadow: var(--shadow-glow);
+}
+
+.PlaylistTitle {
+  font-size: $font-size-3xl;
+  font-weight: $font-weight-bold;
+  color: var(--text-primary);
+  margin: 0;
+  padding: 0 $spacing-xl;
+
+  @include media-down($breakpoint-md) {
+    font-size: $font-size-2xl;
+    padding: 0 $spacing-lg;
+  }
+}
+
+.Grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: $spacing-lg;
+  padding: 0 $spacing-xl;
+
+  @include media-down($breakpoint-md) {
+    grid-template-columns: 1fr;
+    padding: 0 $spacing-lg;
+  }
+}
+
+.Card {
+  @include glass-card;
+  overflow: hidden;
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--gradient-accent);
+    opacity: 0;
+    transition: opacity $transition-base;
+  }
+
+  &:hover {
+    transform: translateY(-4px);
+    
+    &::before {
+      opacity: 1;
+    }
+  }
+}
+
+.CardImage {
+  width: 100%;
+  aspect-ratio: 16 / 12;
+  object-fit: cover;
+  display: block;
+  border-bottom: 1px solid var(--border-light);
+  filter: brightness(0.9);
+  transition: filter $transition-base;
+  
+  .Card:hover & {
+    filter: brightness(1);
+  }
+}
+
+.CardContent {
+  padding: $spacing-lg;
+  @include flex-column;
+  gap: $spacing-md;
+}
+
+.CardTitle {
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-bold;
+  color: var(--text-primary);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  
+  .material-icons {
+    font-size: 24px;
+    color: var(--text-accent);
+  }
+}
+
+.CardDescription {
+  font-size: $font-size-base;
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: 1.6;
+}
+
+.Authors {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+}
+
+.Avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 2px solid var(--background-paper);
+  object-fit: cover;
+
+  &:not(:first-child) {
+    margin-left: -#{$spacing-sm};
+  }
+}
+
+.MoreAuthors {
+  margin-left: $spacing-xs;
+  font-size: $font-size-sm;
+  color: var(--text-secondary);
+}
+
+.PlayButton {
+  @include button-reset;
+  @include glass-button;
+  @include flex-center;
+  gap: $spacing-sm;
+  padding: $spacing-sm $spacing-lg;
+  font-size: $font-size-base;
+  font-weight: $font-weight-semibold;
+  margin-top: auto;
+  background: var(--gradient-accent);
+  border: 1px solid var(--border-glow);
+
+  &:hover {
+    box-shadow: var(--shadow-glow-strong);
+  }
+
+  .material-icons {
+    font-size: 20px;
+  }
+}

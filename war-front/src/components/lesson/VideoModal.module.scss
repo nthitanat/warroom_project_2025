@@ -1,0 +1,60 @@
+@import '../../styles/main.scss';
+
+.Overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.85);
+  @include flex-center;
+  z-index: 1000;
+  padding: $spacing-lg;
+}
+
+.Modal {
+  position: relative;
+  width: 90%;
+  max-width: 1000px;
+  background: var(--background-paper);
+  border-radius: $border-radius-lg;
+  padding: $spacing-xl;
+  box-shadow: var(--shadow-xl);
+}
+
+.CloseButton {
+  @include button-reset;
+  padding: $spacing-sm $spacing-lg;
+  margin-bottom: $spacing-lg;
+  font-size: $font-size-base;
+  font-weight: $font-weight-semibold;
+  color: var(--text-primary);
+  background: var(--background-default);
+  border-radius: $border-radius-md;
+  transition: all $transition-base;
+
+  &:hover {
+    background: var(--primary-500);
+    color: var(--text-inverse);
+  }
+}
+
+.LoadingContainer {
+  @include flex-center;
+  height: 400px;
+}
+
+.Spinner {
+  width: 48px;
+  height: 48px;
+  border: 4px solid var(--border-light);
+  border-top-color: var(--primary-500);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

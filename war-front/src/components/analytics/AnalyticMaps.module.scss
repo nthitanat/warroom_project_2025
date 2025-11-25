@@ -1,0 +1,228 @@
+@import '../../styles/main.scss';
+
+.Container {
+  @include flex-column;
+  align-items: center;
+  width: 100%;
+  padding: $spacing-lg;
+}
+
+.SearchWrapper {
+  @include flex-between;
+  width: 100%;
+  max-width: 600px;
+  margin: $spacing-lg 0;
+  gap: $spacing-sm;
+}
+
+.SearchInput {
+  flex: 1;
+  padding: $spacing-sm $spacing-md;
+  border: 1px solid var(--border-light);
+  border-radius: $border-radius-md;
+  font-size: $font-size-base;
+  color: var(--text-primary);
+  background: var(--background-default);
+  transition: border-color $transition-base;
+
+  &:focus {
+    outline: none;
+    border-color: var(--primary-500);
+  }
+
+  &::placeholder {
+    color: var(--text-disabled);
+  }
+}
+
+.SearchButton {
+  @include button-reset;
+  padding: $spacing-sm $spacing-lg;
+  background: var(--primary-500);
+  color: var(--text-inverse);
+  border-radius: $border-radius-md;
+  font-weight: $font-weight-medium;
+  transition: background $transition-base;
+
+  &:hover {
+    background: var(--primary-600);
+  }
+
+  &:active {
+    background: var(--primary-700);
+  }
+}
+
+.MapWrapper {
+  position: relative;
+  width: 100%;
+  height: 70vh;
+  border-radius: $border-radius-lg;
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+}
+
+.MapContainer {
+  height: 100%;
+  width: 100%;
+}
+
+.MapStyleToggle {
+  position: absolute;
+  bottom: $spacing-md;
+  left: $spacing-md;
+  @include flex-center;
+  gap: 0;
+  background: var(--background-paper);
+  border-radius: $border-radius-md;
+  box-shadow: var(--shadow-md);
+  overflow: hidden;
+  z-index: $z-index-dropdown;
+}
+
+.ToggleButton {
+  @include button-reset;
+  padding: $spacing-sm $spacing-md;
+  background: var(--background-paper);
+  color: var(--text-primary);
+  font-size: $font-size-md;
+  font-weight: $font-weight-medium;
+  transition: all $transition-fast;
+
+  &:hover {
+    background: var(--grey-100);
+  }
+
+  &.Active {
+    background: var(--primary-500);
+    color: var(--text-inverse);
+  }
+}
+
+.LayersPanel {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  gap: $spacing-2xl;
+  width: 100%;
+  max-width: 1000px;
+  margin-top: $spacing-2xl;
+
+  @include media-down($breakpoint-md) {
+    flex-direction: column;
+    gap: $spacing-lg;
+  }
+}
+
+.LayerSection {
+  flex: 1;
+
+  strong {
+    display: block;
+    font-size: $font-size-lg;
+    font-weight: $font-weight-bold;
+    color: var(--text-primary);
+    margin-bottom: $spacing-md;
+  }
+}
+
+.LayerList {
+  @include flex-column;
+  gap: $spacing-sm;
+}
+
+.LayerItem {
+  @include flex-between;
+  padding: $spacing-md;
+  background: var(--grey-100);
+  border-radius: $border-radius-md;
+  transition: background $transition-base;
+
+  &:hover {
+    background: var(--grey-200);
+  }
+
+  span {
+    color: var(--text-primary);
+    font-size: $font-size-base;
+  }
+}
+
+.AddButton {
+  @include button-reset;
+  padding: $spacing-xs $spacing-md;
+  background: transparent;
+  color: var(--primary-500);
+  border: 1px solid var(--primary-500);
+  border-radius: $border-radius-sm;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  transition: all $transition-base;
+
+  &:hover {
+    background: var(--primary-500);
+    color: var(--text-inverse);
+  }
+}
+
+.ActiveLayerItem {
+  @include flex-between;
+  padding: $spacing-md;
+  background: var(--background-paper);
+  border: 1px solid var(--border-light);
+  border-radius: $border-radius-md;
+  cursor: grab;
+  transition: all $transition-base;
+
+  &:hover {
+    box-shadow: var(--shadow-sm);
+    border-color: var(--border-medium);
+  }
+
+  &:active {
+    cursor: grabbing;
+  }
+
+  span {
+    color: var(--text-primary);
+    font-size: $font-size-base;
+  }
+}
+
+.LayerControls {
+  @include flex-center;
+  gap: $spacing-md;
+}
+
+.CheckboxLabel {
+  @include flex-center;
+  gap: $spacing-xs;
+  cursor: pointer;
+  user-select: none;
+
+  input[type='checkbox'] {
+    cursor: pointer;
+  }
+
+  span {
+    font-size: $font-size-sm;
+    color: var(--text-secondary);
+  }
+}
+
+.RemoveButton {
+  @include button-reset;
+  padding: $spacing-xs $spacing-sm;
+  background: transparent;
+  color: var(--error);
+  border: 1px solid var(--error);
+  border-radius: $border-radius-sm;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  transition: all $transition-base;
+
+  &:hover {
+    background: var(--error);
+    color: var(--text-inverse);
+  }
+}

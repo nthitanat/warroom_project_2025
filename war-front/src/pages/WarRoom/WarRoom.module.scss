@@ -1,0 +1,85 @@
+@import '../../styles/main.scss';
+
+.Container {
+  min-height: 100vh;
+  padding: $spacing-xl 0;
+  background: var(--gradient-primary);
+  @include flex-column;
+  gap: $spacing-2xl;
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 80% 20%, rgba(0, 212, 255, 0.08) 0%, transparent 50%);
+    pointer-events: none;
+  }
+}
+
+.Loading {
+  @include flex-center;
+  @include flex-column;
+  min-height: 50vh;
+  font-size: $font-size-xl;
+  color: var(--text-secondary);
+  gap: $spacing-md;
+  
+  .material-icons {
+    font-size: 48px;
+    animation: pulse 1.5s ease-in-out infinite;
+  }
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 0.5; transform: scale(1); }
+  50% { opacity: 1; transform: scale(1.1); }
+}
+
+.VideoWrapper {
+  width: 100%;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 $spacing-lg;
+  position: relative;
+  z-index: 1;
+}
+
+.VideoFrame,
+.CoverImage,
+.FacebookFrame {
+  width: 100%;
+  border-radius: $border-radius-xl;
+  box-shadow: var(--shadow-lg);
+  border: 1px solid var(--border-light);
+  overflow: hidden;
+}
+
+.VideoFrame,
+.FacebookFrame {
+  height: 500px;
+
+  @include media-down($breakpoint-md) {
+    height: 400px;
+  }
+
+  @include media-down($breakpoint-sm) {
+    height: 300px;
+  }
+}
+
+.CoverImage {
+  height: 500px;
+  object-fit: cover;
+
+  @include media-down($breakpoint-md) {
+    height: 400px;
+  }
+
+  @include media-down($breakpoint-sm) {
+    height: 300px;
+  }
+}

@@ -1,0 +1,84 @@
+@import '../../../styles/main.scss';
+
+.Container {
+  position: relative;
+  width: 100%;
+}
+
+.Empty {
+  @include flex-center;
+  padding: $spacing-2xl;
+  background: var(--background-default);
+  color: var(--text-secondary);
+  font-size: $font-size-base;
+}
+
+.NavButton {
+  @include button-reset;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 10;
+  padding: $spacing-sm;
+  color: white;
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(76, 175, 80, 0.5);
+  border-radius: $border-radius-md;
+  transition: all $transition-base;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.7);
+    border-color: var(--primary-500);
+  }
+
+  &:active {
+    background: rgba(0, 0, 0, 0.8);
+  }
+
+  svg {
+    display: block;
+  }
+}
+
+.SlideCard {
+  background: var(--background-paper);
+  border-radius: $border-radius-lg;
+  overflow: hidden;
+  box-shadow: var(--shadow-md);
+}
+
+.MediaContainer {
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%; // 16:9 aspect ratio
+  border-bottom: 1px solid var(--border-light);
+}
+
+.Video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
+}
+
+.Image {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  object-fit: contain;
+  display: block;
+  border-bottom: 1px solid var(--border-light);
+  background: var(--background-default);
+}
+
+.Description {
+  padding: $spacing-md;
+
+  p {
+    margin: 0;
+    font-size: $font-size-base;
+    color: var(--text-primary);
+    line-height: 1.6;
+  }
+}

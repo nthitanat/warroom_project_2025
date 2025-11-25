@@ -1,0 +1,167 @@
+@import '../../styles/main.scss';
+
+.Container {
+  min-height: 100vh;
+  padding: $spacing-2xl $spacing-lg;
+  background: var(--gradient-primary);
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 50% 20%, rgba(0, 212, 255, 0.1) 0%, transparent 50%);
+    pointer-events: none;
+  }
+}
+
+.Title {
+  font-size: $font-size-3xl;
+  font-weight: $font-weight-bold;
+  color: var(--text-primary);
+  text-align: center;
+  margin-bottom: $spacing-2xl;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-md;
+  position: relative;
+  z-index: 1;
+
+  @include media-down($breakpoint-md) {
+    font-size: $font-size-2xl;
+  }
+  
+  .material-icons {
+    font-size: 40px;
+    color: var(--text-accent);
+  }
+}
+
+.Grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: $spacing-lg;
+
+  @include media-down($breakpoint-md) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.GridItem {
+  width: 100%;
+}
+
+.Card {
+  @include glass-card;
+  overflow: hidden;
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--gradient-accent);
+    opacity: 0;
+    transition: opacity $transition-base;
+  }
+
+  &:hover {
+    transform: translateY(-4px);
+    
+    &::before {
+      opacity: 1;
+    }
+  }
+}
+
+.CardContent {
+  padding: $spacing-lg;
+  @include flex-column;
+  gap: $spacing-md;
+}
+
+.CardTitle {
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-bold;
+  color: var(--text-primary);
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  
+  .material-icons {
+    font-size: 24px;
+    color: var(--text-accent);
+  }
+}
+
+.Description {
+  font-size: $font-size-base;
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: 1.6;
+}
+
+.ButtonGroup {
+  @include flex-center;
+  gap: $spacing-lg;
+  margin-top: $spacing-md;
+}
+
+.Button {
+  @include button-reset;
+  @include glass-button;
+  padding: $spacing-sm $spacing-lg;
+  font-size: $font-size-base;
+  font-weight: $font-weight-semibold;
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-sm;
+
+  &:first-of-type {
+    background: var(--gradient-accent);
+    border-color: var(--border-glow);
+  }
+
+  .material-icons {
+    font-size: 18px;
+  }
+}
+
+.Loading,
+.Error {
+  @include flex-center;
+  @include flex-column;
+  min-height: 50vh;
+  font-size: $font-size-xl;
+  color: var(--text-secondary);
+  gap: $spacing-md;
+  
+  .material-icons {
+    font-size: 48px;
+  }
+}
+
+.Loading .material-icons {
+  animation: rotate 2s linear infinite;
+}
+
+@keyframes rotate {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.Error {
+  color: var(--error);
+  
+  .material-icons {
+    color: var(--error);
+  }
+}

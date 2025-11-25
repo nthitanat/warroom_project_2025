@@ -1,0 +1,335 @@
+@import '../../styles/main.scss';
+
+.Container {
+  min-height: 100vh;
+  background: var(--gradient-primary);
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 20% 50%, rgba(0, 212, 255, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(33, 150, 243, 0.1) 0%, transparent 50%);
+    pointer-events: none;
+  }
+}
+
+.Hero {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-3xl;
+  align-items: center;
+  min-height: 80vh;
+  padding: $spacing-3xl $spacing-2xl;
+  max-width: 1400px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+
+  @include media-down($breakpoint-lg) {
+    grid-template-columns: 1fr;
+    gap: $spacing-2xl;
+    padding: $spacing-2xl $spacing-lg;
+  }
+}
+
+.HeroContent {
+  @include flex-column;
+  gap: $spacing-xl;
+}
+
+.HeroTitle {
+  font-size: $font-size-4xl;
+  font-weight: $font-weight-bold;
+  color: var(--text-primary);
+  margin: 0;
+  line-height: 1.2;
+
+  @include media-down($breakpoint-md) {
+    font-size: $font-size-3xl;
+  }
+}
+
+.HeroSubtitle {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-medium;
+  color: var(--text-secondary);
+  margin: 0;
+
+  @include media-down($breakpoint-md) {
+    font-size: $font-size-lg;
+  }
+}
+
+.HeroDescription {
+  font-size: $font-size-lg;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin: 0;
+
+  @include media-down($breakpoint-md) {
+    font-size: $font-size-base;
+  }
+}
+
+.HeroButtons {
+  display: flex;
+  gap: $spacing-lg;
+  margin-top: $spacing-lg;
+
+  @include media-down($breakpoint-sm) {
+    flex-direction: column;
+  }
+}
+
+.PrimaryButton {
+  @include button-reset;
+  @include glass-button;
+  padding: $spacing-md $spacing-2xl;
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: var(--text-primary);
+  background: var(--gradient-accent);
+  border: 1px solid var(--border-glow);
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-sm;
+
+  &:hover {
+    box-shadow: var(--shadow-glow-strong);
+    transform: translateY(-2px);
+  }
+
+  .material-icons {
+    font-size: 20px;
+  }
+}
+
+.SecondaryButton {
+  @include button-reset;
+  @include glass-button;
+  padding: $spacing-md $spacing-2xl;
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: var(--text-primary);
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-sm;
+
+  .material-icons {
+    font-size: 20px;
+  }
+}
+
+.HeroImage {
+  @include flex-center;
+
+  img {
+    width: 100%;
+    max-width: 600px;
+    height: auto;
+    object-fit: contain;
+  }
+
+  @include media-down($breakpoint-lg) {
+    display: none;
+  }
+}
+
+.Features {
+  padding: $spacing-3xl $spacing-2xl;
+  max-width: 1400px;
+  margin: 0 auto;
+}
+
+.SectionHeader {
+  text-align: center;
+  margin-bottom: $spacing-3xl;
+}
+
+.SectionTitle {
+  font-size: $font-size-3xl;
+  font-weight: $font-weight-bold;
+  color: var(--text-primary);
+  margin: 0 0 $spacing-md 0;
+
+  @include media-down($breakpoint-md) {
+    font-size: $font-size-2xl;
+  }
+}
+
+.SectionDescription {
+  font-size: $font-size-lg;
+  color: var(--text-secondary);
+  margin: 0;
+
+  @include media-down($breakpoint-md) {
+    font-size: $font-size-base;
+  }
+}
+
+.FeatureGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: $spacing-xl;
+
+  @include media-down($breakpoint-md) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.FeatureCard {
+  @include flex-column;
+  @include glass-card;
+  gap: $spacing-md;
+  padding: $spacing-2xl;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--gradient-accent);
+    opacity: 0;
+    transition: opacity $transition-base;
+  }
+
+  &:hover {
+    transform: translateY(-8px);
+    
+    &::before {
+      opacity: 1;
+    }
+  }
+}
+
+.FeatureIcon {
+  @include flex-center;
+  width: 64px;
+  height: 64px;
+  background: var(--gradient-accent);
+  border-radius: $border-radius-lg;
+  color: var(--text-primary);
+  box-shadow: var(--shadow-glow);
+  
+  .material-icons {
+    font-size: 32px;
+  }
+}
+
+.FeatureTitle {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.FeatureDescription {
+  font-size: $font-size-base;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin: 0;
+  flex-grow: 1;
+}
+
+.FeatureLink {
+  @include button-reset;
+  padding: $spacing-sm $spacing-md;
+  font-size: $font-size-base;
+  font-weight: $font-weight-semibold;
+  color: var(--primary-500);
+  background: transparent;
+  border: none;
+  text-align: left;
+  transition: all $transition-base;
+
+  &:hover {
+    color: var(--primary-600);
+    transform: translateX(4px);
+  }
+}
+
+.CTA {
+  padding: $spacing-3xl $spacing-2xl;
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: var(--gradient-accent);
+    opacity: 0.1;
+    z-index: 0;
+  }
+}
+
+.CTAContent {
+  @include glass-panel;
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+  @include flex-column;
+  align-items: center;
+  gap: $spacing-xl;
+  position: relative;
+  z-index: 1;
+}
+
+.CTATitle {
+  font-size: $font-size-3xl;
+  font-weight: $font-weight-bold;
+  color: var(--text-primary);
+  margin: 0;
+
+  @include media-down($breakpoint-md) {
+    font-size: $font-size-2xl;
+  }
+}
+
+.CTADescription {
+  font-size: $font-size-lg;
+  color: var(--text-secondary);
+  margin: 0;
+
+  @include media-down($breakpoint-md) {
+    font-size: $font-size-base;
+  }
+}
+
+.CTAButton {
+  @include button-reset;
+  padding: $spacing-md $spacing-2xl;
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: var(--text-primary);
+  background: var(--gradient-accent);
+  border: 1px solid var(--border-glow);
+  border-radius: $border-radius-lg;
+  transition: all $transition-base;
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-sm;
+  box-shadow: var(--shadow-glow);
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-glow-strong);
+  }
+  
+  .material-icons {
+    font-size: 20px;
+  }
+}

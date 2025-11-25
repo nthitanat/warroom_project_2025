@@ -1,0 +1,311 @@
+@import '../../../styles/main.scss';
+
+.Container {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.Navbar {
+  @include glass-panel;
+  backdrop-filter: blur(var(--glass-blur));
+  -webkit-backdrop-filter: blur(var(--glass-blur));
+  background: var(--glass-bg);
+  border-bottom: 1px solid var(--border-light);
+  box-shadow: var(--shadow-md);
+  padding: $spacing-xs 0;
+}
+
+.NavContent {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: $spacing-sm $spacing-lg;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: $spacing-lg;
+}
+
+.NavLinks {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  flex: 1;
+
+  @include media-down($breakpoint-lg) {
+    display: none;
+  }
+}
+
+.NavLink {
+  @include button-reset;
+  padding: $spacing-sm $spacing-md;
+  font-size: $font-size-base;
+  font-weight: $font-weight-medium;
+  color: var(--text-secondary);
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: $border-radius-md;
+  transition: all $transition-base;
+  white-space: nowrap;
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-xs;
+
+  &:hover {
+    color: var(--text-primary);
+    background: var(--background-glass-hover);
+    border-color: var(--border-light);
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+  
+  .material-icons {
+    font-size: 18px;
+  }
+}
+
+.NavLinkActive {
+  color: var(--text-accent);
+  font-weight: $font-weight-semibold;
+  background: var(--background-glass-active);
+  border-color: var(--border-glow);
+  box-shadow: var(--shadow-glow);
+}
+
+.NavLinkAdmin {
+  color: var(--text-accent);
+
+  &:hover {
+    color: var(--text-primary);
+    background: var(--background-glass-hover);
+  }
+}
+
+.AuthButtons {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+
+  @include media-down($breakpoint-lg) {
+    display: none;
+  }
+}
+
+.UserName {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: var(--text-secondary);
+  padding: 0 $spacing-sm;
+}
+
+.SignInButton {
+  @include button-reset;
+  padding: $spacing-sm $spacing-lg;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  color: var(--primary-500);
+  background: transparent;
+  border: none;
+  border-radius: $border-radius-md;
+  transition: all $transition-base;
+
+  &:hover {
+    background: rgba(var(--primary-500-rgb), 0.1);
+  }
+}
+
+.SignUpButton {
+  @include button-reset;
+  padding: $spacing-sm $spacing-lg;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  color: var(--text-primary);
+  background: var(--gradient-accent);
+  border: 1px solid var(--border-glow);
+  border-radius: $border-radius-md;
+  transition: all $transition-base;
+  box-shadow: var(--shadow-glow);
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-xs;
+
+  &:hover {
+    box-shadow: var(--shadow-glow-strong);
+    transform: translateY(-1px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+  
+  .material-icons {
+    font-size: 16px;
+  }
+}
+
+.LogoutButton {
+  @include button-reset;
+  @include glass-button;
+  padding: $spacing-sm $spacing-lg;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-xs;
+  
+  .material-icons {
+    font-size: 16px;
+  }
+}
+
+.MobileMenuButton {
+  @include button-reset;
+  display: none;
+  padding: $spacing-sm;
+  color: var(--text-primary);
+  background: transparent;
+  border-radius: $border-radius-md;
+  transition: all $transition-base;
+
+  @include media-down($breakpoint-lg) {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &:hover {
+    background: var(--background-paper);
+  }
+
+  svg {
+    width: 24px;
+    height: 24px;
+  }
+}
+
+.MobileMenu {
+  display: none;
+  padding: $spacing-lg;
+  background: var(--background-paper);
+  border-top: 1px solid var(--border-light);
+
+  @include media-down($breakpoint-lg) {
+    display: flex;
+    flex-direction: column;
+    gap: $spacing-xs;
+  }
+}
+
+.MobileMenuItem {
+  @include button-reset;
+  padding: $spacing-md;
+  font-size: $font-size-base;
+  font-weight: $font-weight-medium;
+  color: var(--text-primary);
+  background: transparent;
+  border-radius: $border-radius-md;
+  text-align: left;
+  transition: all $transition-base;
+
+  &:hover {
+    background: var(--background-default);
+    color: var(--primary-500);
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+.MobileDivider {
+  height: 1px;
+  background: var(--border-light);
+  margin: $spacing-md 0;
+}
+
+.MobileUserInfo {
+  padding: $spacing-md;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: var(--text-secondary);
+  text-align: center;
+}
+
+.Banner {
+  background: var(--gradient-accent);
+  background-size: cover;
+  background-position: center;
+  border-bottom-left-radius: $border-radius-lg;
+  border-bottom-right-radius: $border-radius-lg;
+  overflow: hidden;
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 50% 50%, rgba(0, 212, 255, 0.2) 0%, transparent 70%);
+    pointer-events: none;
+  }
+}
+
+.BannerContent {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: $spacing-xl $spacing-lg;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-xl;
+
+  @include media-down($breakpoint-md) {
+    flex-direction: column;
+    padding: $spacing-lg;
+    gap: $spacing-md;
+  }
+
+  @include media-down($breakpoint-sm) {
+    padding: $spacing-md;
+  }
+}
+
+.Logo {
+  width: 80px;
+  height: 80px;
+  object-fit: contain;
+
+  @include media-down($breakpoint-sm) {
+    width: 60px;
+    height: 60px;
+  }
+}
+
+.BannerTitle {
+  font-size: $font-size-4xl;
+  font-weight: $font-weight-bold;
+  margin: 0;
+  text-align: center;
+
+  @include media-down($breakpoint-md) {
+    font-size: $font-size-3xl;
+  }
+
+  @include media-down($breakpoint-sm) {
+    font-size: $font-size-2xl;
+  }
+}
+
+.BannerMain {
+  color: var(--text-primary);
+}
+
+.BannerHighlight {
+  color: var(--text-accent);
+  text-shadow: 0 0 20px rgba(0, 212, 255, 0.5);
+}

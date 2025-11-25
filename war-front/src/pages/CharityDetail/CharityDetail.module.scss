@@ -1,0 +1,237 @@
+@import '../../styles/main.scss';
+
+.Container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+  min-height: 100vh;
+  background: var(--gradient-primary);
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 60% 30%, rgba(0, 212, 255, 0.08) 0%, transparent 50%);
+    pointer-events: none;
+  }
+}
+
+.BackButtonContainer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border-light);
+  position: relative;
+  z-index: 1;
+}
+
+.BackButton {
+  @include glass-button;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
+
+  .material-icons {
+    font-size: 20px;
+  }
+
+  &:hover {
+    transform: translateX(-4px);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--border-glow);
+    outline-offset: 2px;
+  }
+}
+
+.Title {
+  margin: 0;
+  font-size: 2rem;
+  font-weight: 600;
+  color: var(--text-primary, #000);
+}
+
+.ContentGrid {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 2rem;
+  margin-top: 2rem;
+
+  @media (max-width: 968px) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.SliderSection {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.SidebarSection {
+  position: sticky;
+  top: 2rem;
+  height: fit-content;
+}
+
+.Description {
+  @include glass-card;
+  padding: 1.5rem;
+  line-height: 1.6;
+  
+  p {
+    margin: 0;
+    color: var(--text-secondary);
+    white-space: pre-wrap;
+  }
+}
+
+.InfoCard {
+  @include glass-panel;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.InfoTitle {
+  font-size: 1.75rem;
+  font-weight: 600;
+  margin: 0;
+  color: var(--text-primary, #000);
+}
+
+.InfoDescription {
+  p {
+    margin: 0;
+    line-height: 1.6;
+    color: var(--text-secondary, #666);
+    white-space: pre-wrap;
+  }
+}
+
+.FundInfo {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  padding: 1rem;
+  background-color: var(--background-secondary, #f5f5f5);
+  border-radius: 4px;
+}
+
+.FundLabel {
+  margin: 0;
+  font-size: 0.875rem;
+  color: var(--text-secondary, #666);
+  font-weight: 500;
+}
+
+.FundAmount {
+  margin: 0;
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: var(--primary-color, #1976d2);
+}
+
+.DonateButton {
+  padding: 0.75rem 1.5rem;
+  background: var(--gradient-accent);
+  color: var(--text-primary);
+  border: 1px solid var(--border-glow);
+  border-radius: $border-radius-md;
+  font-size: 1rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: var(--shadow-glow);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  justify-content: center;
+
+  .material-icons {
+    font-size: 20px;
+  }
+
+  &:hover {
+    box-shadow: var(--shadow-glow-strong);
+    transform: translateY(-2px);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--border-glow);
+    outline-offset: 2px;
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.Loading {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+  font-size: 1.25rem;
+  color: var(--text-secondary, #666);
+}
+
+.Error {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+  padding: 2rem;
+  text-align: center;
+  
+  h2 {
+    margin: 0 0 1rem;
+    color: var(--error-color, #d32f2f);
+  }
+  
+  p {
+    margin: 0;
+    color: var(--text-secondary, #666);
+  }
+}
+
+.Empty {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 400px;
+  font-size: 1.25rem;
+  color: var(--text-secondary, #666);
+}
+
+@media (max-width: 768px) {
+  .Container {
+    padding: 1rem;
+  }
+
+  .Title {
+    font-size: 1.5rem;
+  }
+
+  .BackButtonContainer {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .SidebarSection {
+    position: static;
+  }
+}

@@ -1,0 +1,185 @@
+[
+  {
+    "img": "/lesson/images/DSN_guide.png",
+    "title": "คู่มือ Digital WarRoom",
+    "description": "",
+    "videoLink": "https://heyzine.com/flip-book/9b5323a325.html#page/1",
+    "authors": [
+      { "name": "ChulaDSN", "avatar": "common/logo.png" }
+    ],
+    "size": { "xs": 12, "md": 3 },
+    "recommend": true,
+    "playlist_id": "2"
+  },
+  {
+    "img": "/lesson/images/roblox_family.png",
+    "title": "Warroom - Roblox Family Co-Creation",
+    "description": "",
+    "videoLink": "https://drive.google.com/file/d/1ce60D4ioS6Vh2et5pRLjBpcooQPwr74Y/preview",
+    "authors": [
+      { "name": "ChulaDSN", "avatar": "common/logo.png" }
+    ],
+    "size": { "xs": 12, "md": 3 },
+    "recommend": true,
+    "playlist_id": "2"
+  },
+  {
+    "img": "/lesson/images/dsn/1.png",
+    "title": "Chula Disaster Solution Network 01: เครือข่ายจุฬาฝ่าพิบัติ",
+    "description": "",
+    "videoLink": "https://drive.google.com/file/d/1PyOJMbPkJrqyaoeoD8zNnAKRGDxkuBMb/preview",
+    "authors": [
+      { "name": "ChulaDSN", "avatar": "common/network/putalay.png" }
+    ],
+    "size": { "xs": 12, "md": 6 },
+    "recommend": true,
+    "playlist_id": "1"
+  },
+  {
+    "img": "/lesson/images/dsn/2.png",
+    "title": "Chula Disaster Solution Network 02:ห้องเรียนฟื้นป่าน่านด้วยเกษตรกักตะกอนดินและน้ำ โดย ปูทะเลย์อารยอาสาร่วมกับ Chula DSN",
+    "description": "",
+    "videoLink": "https://drive.google.com/file/d/14RZwg94qxmHzWim-fl5zMuK13dDgZZK6/preview",
+    "authors": [
+      { "name": "ChulaDSN", "avatar": "common/network/putalay.png" }
+    ],
+    "size": { "xs": 12, "md": 6 },
+    "recommend": true,
+    "playlist_id": "1"
+  },
+  {
+    "img": "/lesson/images/dsn/3.png",
+    "title": "Chula Disaster Solution Network 03:ห้องเรียนฟื้นป่าน่าน ตอน หยุดเผา หยุด PM 2.5 ด้วยการจัดการน้ำในแปลง ",
+    "description": "",
+    "videoLink": "https://www.youtube.com/embed/Ub-ndmgdlYY?si=AHYnmwJQgASJWqhs",
+    "authors": [
+      { "name": "ChulaDSN", "avatar": "common/network/putalay.png" }
+    ],
+    "size": { "xs": 12, "md": 6 },
+    "recommend": true,
+    "playlist_id": "1"
+  },
+  {
+    "img": "/lesson/images/dsn/4.png",
+    "title": "Chula Disaster Solution Network 04: การอบรมสร้างตัวอย่างความสำเร็จ “โครงการ ฮีโร่ฟื้นป่าน่าน” ภายใต้โครงการปลูกป่า 3 อย่างประโยชน์ 4 อย่าง 1 ล้านไร่ เพื่อฟื้นฟูป่าต้นน้ำน่าน ตามพระราชปณิธานพระบาทสมเด็จพระเจ้าอยู่หัว",
+    "description": "",
+    "videoLink": "https://drive.google.com/file/d/1GZAS6cg_l9hz_OWUmg5fujnMf3-EjHr4/preview",
+    "authors": [
+      { "name": "ChulaDSN", "avatar": "common/network/putalay.png" }
+    ],
+    "size": { "xs": 12, "md": 6 },
+    "recommend": true,
+    "playlist_id": "1"
+  },
+  {
+    "img": "/lesson/images/dsn/5.png",
+    "title": "Chula Disaster Solution Network 05: ห้องเรียนฟื้นป่าน่าน ผ่านกิจกรรม Learning Journey กับนิสิตจุฬาลงกรณ์มหาวิทยาลัย",
+    "description": "",
+    "videoLink": "https://drive.google.com/file/d/1GpGodDzYxGgjt4w2iE88Y2HajdTyi719/preview",
+    "authors": [
+      { "name": "ChulaDSN", "avatar": "common/network/putalay.png" }
+    ],
+    "size": { "xs": 12, "md": 6 },
+    "recommend": true,
+    "playlist_id": "1"
+  },
+  {
+    "img": "/lesson/images/dsn/6.png",
+    "title": "Chula Disaster Solution Network 06: การจัดการความเสี่ยงภัยพิบัติโดยชุมชนเป็นฐาน: Community-Based Disaster Risk Management (CBDRM)",
+    "description": "",
+    "videoLink": "https://www.youtube.com/embed/qn--G9O4j7s?si=nvTasiILZolGWOuw",
+    "authors": [
+      { "name": "ChulaDSN", "avatar": "common/network/putalay.png" }
+    ],
+    "size": { "xs": 12, "md": 6 },
+    "recommend": true,
+    "playlist_id": "1"
+  },
+  {
+    "img": "/lesson/images/dsn/7.png",
+    "title": "Chula Disaster Solution Network 07: กำจัดฝุ่น PM 2.5 ",
+    "description": "",
+    "videoLink": "https://drive.google.com/file/d/1TfcR448Xi15YobT-OuV2Ua78FQ-3M6hO/preview",
+    "authors": [
+      { "name": "ChulaDSN", "avatar": "common/network/putalay.png" }
+    ],
+    "size": { "xs": 12, "md": 6 },
+    "recommend": true,
+    "playlist_id": "1"
+  },
+  {
+    "img": "/lesson/images/dsn/8.png",
+    "title": "Chula Disaster Solution Network 08: การจัดการภัยพิบัติในสัตว์",
+    "description": "",
+    "videoLink": "https://www.youtube.com/embed/bM5NBppzBZ4?si=Ffhiv81K5YK9b7PZ",
+    "authors": [
+      { "name": "ChulaDSN", "avatar": "common/network/putalay.png" }
+    ],
+    "size": { "xs": 12, "md": 6 },
+    "recommend": true,
+    "playlist_id": "1"
+  },
+  {
+    "img": "/lesson/images/dsn/9.png",
+    "title": "Chula Disaster Solution Network 09: กายภาพบำบัดช่วยผู้ประสบภัย",
+    "description": "",
+    "videoLink": "https://www.youtube.com/embed/U8rqgvQ1Pbg?si=hBkhVuIVXcPwXyjx",
+    "authors": [
+      { "name": "ChulaDSN", "avatar": "common/network/putalay.png" }
+    ],
+    "size": { "xs": 12, "md": 6 },
+    "recommend": true,
+    "playlist_id": "1"
+  },
+  {
+    "img": "/lesson/images/ห้วยหินลาด.png",
+    "title": "ห้วยหินลาดใน 7 นาที",
+    "description": "",
+
+    "videoLink": "https://www.youtube.com/embed/8e73KeTtpF0?si=DCsxQcu4SJofz8c-",
+    "authors": [
+      { "name": "ChulaDSN", "avatar": "common/logo.png" }
+    ],
+    "size": { "xs": 12, "md": 3 },
+    "recommend": true,
+    "playlist_id": "2"
+  },
+  {
+    "img": "/lesson/images/คู่มือ.png",
+    "title": "คู่มือจัดการบ้านหลังน้ำลด",
+    "description": "จากเหตุการณ์อุทกภัยในประเทศ สมาคมสถาปนิกสยาม ในพระบรมราชูปถัมภ์ ร่วมกับ สมาคมนักออกแบบเรขศิลป์ไทย วิศวกรรมสถานแห่งประเทศไทย ในพระบรมราชูปปถัมภ์ จัดทำ คู่มือจัดการบ้านหลังน้ำลด มาตั้งแต่ปี พ.ศ. 2554 เพื่อเป็นประโยชนแก่ผู้ประสบภัย จึงขอนำมาเผยแพร่",
+
+    "videoLink": "https://heyzine.com/flip-book/98dada15d1.html",
+    "authors": [
+      { "name": "ChulaDSN", "avatar": "common/logo.png" }
+    ],
+    "size": { "xs": 12, "md": 3 },
+    "recommend": true,
+    "playlist_id": "2"
+  },
+  {
+    "img": "/lesson/images/แม่สาย.png",
+    "title": "จุดเกิดเหตุที่แม่สาย",
+    "description": "",
+    "videoLink": "https://www.youtube.com/embed/7mEVlMp2Spc?si=8FvAxJZoIAfGG9xw",
+    "authors": [
+      { "name": "ChulaDSN", "avatar": "common/logo.png" }
+    ],
+    "size": { "xs": 12, "md": 4 },
+    "recommend": false,
+    "playlist_id": "2"
+  },
+  {
+    "img": "/lesson/images/นครสวรรค์.png",
+    "title": "ถอดบทเรียนนครสวรรค์",
+    "description": "",
+    "videoLink": "https://drive.google.com/file/d/1Fm-TNNEK-MYTuCyDhJx2J0Ap7PxdNF4T/preview",
+    "authors": [
+      { "name": "ChulaDSN", "avatar": "common/logo.png" }
+    ],
+    "size": { "xs": 12, "md": 3 },
+    "recommend": false,
+    "playlist_id": "2"
+  }
+  
+]

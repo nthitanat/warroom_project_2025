@@ -1,0 +1,111 @@
+// Color Palette Variables - Dark Blue Glassmorphism Theme
+:root {
+  /* Primary Colors - Deep Blue Scale */
+  --primary-50: #e3f2fd;
+  --primary-100: #bbdefb;
+  --primary-200: #90caf9;
+  --primary-300: #64b5f6;
+  --primary-400: #42a5f5;
+  --primary-500: #2196f3;
+  --primary-600: #1e88e5;
+  --primary-700: #1976d2;
+  --primary-800: #1565c0;
+  --primary-900: #0d47a1;
+  
+  /* Primary RGB values for transparency */
+  --primary-500-rgb: 33, 150, 243;
+
+  /* Secondary Colors - Cyan/Teal Scale */
+  --secondary-50: #e0f7fa;
+  --secondary-100: #b2ebf2;
+  --secondary-200: #80deea;
+  --secondary-300: #4dd0e1;
+  --secondary-400: #26c6da;
+  --secondary-500: #00bcd4;
+  --secondary-600: #00acc1;
+  --secondary-700: #0097a7;
+  --secondary-800: #00838f;
+  --secondary-900: #006064;
+  
+  /* Secondary RGB values for transparency */
+  --secondary-500-rgb: 0, 188, 212;
+
+  /* Accent Color - Electric Blue */
+  --accent-primary: #00d4ff;
+  --accent-secondary: #0088ff;
+  --accent-rgb: 0, 212, 255;
+
+  // Neutral Colors - Dark Blue Tinted
+  --grey-50: #eceff1;
+  --grey-100: #cfd8dc;
+  --grey-200: #b0bec5;
+  --grey-300: #90a4ae;
+  --grey-400: #78909c;
+  --grey-500: #607d8b;
+  --grey-600: #546e7a;
+  --grey-700: #455a64;
+  --grey-800: #37474f;
+  --grey-900: #263238;
+
+  // Semantic Colors
+  --success: #00e676;
+  --warning: #ffd740;
+  --error: #ff5252;
+  --info: #40c4ff;
+
+  // Background Colors - Dark Blue with Glassmorphism
+  --background-default: #0a1929;
+  --background-paper: rgba(15, 30, 50, 0.7);
+  --background-overlay: rgba(10, 25, 41, 0.8);
+  --background-glass: rgba(255, 255, 255, 0.05);
+  --background-glass-hover: rgba(255, 255, 255, 0.08);
+  --background-glass-active: rgba(255, 255, 255, 0.12);
+  
+  /* Background RGB values for transparency */
+  --background-default-rgb: 10, 25, 41;
+  --background-paper-rgb: 15, 30, 50;
+  --background-dark: #050d18;
+
+  // Glassmorphism specific
+  --glass-bg: rgba(255, 255, 255, 0.05);
+  --glass-border: rgba(255, 255, 255, 0.1);
+  --glass-shadow: rgba(0, 0, 0, 0.3);
+  --glass-blur: 20px;
+
+  // Text Colors - Optimized for dark background
+  --text-primary: #e3f2fd;
+  --text-secondary: #90caf9;
+  --text-disabled: #607d8b;
+  --text-inverse: #0a1929;
+  --text-accent: #00d4ff;
+
+  // Border Colors - Glassmorphism style
+  --border-light: rgba(255, 255, 255, 0.08);
+  --border-medium: rgba(255, 255, 255, 0.15);
+  --border-dark: rgba(255, 255, 255, 0.25);
+  --border-glow: rgba(0, 212, 255, 0.3);
+
+  // Shadows - Enhanced for glassmorphism
+  --shadow-sm: 0 2px 8px 0 rgba(0, 0, 0, 0.2);
+  --shadow-md: 0 4px 16px 0 rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+  --shadow-xl: 0 16px 48px 0 rgba(0, 0, 0, 0.5);
+  --shadow-glow: 0 0 20px rgba(0, 212, 255, 0.3);
+  --shadow-glow-strong: 0 0 30px rgba(0, 212, 255, 0.5);
+
+  // Gradient backgrounds
+  --gradient-primary: linear-gradient(135deg, #1e3a8a 0%, #0a1929 100%);
+  --gradient-secondary: linear-gradient(135deg, #0c4a6e 0%, #0a1929 100%);
+  --gradient-accent: linear-gradient(135deg, #00d4ff 0%, #0088ff 100%);
+  --gradient-glass: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+}
+
+// Light mode override (optional - maintaining dark theme as default)
+[data-theme="light"] {
+  --background-default: #e3f2fd;
+  --background-paper: rgba(255, 255, 255, 0.9);
+  --text-primary: #0a1929;
+  --text-secondary: #1565c0;
+  --glass-bg: rgba(255, 255, 255, 0.6);
+  --glass-border: rgba(33, 150, 243, 0.2);
+}

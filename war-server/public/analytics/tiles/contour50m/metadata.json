@@ -1,0 +1,14 @@
+{
+    "name": "contour50m.pbf",
+    "description": "contour50m.pbf",
+    "version": "2",
+    "minzoom": "0",
+    "maxzoom": "9",
+    "center": "98.085938,18.978694,9",
+    "bounds": "97.345085,5.615923,105.636654,20.448677",
+    "type": "overlay",
+    "format": "pbf",
+    "generator": "tippecanoe v1.36.0",
+    "generator_options": "tippecanoe -o contour50m.pbf -zg contour50m.geojson",
+    "json": "{\"vector_layers\": [ { \"id\": \"contour50m\", \"description\": \"\", \"minzoom\": 0, \"maxzoom\": 9, \"fields\": {\"CLOSED_CON\": \"String\", \"ELEVATION\": \"String\", \"LAYER\": \"String\", \"NAME\": \"String\"} } ],\"tilestats\": {\"layerCount\": 1,\"layers\": [{\"layer\": \"contour50m\",\"count\": 125923,\"geometry\": \"LineString\",\"attributeCount\": 4,\"attributes\": [{\"attribute\": \"CLOSED_CON\",\"count\": 1,\"type\": \"string\",\"values\": [\"YES\"]},{\"attribute\": \"ELEVATION\",\"count\": 53,\"type\": \"string\",\"values\": [\"-50 m\",\"0 m\",\"100 m\",\"1000 m\",\"1050 m\",\"1100 m\",\"1150 m\",\"1200 m\",\"1250 m\",\"1300 m\",\"1350 m\",\"1400 m\",\"1450 m\",\"150 m\",\"1500 m\",\"1550 m\",\"1600 m\",\"1650 m\",\"1700 m\",\"1750 m\",\"1800 m\",\"1850 m\",\"1900 m\",\"1950 m\",\"200 m\",\"2000 m\",\"2050 m\",\"2100 m\",\"2150 m\",\"2200 m\",\"2250 m\",\"2300 m\",\"2350 m\",\"2400 m\",\"2450 m\",\"250 m\",\"2500 m\",\"2550 m\",\"300 m\",\"350 m\",\"400 m\",\"450 m\",\"50 m\",\"500 m\",\"550 m\",\"600 m\",\"650 m\",\"700 m\",\"750 m\",\"800 m\",\"850 m\",\"900 m\",\"950 m\"]},{\"attribute\": \"LAYER\",\"count\": 2,\"type\": \"string\",\"values\": [\"Contour Line, Intermediate\",\"Contour Line, Major\"]},{\"attribute\": \"NAME\",\"count\": 53,\"type\": \"string\",\"values\": [\"-50 m\",\"0 m\",\"100 m\",\"1000 m\",\"1050 m\",\"1100 m\",\"1150 m\",\"1200 m\",\"1250 m\",\"1300 m\",\"1350 m\",\"1400 m\",\"1450 m\",\"150 m\",\"1500 m\",\"1550 m\",\"1600 m\",\"1650 m\",\"1700 m\",\"1750 m\",\"1800 m\",\"1850 m\",\"1900 m\",\"1950 m\",\"200 m\",\"2000 m\",\"2050 m\",\"2100 m\",\"2150 m\",\"2200 m\",\"2250 m\",\"2300 m\",\"2350 m\",\"2400 m\",\"2450 m\",\"250 m\",\"2500 m\",\"2550 m\",\"300 m\",\"350 m\",\"400 m\",\"450 m\",\"50 m\",\"500 m\",\"550 m\",\"600 m\",\"650 m\",\"700 m\",\"750 m\",\"800 m\",\"850 m\",\"900 m\",\"950 m\"]}]}]}}"
+}

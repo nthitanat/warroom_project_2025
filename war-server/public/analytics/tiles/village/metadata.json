@@ -1,0 +1,16 @@
+{
+"name": "village.mbtiles",
+"description": "village.mbtiles",
+"version": "2",
+"minzoom": "0",
+"maxzoom": "5",
+"center": "97.456810,5.686000,5",
+"bounds": "97.448730,5.692516,105.644531,20.452749",
+"antimeridian_adjusted_bounds": "97.448730,5.692516,105.644531,20.452749",
+"type": "overlay",
+"strategies": "[{\"dropped_by_rate\":63728},{\"dropped_by_rate\":62739},{\"dropped_by_rate\":60267},{\"dropped_by_rate\":54085,\"dropped_as_needed\":4922,\"tile_size_desired\":765951},{\"dropped_by_rate\":38632,\"dropped_as_needed\":20226,\"tile_size_desired\":1863404},{\"dropped_as_needed\":55800,\"tile_size_desired\":1986110}]",
+"format": "pbf",
+"generator": "tile-join v2.80.0",
+"generator_options": "tippecanoe -o village.mbtiles -l village -zg --drop-densest-as-needed susceptible.geojson; tile-join -e village -f village.mbtiles",
+"json": "{\"vector_layers\":[{\"id\":\"village\",\"description\":\"\",\"minzoom\":0,\"maxzoom\":5,\"fields\":{\"Name\":\"String\",\"description\":\"String\",\"extrude\":\"Number\",\"snippet\":\"String\",\"tessellate\":\"Number\",\"visibility\":\"Number\"}}],\"tilestats\":{\"layerCount\":1,\"layers\":[{\"layer\":\"village\",\"count\":30938,\"geometry\":\"Point\",\"attributeCount\":6,\"attributes\":[{\"attribute\":\"Name\",\"count\":1000,\"type\":\"string\",\"values\":[\"กกกล้วยนวน\",\"กกกอ\",\"กกกอก\",\"กกกะบาก\",\"กกจำปา\",\"กกชุมแสง\",\"กกดู่\",\"กกตาด\",\"กกตาล\",\"กกต้อง\",\"กกบก\",\"กกม่วง\",\"กกม่วงชี\",\"กกสะทอน\",\"กกสับนอก\",\"กกเกลี้ยง\",\"กกแต้\",\"กกแรต\",\"กกโก\",\"กกโด่\",\"กกโอ\",\"กกไม้แดง\",\"กงกำปั่น\",\"กงษี\",\"กงษีไร่\",\"กงสี 7\",\"กงสี 8\",\"กงสีสอง\",\"กงสีใน\",\"กงหรา\",\"กบลคร\",\"กม. 1\",\"กม. 10\",\"กม. 11\",\"กม. 12\",\"กม. 17\",\"กม. 18\",\"กม. 19\",\"กม. 26 ใน\",\"กม. 3\",\"กม. 4\",\"กม. 40 พัฒนา\",\"กม. 5\",\"กม. 7\",\"กม. 9\",\"กม.12\",\"กม.30\",\"กมลราษฏร์\",\"กมลาไสย\",\"กรงทอง\",\"กรวด\",\"กรวย\",\"กรอกสะแก\",\"กรองทอง\",\"กรอบ\",\"กระจวน\",\"กระจับ\",\"กระจาย\",\"กระชงค์\",\"กระชัด\",\"กระชาย\",\"กระซัง\",\"กระฎีกรุ\",\"กระดานป้าย\",\"กระดานเลื่อน\",\"กระดูกช้าง\",\"กระต่าย\",\"กระต่ายด่อน\",\"กระถิน\",\"กระทม\",\"กระทมพรง\",\"กระทุ่ม\",\"กระทุ่มทอง\",\"กระทุ่มมืด\",\"กระทุ่มราย\",\"กระทุ่มล้ม\",\"กระทุ่มสูง\",\"กระทุ่มโทน1\",\"กระนวน\",\"กระบกหวาน\",\"กระบกเตี้ย\",\"กระบวยทอง\",\"กระบอก\",\"กระบี่\",\"กระบูน\",\"กระพี้\",\"กระมอล\",\"กระสัง\",\"กระหวัน\",\"กระเชาะราก\",\"กระเดื่อง\",\"กระเต็ล\",\"กระเทียม\",\"กระเบา\",\"กระเบากลัก\",\"กระเบาเดื่อ\",\"กระเบื้อง\",\"กระเบื้องนอก\",\"กระเบื้องน้อย\",\"กระเบื้องใหญ่\"]},{\"attribute\":\"description\",\"count\":1000,\"type\":\"string\",\"values\":[]},{\"attribute\":\"extrude\",\"count\":1,\"type\":\"number\",\"values\":[0],\"min\":0,\"max\":0},{\"attribute\":\"snippet\",\"count\":1,\"type\":\"string\",\"values\":[\"\"]},{\"attribute\":\"tessellate\",\"count\":1,\"type\":\"number\",\"values\":[-1],\"min\":-1,\"max\":-1},{\"attribute\":\"visibility\",\"count\":1,\"type\":\"number\",\"values\":[-1],\"min\":-1,\"max\":-1}]}]}}"
+}

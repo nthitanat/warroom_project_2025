@@ -1,0 +1,392 @@
+[
+    {
+        "name": "Bangkok",
+        "thai_name": "กรุงเทพมหานคร",
+        "coordinates": [13.7563, 100.5018]
+    },
+    {
+        "name": "santi_suk",
+        "thai_name": "บ้านสันติสุข",
+        "coordinates": [19.130143, 100.698599]
+    },
+     {
+        "name": "huai_muang",
+        "thai_name": "บ้่านห้วยม่วง",
+        "coordinates": [19.139837, 100.718716]
+    },
+    {
+        "name": "nam_krai",
+        "thai_name": "บ้านน้ำไคร่",
+        "coordinates": [19.131034, 100.737596]
+    },
+    {
+        "name": "ban_huak",
+        "thai_name": "บ้านฮวก",
+        "coordinates": [19.140305, 100.757347]
+    },
+    {
+        "name": "ban_por",
+        "thai_name": "บ้านพ่อ",
+        "coordinates": [19.119392, 100.783856]
+    },
+    {
+        "name": "Chiangmai",
+        "thai_name": "เชียงใหม่",
+        "coordinates": [18.7883, 98.9853]
+    },
+    {
+        "name": "Phuket",
+        "thai_name": "ภูเก็ต",
+        "coordinates": [7.8804, 98.3923]
+    },
+    {
+        "name": "Nonthaburi",
+        "thai_name": "นนทบุรี",
+        "coordinates": [13.8591, 100.5217]
+    },
+    {
+        "name": "Nakhon Ratchasima",
+        "thai_name": "นครราชสีมา",
+        "coordinates": [14.9799, 102.0977]
+    },
+    {
+        "name": "Udon Thani",
+        "thai_name": "อุดรธานี",
+        "coordinates": [17.3647, 102.8158]
+    },
+    {
+        "name": "Chonburi",
+        "thai_name": "ชลบุรี",
+        "coordinates": [13.3611, 100.9847]
+    },
+    {
+        "name": "Nakhon Si Thammarat",
+        "thai_name": "นครศรีธรรมราช",
+        "coordinates": [8.4324, 99.9631]
+    },
+    {
+        "name": "Songkhla",
+        "thai_name": "สงขลา",
+        "coordinates": [7.1756, 100.6144]
+    },
+    {
+        "name": "Chiang Rai",
+        "thai_name": "เชียงราย",
+        "coordinates": [19.9105, 99.8406]
+    },
+    {
+        "name": "Surat Thani",
+        "thai_name": "สุราษฎร์ธานี",
+        "coordinates": [9.1382, 99.3214]
+    },
+    {
+        "name": "Khon Kaen",
+        "thai_name": "ขอนแก่น",
+        "coordinates": [16.4419, 102.8356]
+    },
+    {
+        "name": "Ubon Ratchathani",
+        "thai_name": "อุบลราชธานี",
+        "coordinates": [15.2442, 104.8487]
+    },
+    {
+        "name": "Nakhon Pathom",
+        "thai_name": "นครปฐม",
+        "coordinates": [13.8196, 100.0443]
+    },
+    {
+        "name": "Pattani",
+        "thai_name": "ปัตตานี",
+        "coordinates": [6.8698, 101.2501]
+    },
+    {
+        "name": "Ratchaburi",
+        "thai_name": "ราชบุรี",
+        "coordinates": [13.5367, 99.8173]
+    },
+    {
+        "name": "Rayong",
+        "thai_name": "ระยอง",
+        "coordinates": [12.6814, 101.2810]
+    },
+    {
+        "name": "Samut Prakan",
+        "thai_name": "สมุทรปราการ",
+        "coordinates": [13.5991, 100.5998]
+    },
+    {
+        "name": "Samut Sakhon",
+        "thai_name": "สมุทรสาคร",
+        "coordinates": [13.5472, 100.2730]
+    },
+    {
+        "name": "Samut Songkhram",
+        "thai_name": "สมุทรสงคราม",
+        "coordinates": [13.4142, 100.0020]
+    },
+    {
+        "name": "Saraburi",
+        "thai_name": "สระบุรี",
+        "coordinates": [14.5289, 100.9100]
+    },
+    {
+        "name": "Satun",
+        "thai_name": "สตูล",
+        "coordinates": [6.6238, 100.0674]
+    },
+    {
+        "name": "Sing Buri",
+        "thai_name": "สิงห์บุรี",
+        "coordinates": [14.8872, 100.4018]
+    },
+    {
+        "name": "Sukhothai",
+        "thai_name": "สุโขทัย",
+        "coordinates": [17.0078, 99.8230]
+    },
+    {
+        "name": "Suphan Buri",
+        "thai_name": "สุพรรณบุรี",
+        "coordinates": [14.4745, 100.1226]
+    },
+    {
+        "name": "Trang",
+        "thai_name": "ตรัง",
+        "coordinates": [7.5563, 99.6114]
+    },
+    {
+        "name": "Trat",
+        "thai_name": "ตราด",
+        "coordinates": [12.2427, 102.5170]
+    },
+    {
+        "name": "Yala",
+        "thai_name": "ยะลา",
+        "coordinates": [6.5411, 101.2800]
+    },
+    {
+        "name": "Yasothon",
+        "thai_name": "ยโสธร",
+        "coordinates": [15.7941, 104.1451]
+    },
+    {
+        "name": "Ang Thong",
+        "thai_name": "อ่างทอง",
+        "coordinates": [14.5896, 100.4550]
+    },
+    {
+        "name": "Bueng Kan",
+        "thai_name": "บึงกาฬ",
+        "coordinates": [18.3608, 103.6466]
+    },
+    {
+        "name": "Chachoengsao",
+        "thai_name": "ฉะเชิงเทรา",
+        "coordinates": [13.6904, 101.0772]
+    },
+    {
+        "name": "Chai Nat",
+        "thai_name": "ชัยนาท",
+        "coordinates": [15.1850, 100.1252]
+    },
+    {
+        "name": "Chaiyaphum",
+        "thai_name": "ชัยภูมิ",
+        "coordinates": [15.8067, 102.0311]
+    },
+    {
+        "name": "Chanthaburi",
+        "thai_name": "จันทบุรี",
+        "coordinates": [12.6114, 102.1039]
+    },
+    {
+        "name": "Kalasin",
+        "thai_name": "กาฬสินธุ์",
+        "coordinates": [16.4320, 103.5060]
+    },
+    {
+        "name": "Kamphaeng Phet",
+        "thai_name": "กำแพงเพชร",
+        "coordinates": [16.4828, 99.5222]
+    },
+    {
+        "name": "Kanchanaburi",
+        "thai_name": "กาญจนบุรี",
+        "coordinates": [14.0041, 99.5483]
+    },
+    {
+        "name": "Krabi",
+        "thai_name": "กระบี่",
+        "coordinates": [8.0863, 98.9063]
+    },
+    {
+        "name": "Lampang",
+        "thai_name": "ลำปาง",
+        "coordinates": [18.2888, 99.4908]
+    },
+    {
+        "name": "Lamphun",
+        "thai_name": "ลำพูน",
+        "coordinates": [18.5740, 99.0087]
+    },
+    {
+        "name": "Loei",
+        "thai_name": "เลย",
+        "coordinates": [17.4860, 101.7223]
+    },
+    {
+        "name": "Lopburi",
+        "thai_name": "ลพบุรี",
+        "coordinates": [14.7995, 100.6534]
+    },
+    {
+        "name": "Mae Hong Son",
+        "thai_name": "แม่ฮ่องสอน",
+        "coordinates": [19.3020, 97.9654]
+    },
+    {
+        "name": "Maha Sarakham",
+        "thai_name": "มหาสารคาม",
+        "coordinates": [16.1845, 103.3007]
+    },
+    {
+        "name": "Mukdahan",
+        "thai_name": "มุกดาหาร",
+        "coordinates": [16.5453, 104.7231]
+    },
+    {
+        "name": "Nakhon Nayok",
+        "thai_name": "นครนายก",
+        "coordinates": [14.2068, 101.2131]
+    },
+    {
+        "name": "Nakhon Phanom",
+        "thai_name": "นครพนม",
+        "coordinates": [17.4108, 104.7784]
+    },
+    {
+        "name": "Nakhon Sawan",
+        "thai_name": "นครสวรรค์",
+        "coordinates": [15.7047, 100.1372]
+    },
+    {
+        "name": "Nan",
+        "thai_name": "น่าน",
+        "coordinates": [18.7756, 100.7731]
+    },
+    {
+        "name": "Narathiwat",
+        "thai_name": "นราธิวาส",
+        "coordinates": [6.4264, 101.8230]
+    },
+    {
+        "name": "Nong Bua Lamphu",
+        "thai_name": "หนองบัวลำภู",
+        "coordinates": [17.2046, 102.4406]
+    },
+    {
+        "name": "Nong Khai",
+        "thai_name": "หนองคาย",
+        "coordinates": [17.8783, 102.7420]
+    },
+    {
+        "name": "Pathum Thani",
+        "thai_name": "ปทุมธานี",
+        "coordinates": [14.0200, 100.5250]
+    },
+    {
+        "name": "Pattaya",
+        "thai_name": "พัทยา",
+        "coordinates": [12.9236, 100.8825]
+    },
+    {
+        "name": "Phang Nga",
+        "thai_name": "พังงา",
+        "coordinates": [8.4510, 98.5250]
+    },
+    {
+        "name": "Phatthalung",
+        "thai_name": "พัทลุง",
+        "coordinates": [7.6170, 100.0770]
+    },
+    {
+        "name": "Phayao",
+        "thai_name": "พะเยา",
+        "coordinates": [19.1694, 99.9010]
+    },
+    {
+        "name": "Phetchabun",
+        "thai_name": "เพชรบูรณ์",
+        "coordinates": [16.4180, 101.1606]
+    },
+    {
+        "name": "Phetchaburi",
+        "thai_name": "เพชรบุรี",
+        "coordinates": [13.1115, 99.9446]
+    },
+    {
+        "name": "Phichit",
+        "thai_name": "พิจิตร",
+        "coordinates": [16.4421, 100.3487]
+    },
+    {
+        "name": "Phitsanulok",
+        "thai_name": "พิษณุโลก",
+        "coordinates": [16.8211, 100.2659]
+    },
+    {
+        "name": "Phrae",
+        "thai_name": "แพร่",
+        "coordinates": [18.1446, 100.1403]
+    },
+    {
+        "name": "Prachin Buri",
+        "thai_name": "ปราจีนบุรี",
+        "coordinates": [14.0500, 101.3700]
+    },
+    {
+        "name": "Prachuap Khiri Khan",
+        "thai_name": "ประจวบคีรีขันธ์",
+        "coordinates": [11.8037, 99.8000]
+    },
+    {
+        "name": "Ranong",
+        "thai_name": "ระนอง",
+        "coordinates": [9.9620, 98.6348]
+    },
+    {
+        "name": "Roi Et",
+        "thai_name": "ร้อยเอ็ด",
+        "coordinates": [16.0567, 103.6531]
+    },
+    {
+        "name": "Sa Kaeo",
+        "thai_name": "สระแก้ว",
+        "coordinates": [13.8140, 102.0720]
+    },
+    {
+        "name": "Sakon Nakhon",
+        "thai_name": "สกลนคร",
+        "coordinates": [17.1540, 104.1472]
+    },
+    {
+        "name": "Si Sa Ket",
+        "thai_name": "ศรีสะเกษ",
+        "coordinates": [15.1180, 104.3220]
+    },
+    {
+        "name": "Tak",
+        "thai_name": "ตาก",
+        "coordinates": [16.8698, 99.1242]
+    },
+    {
+        "name": "Uthai Thani",
+        "thai_name": "อุทัยธานี",
+        "coordinates": [15.3795, 100.0248]
+    },
+    {
+        "name": "Phra Nakhon Si Ayutthaya",
+        "thai_name": "พระนครศรีอยุธยา",
+        "coordinates": [14.3532, 100.5684]
+    }
+]

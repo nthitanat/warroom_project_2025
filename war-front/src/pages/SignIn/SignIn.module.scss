@@ -1,0 +1,131 @@
+@import '../../styles/main.scss';
+
+.Container {
+  @include flex-center;
+  min-height: 100vh;
+  padding: $spacing-lg;
+  background: var(--gradient-primary);
+  position: relative;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 50% 50%, rgba(0, 212, 255, 0.1) 0%, transparent 60%);
+    pointer-events: none;
+  }
+}
+
+.FormCard {
+  @include glass-panel;
+  width: 100%;
+  max-width: 400px;
+  position: relative;
+  z-index: 1;
+}
+
+.Title {
+  font-size: $font-size-3xl;
+  font-weight: $font-weight-bold;
+  color: var(--text-primary);
+  margin-bottom: $spacing-xl;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-sm;
+  
+  .material-icons {
+    font-size: 36px;
+    color: var(--text-accent);
+  }
+}
+
+.ErrorAlert {
+  padding: $spacing-md;
+  margin-bottom: $spacing-lg;
+  background: rgba(244, 67, 54, 0.1);
+  border: 1px solid var(--error);
+  border-radius: $border-radius-md;
+  color: var(--error);
+  font-size: $font-size-md;
+}
+
+.Form {
+  @include flex-column;
+  gap: $spacing-lg;
+}
+
+.FormGroup {
+  @include flex-column;
+  gap: $spacing-xs;
+}
+
+.Label {
+  font-size: $font-size-md;
+  font-weight: $font-weight-medium;
+  color: var(--text-primary);
+}
+
+.Input {
+  @include glass-input;
+  width: 100%;
+}
+
+.SubmitButton {
+  @include button-reset;
+  width: 100%;
+  padding: $spacing-md $spacing-lg;
+  font-size: $font-size-base;
+  font-weight: $font-weight-semibold;
+  color: var(--text-primary);
+  background: var(--gradient-accent);
+  border: 1px solid var(--border-glow);
+  border-radius: $border-radius-md;
+  transition: all $transition-base;
+  box-shadow: var(--shadow-glow);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: $spacing-sm;
+
+  &:hover:not(:disabled) {
+    box-shadow: var(--shadow-glow-strong);
+    transform: translateY(-1px);
+  }
+
+  &:active:not(:disabled) {
+    transform: translateY(0);
+  }
+
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+  
+  .material-icons {
+    font-size: 20px;
+  }
+}
+
+.FooterText {
+  margin-top: $spacing-lg;
+  text-align: center;
+  font-size: $font-size-md;
+  color: var(--text-secondary);
+}
+
+.Link {
+  color: var(--primary-500);
+  text-decoration: none;
+  font-weight: $font-weight-medium;
+  transition: color $transition-fast;
+
+  &:hover {
+    color: var(--primary-600);
+    text-decoration: underline;
+  }
+}

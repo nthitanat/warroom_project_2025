@@ -1,0 +1,16 @@
+{
+"name": "roadxridge.mbtiles",
+"description": "roadxridge.mbtiles",
+"version": "2",
+"minzoom": "0",
+"maxzoom": "13",
+"center": "100.393066,13.731380,13",
+"bounds": "97.730255,5.734193,105.594063,20.455061",
+"antimeridian_adjusted_bounds": "97.730255,5.734193,105.594063,20.455061",
+"type": "overlay",
+"strategies": "[{\"dropped_by_rate\":102955},{\"dropped_by_rate\":102954},{\"dropped_by_rate\":102951},{\"dropped_by_rate\":102945},{\"dropped_by_rate\":102929},{\"dropped_by_rate\":110385},{\"dropped_by_rate\":110290},{\"dropped_by_rate\":112487},{\"dropped_by_rate\":111413},{\"dropped_by_rate\":108781},{\"dropped_by_rate\":103472},{\"dropped_by_rate\":91972},{\"dropped_by_rate\":63845}]",
+"format": "pbf",
+"generator": "tile-join v2.80.0",
+"generator_options": "tippecanoe -o roadxridge.mbtiles -l roadxridge -zg --drop-densest-as-needed roadxridge.geojson; tile-join -e roadxridge -f roadxridge.mbtiles",
+"json": "{\"vector_layers\":[{\"id\":\"roadxridge\",\"description\":\"\",\"minzoom\":0,\"maxzoom\":13,\"fields\":{\"Name\":\"String\",\"altitudeMode\":\"String\",\"description\":\"String\",\"extrude\":\"Number\",\"snippet\":\"String\",\"tessellate\":\"Number\",\"visibility\":\"Number\"}}],\"tilestats\":{\"layerCount\":1,\"layers\":[{\"layer\":\"roadxridge\",\"count\":189518,\"geometry\":\"Point\",\"attributeCount\":7,\"attributes\":[{\"attribute\":\"Name\",\"count\":1000,\"type\":\"string\",\"values\":[\" \",\"-0.178 ม.\",\"-0.303 ม.\",\"-0.325 ม.\",\"-0.54 ม.\",\"-0.675 ม.\",\"-1.192 ม.\",\"-1.428 ม.\",\"0.054 ม.\",\"0.427 ม.\",\"0.46 ม.\",\"0.611 ม.\",\"0.67 ม.\",\"0.696 ม.\",\"1 ม.\",\"1.086 ม.\",\"1.104 ม.\",\"1.143 ม.\",\"1.21 ม.\",\"1.24 ม.\",\"1.304 ม.\",\"1.346 ม.\",\"1.439 ม.\",\"1.498 ม.\",\"1.509 ม.\",\"1.594 ม.\",\"1.597 ม.\",\"1.602 ม.\",\"1.636 ม.\",\"1.841 ม.\",\"1.848 ม.\",\"1.873 ม.\",\"1.885 ม.\",\"1.897 ม.\",\"1.984 ม.\",\"1.987 ม.\",\"1.997 ม.\",\"1.998 ม.\",\"10 ม.\",\"10.001 ม.\",\"10.002 ม.\",\"10.003 ม.\",\"10.004 ม.\",\"10.005 ม.\",\"10.006 ม.\",\"10.007 ม.\",\"10.009 ม.\",\"10.01 ม.\",\"10.012 ม.\",\"10.014 ม.\",\"10.015 ม.\",\"10.016 ม.\",\"10.017 ม.\",\"10.018 ม.\",\"10.019 ม.\",\"10.02 ม.\",\"10.021 ม.\",\"10.022 ม.\",\"10.023 ม.\",\"10.024 ม.\",\"10.025 ม.\",\"10.026 ม.\",\"10.027 ม.\",\"10.029 ม.\",\"10.03 ม.\",\"10.032 ม.\",\"10.033 ม.\",\"10.034 ม.\",\"10.035 ม.\",\"10.036 ม.\",\"10.037 ม.\",\"10.039 ม.\",\"10.04 ม.\",\"10.041 ม.\",\"10.042 ม.\",\"10.043 ม.\",\"10.045 ม.\",\"10.046 ม.\",\"10.047 ม.\",\"10.048 ม.\",\"10.049 ม.\",\"10.05 ม.\",\"10.051 ม.\",\"10.052 ม.\",\"10.053 ม.\",\"10.054 ม.\",\"10.055 ม.\",\"10.056 ม.\",\"10.057 ม.\",\"10.058 ม.\",\"10.06 ม.\",\"10.061 ม.\",\"10.062 ม.\",\"10.063 ม.\",\"10.066 ม.\",\"10.067 ม.\",\"10.068 ม.\",\"10.069 ม.\",\"10.07 ม.\",\"10.071 ม.\"]},{\"attribute\":\"altitudeMode\",\"count\":2,\"type\":\"string\",\"values\":[\"absolute\",\"clampToGround\"]},{\"attribute\":\"description\",\"count\":1000,\"type\":\"string\",\"values\":[]},{\"attribute\":\"extrude\",\"count\":1,\"type\":\"number\",\"values\":[0],\"min\":0,\"max\":0},{\"attribute\":\"snippet\",\"count\":1,\"type\":\"string\",\"values\":[\"\"]},{\"attribute\":\"tessellate\",\"count\":1,\"type\":\"number\",\"values\":[-1],\"min\":-1,\"max\":-1},{\"attribute\":\"visibility\",\"count\":1,\"type\":\"number\",\"values\":[-1],\"min\":-1,\"max\":-1}]}]}}"
+}
