@@ -12,7 +12,12 @@ WORKDIR /app
 COPY package*.json ./
 
 # Install dependencies
-RUN npm ci
+# Use npm install if package-lock.json doesn't exist or is out of sync
+RUN if [ -f package-lock.json ]; then \
+        npm ci || npm install; \
+    else \
+        npm install; \
+    fi
 
 # Copy application files
 COPY . .

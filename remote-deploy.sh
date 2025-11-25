@@ -193,6 +193,33 @@ deploy_app() {
         sed -i 's/^DEPLOYMENT_MODE=.*/DEPLOYMENT_MODE=production/' .env 2>/dev/null || true
     fi
 
+    echo "📦 Checking Node.js version..."
+    CURRENT_NODE_VERSION=$(node --version | cut -d'v' -f2 | cut -d'.' -f1)
+    if [ "$CURRENT_NODE_VERSION" -lt 20 ]; then
+        echo "⚠️  Node.js $CURRENT_NODE_VERSION detected. Upgrading to Node.js 20..."
+        # Install Node.js 20 using nvm if available, or suggest manual upgrade
+        if command -v nvm &> /dev/null; then
+            nvm install 20
+            nvm use 20
+            echo "✅ Node.js upgraded to version $(node --version)"
+        else
+            echo "⚠️  nvm not found. Attempting to install Node.js 20 via package manager..."
+            # Try to install via common package managers
+            if command -v apt-get &> /dev/null; then
+                curl -fsSL https://deb.nodesource.com/setup_20.x | echo "$REMOTE_SUDO_PASS" | sudo -S bash -
+                echo "$REMOTE_SUDO_PASS" | sudo -S apt-get install -y nodejs
+            elif command -v yum &> /dev/null; then
+                curl -fsSL https://rpm.nodesource.com/setup_20.x | echo "$REMOTE_SUDO_PASS" | sudo -S bash -
+                echo "$REMOTE_SUDO_PASS" | sudo -S yum install -y nodejs
+            else
+                echo "❌ Cannot automatically upgrade Node.js. Please upgrade manually to version 20+"
+                echo "   Current version: $(node --version)"
+            fi
+        fi
+    else
+        echo "✅ Node.js $(node --version) is compatible"
+    fi
+
     echo "🏗️ Building React client for production..."
     cd "$DEPLOY_PATH/war-front"
     # Try npm ci first, fall back to npm install if lock file is out of sync
