@@ -6,14 +6,8 @@ version: '3.8'
 services:
   war-server:
     environment:
-      - DB_HOST=${PROD_DB_HOST}
-      - DB_PORT=${PROD_DB_PORT}
-      - DB_USER=${PROD_DB_USER}
-      - DB_PASSWORD=${PROD_DB_PASSWORD}
-      - DB_NAME=${PROD_DB_NAME}
-      - JWT_SECRET=${PROD_JWT_SECRET}
-      - JWT_EXPIRES_IN=${PROD_JWT_EXPIRES_IN}
-      - CORS_ORIGIN=${PROD_CORS_ORIGIN}
+      - DEPLOYMENT_MODE=production
+      - NODE_ENV=production
   
   war-front:
     build:

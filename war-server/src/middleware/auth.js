@@ -1,17 +1,37 @@
 const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
+// Determine if we're in production or development mode
+const isProduction = process.env.DEPLOYMENT_MODE === 'production' || process.env.NODE_ENV === 'production';
+
+// Get JWT configuration based on environment
+const getJWTConfig = () => {
+  if (isProduction) {
+    return {
+      secret: process.env.PROD_JWT_SECRET,
+      expiresIn: process.env.PROD_JWT_EXPIRES_IN || '24h'
+    };
+  } else {
+    return {
+      secret: process.env.DEV_JWT_SECRET,
+      expiresIn: process.env.DEV_JWT_EXPIRES_IN || '24h'
+    };
+  }
+};
+
 // Generate JWT Token
 const generateToken = (userId) => {
-  return jwt.sign({ id: userId }, process.env.JWT_SECRET, {
-    expiresIn: '7d',
+  const config = getJWTConfig();
+  return jwt.sign({ id: userId }, config.secret, {
+    expiresIn: config.expiresIn,
   });
 };
 
 // Verify JWT Token
 const verifyToken = (token) => {
   try {
-    return jwt.verify(token, process.env.JWT_SECRET);
+    const config = getJWTConfig();
+    return jwt.verify(token, config.secret);
   } catch (error) {
     return null;
   }

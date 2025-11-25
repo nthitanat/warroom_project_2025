@@ -7,6 +7,30 @@ const { initializeTables } = require('./models');
 // Load environment variables
 dotenv.config();
 
+// Determine if we're in production or development mode
+const isProduction = process.env.DEPLOYMENT_MODE === 'production' || process.env.NODE_ENV === 'production';
+
+// Get environment-specific configuration
+const getEnvConfig = () => {
+  if (isProduction) {
+    return {
+      jwtSecret: process.env.PROD_JWT_SECRET,
+      jwtExpiresIn: process.env.PROD_JWT_EXPIRES_IN,
+      corsOrigin: process.env.PROD_CORS_ORIGIN,
+      dbName: process.env.PROD_DB_NAME
+    };
+  } else {
+    return {
+      jwtSecret: process.env.DEV_JWT_SECRET,
+      jwtExpiresIn: process.env.DEV_JWT_EXPIRES_IN,
+      corsOrigin: process.env.DEV_CORS_ORIGIN,
+      dbName: process.env.DEV_DB_NAME
+    };
+  }
+};
+
+const envConfig = getEnvConfig();
+
 const app = express();
 
 // Initialize database and tables
@@ -29,7 +53,11 @@ const initializeServer = async () => {
 initializeServer();
 
 // Middleware
-app.use(cors());
+const corsOptions = {
+  origin: envConfig.corsOrigin ? envConfig.corsOrigin.split(',') : '*',
+  credentials: true
+};
+app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -64,9 +92,11 @@ app.use((req, res) => {
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
+  const mode = isProduction ? 'PRODUCTION' : 'DEVELOPMENT';
   console.log(`\n🚀 War Room Server is running!`);
   console.log(`📍 Port: ${PORT}`);
-  console.log(`🌍 Environment: ${process.env.NODE_ENV || 'development'}`);
-  console.log(`💾 Database: ${process.env.DB_NAME || 'war_room_db'}`);
+  console.log(`🌍 Environment: ${mode}`);
+  console.log(`💾 Database: ${envConfig.dbName || 'war_room_db'}`);
+  console.log(`🔒 CORS: ${envConfig.corsOrigin || '*'}`);
   console.log(`\n✨ Ready to accept requests\n`);
 });

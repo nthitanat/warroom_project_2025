@@ -18,23 +18,38 @@ services:
       - .env
     environment:
       - NODE_ENV=${DEPLOYMENT_MODE:-development}
+      - DEPLOYMENT_MODE=${DEPLOYMENT_MODE:-development}
       - PORT=${PORT:-4000}
       - API_PREFIX=${API_PREFIX:-/api}
       - API_VERSION=${API_VERSION:-v1}
       
-      # Dynamically set database configuration based on DEPLOYMENT_MODE
-      - DB_HOST=${DEV_DB_HOST}
-      - DB_PORT=${DEV_DB_PORT}
-      - DB_USER=${DEV_DB_USER}
-      - DB_PASSWORD=${DEV_DB_PASSWORD}
-      - DB_NAME=${DEV_DB_NAME}
+      # Development database configuration
+      - DEV_DB_HOST=${DEV_DB_HOST}
+      - DEV_DB_PORT=${DEV_DB_PORT}
+      - DEV_DB_USER=${DEV_DB_USER}
+      - DEV_DB_PASSWORD=${DEV_DB_PASSWORD}
+      - DEV_DB_NAME=${DEV_DB_NAME}
       
-      # Dynamically set JWT configuration
-      - JWT_SECRET=${DEV_JWT_SECRET}
-      - JWT_EXPIRES_IN=${DEV_JWT_EXPIRES_IN}
+      # Production database configuration
+      - PROD_DB_HOST=${PROD_DB_HOST}
+      - PROD_DB_PORT=${PROD_DB_PORT}
+      - PROD_DB_USER=${PROD_DB_USER}
+      - PROD_DB_PASSWORD=${PROD_DB_PASSWORD}
+      - PROD_DB_NAME=${PROD_DB_NAME}
       
-      # Dynamically set CORS configuration
-      - CORS_ORIGIN=${DEV_CORS_ORIGIN}
+      # Development JWT configuration
+      - DEV_JWT_SECRET=${DEV_JWT_SECRET}
+      - DEV_JWT_EXPIRES_IN=${DEV_JWT_EXPIRES_IN}
+      
+      # Production JWT configuration
+      - PROD_JWT_SECRET=${PROD_JWT_SECRET}
+      - PROD_JWT_EXPIRES_IN=${PROD_JWT_EXPIRES_IN}
+      
+      # Development CORS configuration
+      - DEV_CORS_ORIGIN=${DEV_CORS_ORIGIN}
+      
+      # Production CORS configuration
+      - PROD_CORS_ORIGIN=${PROD_CORS_ORIGIN}
       
       # Rate limiting
       - RATE_LIMIT_WINDOW_MS=${RATE_LIMIT_WINDOW_MS:-900000}
