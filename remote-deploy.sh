@@ -206,11 +206,11 @@ deploy_app() {
             echo "⚠️  nvm not found. Attempting to install Node.js 20 via package manager..."
             # Try to install via common package managers
             if command -v apt-get &> /dev/null; then
-                curl -fsSL https://deb.nodesource.com/setup_20.x | echo "$REMOTE_SUDO_PASS" | sudo -S bash -
-                echo "$REMOTE_SUDO_PASS" | sudo -S apt-get install -y nodejs
+                curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -S bash - <<< "$REMOTE_SUDO_PASS"
+                sudo -S apt-get install -y nodejs <<< "$REMOTE_SUDO_PASS"
             elif command -v yum &> /dev/null; then
-                curl -fsSL https://rpm.nodesource.com/setup_20.x | echo "$REMOTE_SUDO_PASS" | sudo -S bash -
-                echo "$REMOTE_SUDO_PASS" | sudo -S yum install -y nodejs
+                curl -fsSL https://rpm.nodesource.com/setup_20.x | sudo -S bash - <<< "$REMOTE_SUDO_PASS"
+                sudo -S yum install -y nodejs <<< "$REMOTE_SUDO_PASS"
             else
                 echo "❌ Cannot automatically upgrade Node.js. Please upgrade manually to version 20+"
                 echo "   Current version: $(node --version)"
