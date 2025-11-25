@@ -195,9 +195,14 @@ deploy_app() {
 
     echo "🏗️ Building React client for production..."
     cd "$DEPLOY_PATH/war-front"
-    # Use npm ci for reproducible installs
+    # Try npm ci first, fall back to npm install if lock file is out of sync
     if [ -f package-lock.json ]; then
-        npm ci
+        echo "Attempting clean install with npm ci..."
+        if ! npm ci; then
+            echo "⚠️  npm ci failed, regenerating lock file with npm install..."
+            rm -f package-lock.json
+            npm install
+        fi
     else
         npm install
     fi
