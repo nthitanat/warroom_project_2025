@@ -2,6 +2,7 @@
   "name": "war-front",
   "version": "1.0.0",
   "private": true,
+  "homepage": ".",
   "dependencies": {
     "@hello-pangea/dnd": "^18.0.1",
     "@turf/turf": "^7.2.0",

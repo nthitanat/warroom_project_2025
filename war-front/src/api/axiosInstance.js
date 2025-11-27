@@ -2,10 +2,12 @@ import axios from 'axios';
 
 // Switch between development and production API base URL
 const getApiBaseUrl = () => {
-  if (process.env.DEPLOYMENT_MODE === 'production') {
-    return process.env.PROD_REACT_APP_API_BASE_URL || 'https://engagement.chula.ac.th/war-room-api';
+  // Use build-time environment variable if available (injected during build)
+  if (process.env.REACT_APP_API_BASE_URL) {
+    return process.env.REACT_APP_API_BASE_URL;
   }
-  return process.env.DEV_REACT_APP_API_BASE_URL || 'http://localhost:4000/api';
+  // Production default (for static deployment)
+  return 'https://engagement.chula.ac.th/war-room-api';
 };
 
 const axiosInstance = axios.create({
