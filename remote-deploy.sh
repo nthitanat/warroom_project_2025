@@ -233,7 +233,8 @@ deploy_app() {
     else
         npm install
     fi
-    npm run build
+    # Set PUBLIC_URL for production deployment to /war-room subdirectory
+    PUBLIC_URL=/war-room npm run build
 
     echo "📁 Deploying React build to /www/wwwroot/engagement.chula.ac.th/..."
     echo "$REMOTE_SUDO_PASS" | sudo -S mkdir -p /www/wwwroot/engagement.chula.ac.th
@@ -241,6 +242,17 @@ deploy_app() {
     echo "$REMOTE_SUDO_PASS" | sudo -S mv "$DEPLOY_PATH/war-front/build" /www/wwwroot/engagement.chula.ac.th/war-room
     echo "$REMOTE_SUDO_PASS" | sudo -S chown -R $USER:$USER /www/wwwroot/engagement.chula.ac.th 2>/dev/null || true
     echo "✅ React app deployed to web server"
+
+    echo "🗄️  Setting up MySQL database and user..."
+    # Create database and user with proper permissions for Docker access
+    if command -v mysql &> /dev/null; then
+        printf '%s\n' "$REMOTE_SUDO_PASS" | sudo -S mysql -e "
+            CREATE DATABASE IF NOT EXISTS war_room_db;
+            CREATE USER IF NOT EXISTS 'war_room_db'@'%' IDENTIFIED BY '45tf6bZJrF6s8k3T';
+            GRANT ALL PRIVILEGES ON war_room_db.* TO 'war_room_db'@'%';
+            FLUSH PRIVILEGES;
+        " 2>/dev/null && echo "✅ Database and user configured" || echo "⚠️  Database setup skipped (may already exist)"
+    fi
 
     echo "🐳 Building and starting Docker containers..."
     cd "$DEPLOY_PATH"
@@ -294,9 +306,10 @@ update_app() {
         sed -i 's/^DEPLOYMENT_MODE=.*/DEPLOYMENT_MODE=production/' .env 2>/dev/null || true
     fi
 
-    echo "🔄 Restarting Docker containers..."
+    echo "🔄 Rebuilding and restarting Docker containers..."
     cd "$DEPLOY_PATH"
-    echo "$REMOTE_SUDO_PASS" | sudo -S docker-compose -f docker-compose.yml -f docker-compose.prod.yml --env-file .env restart
+    # Use --build to ensure new environment (.env) and code are picked up
+    echo "$REMOTE_SUDO_PASS" | sudo -S docker-compose -f docker-compose.yml -f docker-compose.prod.yml --env-file .env up -d --build
 
     echo "✅ Update complete!"
 
