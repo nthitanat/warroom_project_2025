@@ -48,25 +48,3 @@ services:
       timeout: 3s
       retries: 3
       start_period: 40s
-
-  war-front:
-    container_name: warroom-frontend
-    build:
-      context: ./war-front
-      dockerfile: Dockerfile
-      args:
-        NODE_ENV: production
-        REACT_APP_API_BASE_URL: ${PROD_REACT_APP_API_BASE_URL}
-        REACT_APP_ENABLE_API_LOGGING: ${PROD_REACT_APP_ENABLE_API_LOGGING}
-    network_mode: host
-    env_file:
-      - .env
-    depends_on:
-      - war-server
-    restart: unless-stopped
-    healthcheck:
-      test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/health"]
-      interval: 30s
-      timeout: 3s
-      retries: 3
-      start_period: 10s
