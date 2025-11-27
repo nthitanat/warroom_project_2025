@@ -5,11 +5,13 @@ version: '3.8'
 
 services:
   war-server:
+    network_mode: host
     environment:
       - DEPLOYMENT_MODE=production
       - NODE_ENV=production
   
   war-front:
+    network_mode: host
     build:
       args:
         NODE_ENV: production
