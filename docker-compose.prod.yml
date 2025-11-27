@@ -1,72 +1,47 @@
 # ============================================
-# WarRoom Project - Docker Compose Configuration
+# WarRoom Project - Production Configuration  
 # ============================================
-# Default development configuration with bridge networking
-# For production deployment, use docker-compose.prod.yml
+# Uses network_mode: host to allow direct MySQL access at 127.0.0.1
 version: '3.8'
 
 services:
-  # ==========================================
-  # War Room Backend Server
-  # ==========================================
   war-server:
     container_name: warroom-server
     build:
       context: ./war-server
       dockerfile: Dockerfile
-    ports:
-      - "${PORT:-4000}:${PORT:-4000}"
+    network_mode: host
     env_file:
       - .env
     environment:
-      - NODE_ENV=${DEPLOYMENT_MODE:-development}
-      - DEPLOYMENT_MODE=${DEPLOYMENT_MODE:-development}
+      - NODE_ENV=production
+      - DEPLOYMENT_MODE=production
       - PORT=${PORT:-4000}
       - API_PREFIX=${API_PREFIX:-/api}
       - API_VERSION=${API_VERSION:-v1}
-      
-      # Development database configuration
       - DEV_DB_HOST=${DEV_DB_HOST}
       - DEV_DB_PORT=${DEV_DB_PORT}
       - DEV_DB_USER=${DEV_DB_USER}
       - DEV_DB_PASSWORD=${DEV_DB_PASSWORD}
       - DEV_DB_NAME=${DEV_DB_NAME}
-      
-      # Production database configuration
       - PROD_DB_HOST=${PROD_DB_HOST}
       - PROD_DB_PORT=${PROD_DB_PORT}
       - PROD_DB_USER=${PROD_DB_USER}
       - PROD_DB_PASSWORD=${PROD_DB_PASSWORD}
       - PROD_DB_NAME=${PROD_DB_NAME}
-      
-      # Development JWT configuration
       - DEV_JWT_SECRET=${DEV_JWT_SECRET}
       - DEV_JWT_EXPIRES_IN=${DEV_JWT_EXPIRES_IN}
-      
-      # Production JWT configuration
       - PROD_JWT_SECRET=${PROD_JWT_SECRET}
       - PROD_JWT_EXPIRES_IN=${PROD_JWT_EXPIRES_IN}
-      
-      # Development CORS configuration
       - DEV_CORS_ORIGIN=${DEV_CORS_ORIGIN}
-      
-      # Production CORS configuration
       - PROD_CORS_ORIGIN=${PROD_CORS_ORIGIN}
-      
-      # Rate limiting
       - RATE_LIMIT_WINDOW_MS=${RATE_LIMIT_WINDOW_MS:-900000}
       - RATE_LIMIT_MAX_REQUESTS=${RATE_LIMIT_MAX_REQUESTS:-100}
-      
-      # File upload
       - UPLOAD_DIR=${UPLOAD_DIR:-./public}
       - MAX_FILE_SIZE=${MAX_FILE_SIZE:-10485760}
     volumes:
       - ./war-server/public:/app/public
     restart: unless-stopped
-    networks:
-      - warroom-network
-    extra_hosts:
-      - "host.docker.internal:host-gateway"
     healthcheck:
       test: ["CMD", "node", "-e", "require('http').get('http://localhost:${PORT:-4000}/api/health', (r) => {process.exit(r.statusCode === 200 ? 0 : 1)})"]
       interval: 30s
@@ -74,44 +49,24 @@ services:
       retries: 3
       start_period: 40s
 
-  # ==========================================
-  # War Room Frontend Client
-  # ==========================================
   war-front:
     container_name: warroom-frontend
     build:
       context: ./war-front
       dockerfile: Dockerfile
       args:
-        NODE_ENV: development
-        REACT_APP_API_BASE_URL: ${DEV_REACT_APP_API_BASE_URL}
-        REACT_APP_ENABLE_API_LOGGING: ${DEV_REACT_APP_ENABLE_API_LOGGING}
-    ports:
-      - "${CLIENT_PORT:-4001}:80"
+        NODE_ENV: production
+        REACT_APP_API_BASE_URL: ${PROD_REACT_APP_API_BASE_URL}
+        REACT_APP_ENABLE_API_LOGGING: ${PROD_REACT_APP_ENABLE_API_LOGGING}
+    network_mode: host
     env_file:
       - .env
     depends_on:
       - war-server
     restart: unless-stopped
-    networks:
-      - warroom-network
     healthcheck:
       test: ["CMD", "wget", "--quiet", "--tries=1", "--spider", "http://localhost/health"]
       interval: 30s
       timeout: 3s
       retries: 3
       start_period: 10s
-
-# ==========================================
-# Networks
-# ==========================================
-networks:
-  warroom-network:
-    driver: bridge
-
-# ==========================================
-# Volumes (if needed in future)
-# ==========================================
-volumes:
-  warroom-data:
-    driver: local

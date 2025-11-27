@@ -256,8 +256,8 @@ deploy_app() {
 
     echo "🐳 Building and starting Docker containers..."
     cd "$DEPLOY_PATH"
-    # Set NETWORK_MODE=host for production to allow direct MySQL access
-    echo "$REMOTE_SUDO_PASS" | sudo -S NETWORK_MODE=host docker-compose --env-file .env up -d --build
+    # Use production compose file with host networking
+    echo "$REMOTE_SUDO_PASS" | sudo -S docker-compose -f docker-compose.prod.yml --env-file .env up -d --build
 
     echo "🔥 Configuring firewall rules..."
     # Allow ports 4000 (API) and 4001 (Client)
@@ -275,7 +275,7 @@ deploy_app() {
     echo ""
     echo "📊 Container status:"
     cd "$DEPLOY_PATH"
-    echo "$REMOTE_SUDO_PASS" | sudo -S NETWORK_MODE=host docker-compose --env-file .env ps
+    echo "$REMOTE_SUDO_PASS" | sudo -S docker-compose -f docker-compose.prod.yml --env-file .env ps
 }
 
 # Function to update (git pull + restart, no rebuild)
@@ -310,32 +310,31 @@ update_app() {
     echo "🔄 Rebuilding and restarting Docker containers..."
     cd "$DEPLOY_PATH"
     # Use --build to ensure new environment (.env) and code are picked up
-    # Set NETWORK_MODE=host for production
-    echo "$REMOTE_SUDO_PASS" | sudo -S NETWORK_MODE=host docker-compose --env-file .env up -d --build
+    echo "$REMOTE_SUDO_PASS" | sudo -S docker-compose -f docker-compose.prod.yml --env-file .env up -d --build
 
     echo "✅ Update complete!"
 
     echo ""
     echo "📊 Container status:"
-    echo "$REMOTE_SUDO_PASS" | sudo -S NETWORK_MODE=host docker-compose --env-file .env ps
+    echo "$REMOTE_SUDO_PASS" | sudo -S docker-compose -f docker-compose.prod.yml --env-file .env ps
 }
 
 # Function to start containers
 start_containers() {
     echo "🚀 Starting Docker containers..."
     cd "$DEPLOY_PATH"
-    echo "$REMOTE_SUDO_PASS" | sudo -S NETWORK_MODE=host docker-compose --env-file .env up -d
+    echo "$REMOTE_SUDO_PASS" | sudo -S docker-compose -f docker-compose.prod.yml --env-file .env up -d
     echo "✅ Containers started!"
     echo ""
     echo "📊 Container status:"
-    echo "$REMOTE_SUDO_PASS" | sudo -S NETWORK_MODE=host docker-compose --env-file .env ps
+    echo "$REMOTE_SUDO_PASS" | sudo -S docker-compose -f docker-compose.prod.yml --env-file .env ps
 }
 
 # Function to stop containers
 stop_containers() {
     echo "🛑 Stopping Docker containers..."
     cd "$DEPLOY_PATH"
-    echo "$REMOTE_SUDO_PASS" | sudo -S NETWORK_MODE=host docker-compose --env-file .env down
+    echo "$REMOTE_SUDO_PASS" | sudo -S docker-compose -f docker-compose.prod.yml --env-file .env down
     echo "✅ Containers stopped!"
 }
 
@@ -343,25 +342,25 @@ stop_containers() {
 restart_containers() {
     echo "🔄 Restarting Docker containers..."
     cd "$DEPLOY_PATH"
-    echo "$REMOTE_SUDO_PASS" | sudo -S NETWORK_MODE=host docker-compose --env-file .env restart
+    echo "$REMOTE_SUDO_PASS" | sudo -S docker-compose -f docker-compose.prod.yml --env-file .env restart
     echo "✅ Containers restarted!"
     echo ""
     echo "📊 Container status:"
-    echo "$REMOTE_SUDO_PASS" | sudo -S NETWORK_MODE=host docker-compose --env-file .env ps
+    echo "$REMOTE_SUDO_PASS" | sudo -S docker-compose -f docker-compose.prod.yml --env-file .env ps
 }
 
 # Function to view logs
 view_logs() {
     echo "📋 Viewing container logs (Press Ctrl+C to exit)..."
     cd "$DEPLOY_PATH"
-    echo "$REMOTE_SUDO_PASS" | sudo -S NETWORK_MODE=host docker-compose --env-file .env logs -f --tail=100
+    echo "$REMOTE_SUDO_PASS" | sudo -S docker-compose -f docker-compose.prod.yml --env-file .env logs -f --tail=100
 }
 
 # Function to show status
 show_status() {
     echo "📊 Container status:"
     cd "$DEPLOY_PATH"
-    echo "$REMOTE_SUDO_PASS" | sudo -S NETWORK_MODE=host docker-compose --env-file .env ps
+    echo "$REMOTE_SUDO_PASS" | sudo -S docker-compose -f docker-compose.prod.yml --env-file .env ps
     echo ""
     echo "💾 Disk usage:"
     echo "$REMOTE_SUDO_PASS" | sudo -S docker system df
