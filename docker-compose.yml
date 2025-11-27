@@ -12,6 +12,8 @@ services:
     build:
       context: ./war-server
       dockerfile: Dockerfile
+    # Use host networking in production for direct MySQL access
+    network_mode: "${NETWORK_MODE:-bridge}"
     ports:
       - "${PORT:-4000}:${PORT:-4000}"
     env_file:
@@ -81,9 +83,11 @@ services:
       context: ./war-front
       dockerfile: Dockerfile
       args:
-        NODE_ENV: development
+        NODE_ENV: ${DEPLOYMENT_MODE:-development}
         REACT_APP_API_BASE_URL: ${DEV_REACT_APP_API_BASE_URL}
         REACT_APP_ENABLE_API_LOGGING: ${DEV_REACT_APP_ENABLE_API_LOGGING}
+    # Use host networking in production
+    network_mode: "${NETWORK_MODE:-bridge}"
     ports:
       - "${CLIENT_PORT:-4001}:80"
     env_file:
