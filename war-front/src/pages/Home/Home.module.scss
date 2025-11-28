@@ -88,7 +88,7 @@
   gap: $spacing-3xl;
   align-items: center;
   width: 100%;
-  max-width: 1400px;
+  max-width: 80%;
   margin: 0 auto;
   position: relative;
   z-index: 2;
@@ -96,6 +96,15 @@
   @include media-down($breakpoint-lg) {
     flex-direction: column;
     gap: $spacing-2xl;
+    max-width: 90%;
+  }
+
+  @include media-down($breakpoint-md) {
+    max-width: 95%;
+  }
+
+  @include media-down($breakpoint-sm) {
+    max-width: 100%;
   }
 }
 
@@ -285,11 +294,24 @@
 // Nan Learning Journey Section
 .NanLearning {
   padding: $spacing-3xl $spacing-2xl;
-  max-width: 1400px;
+  max-width: 80%;
   margin: 0 auto;
   position: relative;
   z-index: 1;
   background: transparent;
+
+  @include media-down($breakpoint-lg) {
+    max-width: 90%;
+  }
+
+  @include media-down($breakpoint-md) {
+    max-width: 95%;
+  }
+
+  @include media-down($breakpoint-sm) {
+    max-width: 100%;
+    padding: $spacing-2xl $spacing-md;
+  }
 }
 
 .NanIntro {
@@ -429,11 +451,24 @@
 // Executive Team Section
 .ExecutiveTeam {
   padding: $spacing-3xl $spacing-2xl;
-  max-width: 1400px;
+  max-width: 80%;
   margin: 0 auto;
   position: relative;
   z-index: 1;
   background: rgba(15, 20, 45, 0.3);
+
+  @include media-down($breakpoint-lg) {
+    max-width: 90%;
+  }
+
+  @include media-down($breakpoint-md) {
+    max-width: 95%;
+  }
+
+  @include media-down($breakpoint-sm) {
+    max-width: 100%;
+    padding: $spacing-2xl $spacing-md;
+  }
 }
 
 .TeamGrid {

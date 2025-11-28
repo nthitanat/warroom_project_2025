@@ -84,3 +84,19 @@
     height: 300px;
   }
 }
+
+.ErrorState {
+  @include flex-center;
+  min-height: 50vh;
+  padding: $spacing-3xl $spacing-lg;
+}
+
+.ErrorMessage {
+  @include glass-card;
+  padding: $spacing-xl;
+  font-size: $font-size-lg;
+  color: var(--error);
+  text-align: center;
+  max-width: 600px;
+  margin: 0;
+}

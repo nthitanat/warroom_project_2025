@@ -12,7 +12,6 @@ import Analytics from './pages/Analytics/Analytics';
 import Charities from './pages/Charities/Charities';
 import CharityDetail from './pages/CharityDetail/CharityDetail';
 import Lessons from './pages/Lessons/Lessons';
-import LessonsPM from './pages/LessonsPM/LessonsPM';
 import WarRoom from './pages/WarRoom/WarRoom';
 import AdminDashboard from './pages/AdminDashboard/AdminDashboard';
 import Unauthorized from './pages/Unauthorized/Unauthorized';
@@ -36,7 +35,6 @@ function App() {
             <Route path="/charities" element={<Charities />} />
             <Route path="/charity/:id" element={<CharityDetail />} />
             <Route path="/lessons" element={<Lessons />} />
-            <Route path="/lessons-pm" element={<LessonsPM />} />
             <Route path="/warroom" element={<WarRoom />} />
             
             {/* Admin Routes */}

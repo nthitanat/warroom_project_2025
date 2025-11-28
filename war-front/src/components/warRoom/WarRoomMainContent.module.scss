@@ -161,3 +161,41 @@
     height: 20px;
   }
 }
+
+.EmptyState {
+  @include flex-center;
+  @include flex-column;
+  min-height: 400px;
+  padding: $spacing-3xl $spacing-lg;
+  gap: $spacing-lg;
+  text-align: center;
+}
+
+.EmptyIcon {
+  @include flex-center;
+  width: 80px;
+  height: 80px;
+  border-radius: $border-radius-full;
+  background: var(--background-glass);
+  color: var(--text-secondary);
+  opacity: 0.6;
+
+  svg {
+    width: 40px;
+    height: 40px;
+  }
+}
+
+.EmptyMessage {
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-semibold;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.EmptySubtext {
+  font-size: $font-size-lg;
+  color: var(--text-secondary);
+  margin: 0;
+  opacity: 0.8;
+}

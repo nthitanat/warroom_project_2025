@@ -64,35 +64,62 @@ export default function WarRoomMainContent({ onVideoSelect, items }) {
       </div>
 
       <div className={styles.Content}>
-        <div className={styles.Grid}>
-          {items
-            .filter(card => card.status === stateWarRoomMainContent.selectedTab)
-            .map((card, index) => (
-              <div key={index} className={styles.Card}>
-                <img
-                  src={card.img}
-                  alt={card.title}
-                  className={styles.CardImage}
-                />
-                <div className={styles.CardContent}>
-                  <h4 className={styles.CardTitle}>{card.title}</h4>
-                  <p className={styles.CardDescription}>{card.description}</p>
-                  {stateWarRoomMainContent.selectedTab !== 0 && (
-                    <button
-                      onClick={() => onVideoSelect(card.videoLink)}
-                      className={styles.PlayButton}
-                      aria-label="play video"
-                    >
-                      <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <polygon points="5 3 19 12 5 21 5 3"></polygon>
-                      </svg>
-                      Play
-                    </button>
-                  )}
+        {(() => {
+          const filteredItems = items.filter(card => card.status === stateWarRoomMainContent.selectedTab);
+          
+          if (filteredItems.length === 0) {
+            const emptyMessages = [
+              'No upcoming events at the moment',
+              'No current live sessions',
+              'No archived content available',
+              'No podcasts available yet'
+            ];
+            
+            return (
+              <div className={styles.EmptyState}>
+                <div className={styles.EmptyIcon}>
+                  {getIcon(tabs[stateWarRoomMainContent.selectedTab].icon)}
                 </div>
+                <p className={styles.EmptyMessage}>
+                  {emptyMessages[stateWarRoomMainContent.selectedTab]}
+                </p>
+                <p className={styles.EmptySubtext}>
+                  Check back later for updates
+                </p>
               </div>
-            ))}
-        </div>
+            );
+          }
+          
+          return (
+            <div className={styles.Grid}>
+              {filteredItems.map((card, index) => (
+                <div key={index} className={styles.Card}>
+                  <img
+                    src={card.img}
+                    alt={card.title}
+                    className={styles.CardImage}
+                  />
+                  <div className={styles.CardContent}>
+                    <h4 className={styles.CardTitle}>{card.title}</h4>
+                    <p className={styles.CardDescription}>{card.description}</p>
+                    {stateWarRoomMainContent.selectedTab !== 0 && (
+                      <button
+                        onClick={() => onVideoSelect(card.videoLink)}
+                        className={styles.PlayButton}
+                        aria-label="play video"
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                          <polygon points="5 3 19 12 5 21 5 3"></polygon>
+                        </svg>
+                        Play
+                      </button>
+                    )}
+                  </div>
+                </div>
+              ))}
+            </div>
+          );
+        })()}
       </div>
     </div>
   );

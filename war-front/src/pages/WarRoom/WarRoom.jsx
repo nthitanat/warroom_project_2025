@@ -18,6 +18,16 @@ export default function WarRoom() {
     return <LoadingIndicator message="Loading War Room data..." />;
   }
 
+  if (stateWarRoom.error) {
+    return (
+      <div className={styles.Container}>
+        <div className={styles.ErrorState}>
+          <p className={styles.ErrorMessage}>{stateWarRoom.error}</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className={styles.Container}>
       <WarRoomMainContent 

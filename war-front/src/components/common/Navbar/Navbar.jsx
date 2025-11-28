@@ -17,13 +17,12 @@ export default function Navbar() {
     if (path === '/warroom') return { main: 'Digital', highlight: 'War Room' };
     if (path === '/analytics') return { main: 'Analytic', highlight: 'Maps' };
     if (path === '/lessons') return { main: 'Lesson', highlight: 'Learned' };
-    if (path === '/lessons-pm') return { main: 'PM2.5', highlight: 'Lesson Learned' };
     if (path === '/charities') return { main: '', highlight: 'Contributions' };
     return null;
   };
 
   const pageTitle = getPageTitle();
-  const showBanner = ['/analytics', '/warroom', '/lessons', '/lessons-pm', '/charities'].includes(location.pathname);
+  const showBanner = ['/analytics', '/warroom', '/lessons', '/charities'].includes(location.pathname);
 
   return (
     <div className={styles.Container}>
@@ -54,12 +53,6 @@ export default function Navbar() {
               className={`${styles.NavLink} ${location.pathname === '/lessons' ? styles.NavLinkActive : ''}`}
             >
               Flood Lesson
-            </button>
-            <button
-              onClick={() => navigate('/lessons-pm')}
-              className={`${styles.NavLink} ${location.pathname === '/lessons-pm' ? styles.NavLinkActive : ''}`}
-            >
-              PM2.5 Lesson
             </button>
             <button
               onClick={() => navigate('/charities')}
@@ -139,9 +132,6 @@ export default function Navbar() {
             </button>
             <button onClick={() => { navigate('/lessons'); handlers.toggleMobileMenu(); }} className={styles.MobileMenuItem}>
               Flood Lesson Learned
-            </button>
-            <button onClick={() => { navigate('/lessons-pm'); handlers.toggleMobileMenu(); }} className={styles.MobileMenuItem}>
-              PM2.5 Lesson Learned
             </button>
             <button onClick={() => { navigate('/charities'); handlers.toggleMobileMenu(); }} className={styles.MobileMenuItem}>
               Charities

@@ -2,10 +2,14 @@
 
 .Container {
   min-height: 100vh;
-  padding: $spacing-2xl $spacing-lg;
+  padding: $spacing-xl 0;
   background: var(--gradient-primary);
+  @include flex-column;
+  gap: $spacing-3xl;
   position: relative;
   @include page-transition-fade;
+  max-width: 80%;
+  margin: 0 auto;
   
   &::before {
     content: '';
@@ -14,51 +18,88 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: radial-gradient(circle at 50% 20%, rgba(0, 212, 255, 0.1) 0%, transparent 50%);
+    background: radial-gradient(circle at 70% 30%, rgba(255, 64, 129, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 30% 70%, rgba(124, 77, 255, 0.08) 0%, transparent 50%);
     pointer-events: none;
+    z-index: 0;
+  }
+
+  @include media-down($breakpoint-lg) {
+    max-width: 90%;
+  }
+
+  @include media-down($breakpoint-md) {
+    max-width: 95%;
+  }
+
+  @include media-down($breakpoint-sm) {
+    max-width: 100%;
+    padding: $spacing-xl $spacing-md;
   }
 }
 
-.Title {
-  font-size: $font-size-3xl;
-  font-weight: $font-weight-bold;
-  color: var(--text-primary);
-  text-align: center;
-  margin-bottom: $spacing-2xl;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: $spacing-md;
+.Loading,
+.Error {
+  @include flex-center;
+  @include flex-column;
+  min-height: 60vh;
+  gap: $spacing-lg;
   position: relative;
   z-index: 1;
-
-  @include media-down($breakpoint-md) {
-    font-size: $font-size-2xl;
-  }
   
   .material-icons {
-    font-size: 40px;
+    font-size: 64px;
     color: var(--text-accent);
+    @include animate-pulse(2s);
+  }
+  
+  p {
+    font-size: $font-size-xl;
+    color: var(--text-secondary);
+    margin: 0;
   }
 }
 
-.Grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-  gap: $spacing-lg;
-
-  @include media-down($breakpoint-md) {
-    grid-template-columns: 1fr;
+.Error {
+  .material-icons {
+    color: var(--error);
+  }
+  
+  p {
+    color: var(--error);
   }
 }
 
-.GridItem {
-  width: 100%;
+// Featured Section
+.FeaturedSection {
+  padding: 0;
+  position: relative;
+  z-index: 1;
 }
 
-.Card {
+.FeaturedLabel {
+  @include flex-center;
+  gap: $spacing-sm;
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  color: var(--charity-heart);
+  margin-bottom: $spacing-xl;
+  @include animate-fade-in(0.6s);
+  
+  .material-icons {
+    font-size: 32px;
+    @include animate-pulse(3s);
+  }
+}
+
+.FeaturedCard {
   @include glass-card;
+  display: grid;
+  grid-template-columns: 1.2fr 1fr;
+  gap: 0;
+  padding: 0;
   overflow: hidden;
+  min-height: 450px;
   position: relative;
 
   &::before {
@@ -67,102 +108,587 @@
     top: 0;
     left: 0;
     right: 0;
-    height: 2px;
-    background: var(--gradient-accent);
+    height: 5px;
+    background: linear-gradient(90deg, var(--charity-heart), var(--charity-hope));
+    z-index: 2;
+  }
+
+  &:hover {
+    .FeaturedImage {
+      transform: scale(1.1);
+    }
+  }
+
+  @include media-down($breakpoint-md) {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+}
+
+.FeaturedImageWrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 450px;
+  overflow: hidden;
+
+  @include media-down($breakpoint-md) {
+    min-height: 350px;
+  }
+}
+
+.FeaturedImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform $transition-slow;
+}
+
+.FeaturedBadge {
+  position: absolute;
+  top: $spacing-xl;
+  left: $spacing-xl;
+  @include flex-center;
+  gap: $spacing-sm;
+  padding: $spacing-md $spacing-xl;
+  background: linear-gradient(135deg, var(--charity-heart), var(--charity-hope));
+  border-radius: $border-radius-full;
+  color: var(--text-primary);
+  font-size: $font-size-base;
+  font-weight: $font-weight-bold;
+  box-shadow: var(--shadow-xl);
+  z-index: 2;
+  @include animate-pulse(4s);
+  
+  .material-icons {
+    font-size: 22px;
+  }
+}
+
+.FeaturedOverlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 50%;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8), transparent);
+  pointer-events: none;
+}
+
+.FeaturedContent {
+  @include flex-column;
+  gap: $spacing-xl;
+  padding: $spacing-3xl $spacing-2xl;
+  justify-content: space-between;
+  background: var(--background-paper);
+
+  @include media-down($breakpoint-md) {
+    padding: $spacing-2xl $spacing-xl;
+    gap: $spacing-lg;
+  }
+}
+
+.FeaturedHeader {
+  @include flex-column;
+  gap: $spacing-md;
+}
+
+.FeaturedTitle {
+  font-size: $font-size-3xl;
+  font-weight: $font-weight-black;
+  color: var(--text-primary);
+  margin: 0;
+  line-height: 1.2;
+  @include line-clamp(2);
+
+  @include media-down($breakpoint-md) {
+    font-size: $font-size-2xl;
+  }
+}
+
+.FeaturedDescription {
+  font-size: $font-size-lg;
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: 1.7;
+  @include line-clamp(3);
+
+  @include media-down($breakpoint-md) {
+    font-size: $font-size-base;
+  }
+}
+
+.FeaturedStats {
+  display: flex;
+  align-items: center;
+  gap: $spacing-lg;
+  padding: $spacing-lg;
+  background: var(--background-glass);
+  border-radius: $border-radius-lg;
+  border: 1px solid var(--border-light);
+
+  @include media-down($breakpoint-sm) {
+    flex-direction: column;
+    gap: $spacing-md;
+  }
+}
+
+.StatItem {
+  @include flex-center;
+  gap: $spacing-md;
+  flex: 1;
+
+  .material-icons {
+    font-size: 32px;
+    color: var(--charity-heart);
+  }
+}
+
+.StatInfo {
+  @include flex-column;
+  gap: $spacing-xs;
+}
+
+.StatValue {
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-bold;
+  color: var(--text-primary);
+}
+
+.StatLabel {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.StatDivider {
+  width: 1px;
+  height: 40px;
+  background: var(--border-light);
+
+  @include media-down($breakpoint-sm) {
+    display: none;
+  }
+}
+
+.FeaturedActions {
+  display: flex;
+  gap: $spacing-md;
+
+  @include media-down($breakpoint-sm) {
+    flex-direction: column;
+  }
+}
+
+.FeaturedDonateButton {
+  @include button-reset;
+  @include flex-center;
+  gap: $spacing-md;
+  padding: $spacing-lg $spacing-2xl;
+  font-size: $font-size-lg;
+  font-weight: $font-weight-bold;
+  color: var(--text-primary);
+  background: linear-gradient(135deg, var(--charity-heart), var(--charity-hope));
+  border: 2px solid transparent;
+  border-radius: $border-radius-lg;
+  transition: all $transition-base;
+  flex: 1;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: $border-radius-full;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width $transition-slow, height $transition-slow;
+  }
+
+  .material-icons {
+    font-size: 28px;
+    z-index: 1;
+  }
+
+  span:not(.material-icons) {
+    z-index: 1;
+  }
+
+  &:hover {
+    box-shadow: 0 8px 32px rgba(255, 64, 129, 0.4);
+    transform: translateY(-2px);
+    
+    &::before {
+      width: 300px;
+      height: 300px;
+    }
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.FeaturedDetailsButton {
+  @include button-reset;
+  @include flex-center;
+  gap: $spacing-sm;
+  padding: $spacing-lg $spacing-xl;
+  font-size: $font-size-base;
+  font-weight: $font-weight-semibold;
+  color: var(--text-primary);
+  background: var(--background-glass);
+  border: 2px solid var(--border-medium);
+  border-radius: $border-radius-lg;
+  transition: all $transition-base;
+
+  .material-icons {
+    font-size: 24px;
+  }
+
+  &:hover {
+    background: var(--background-glass-hover);
+    border-color: var(--border-glow);
+    transform: translateY(-2px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+// All Charities Section
+.CharitiesSection {
+  padding: 0;
+  position: relative;
+  z-index: 1;
+}
+
+.SectionHeader {
+  @include flex-column;
+  gap: $spacing-md;
+  margin-bottom: $spacing-2xl;
+  text-align: center;
+}
+
+.SectionTitle {
+  @include flex-center;
+  gap: $spacing-md;
+  font-size: $font-size-3xl;
+  font-weight: $font-weight-extrabold;
+  color: var(--text-primary);
+  margin: 0;
+
+  .material-icons {
+    font-size: 40px;
+    color: var(--charity-heart);
+  }
+
+  @include media-down($breakpoint-md) {
+    font-size: $font-size-2xl;
+    
+    .material-icons {
+      font-size: 32px;
+    }
+  }
+}
+
+.SectionSubtitle {
+  font-size: $font-size-lg;
+  color: var(--text-secondary);
+  margin: 0;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+
+  @include media-down($breakpoint-md) {
+    font-size: $font-size-base;
+  }
+}
+
+.Grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: $spacing-xl;
+
+  @include media-down($breakpoint-md) {
+    grid-template-columns: 1fr;
+    gap: $spacing-lg;
+  }
+}
+
+.Card {
+  @include glass-card;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: linear-gradient(90deg, var(--charity-hope), var(--charity-impact));
     opacity: 0;
     transition: opacity $transition-base;
   }
 
   &:hover {
-    transform: translateY(-4px);
+    transform: translateY(-6px);
     
     &::before {
+      opacity: 1;
+    }
+    
+    .CardImageOverlay {
       opacity: 1;
     }
   }
 }
 
+.CardImageWrapper {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+}
+
+.CardImage {
+  width: 100%;
+  aspect-ratio: 16 / 10;
+  object-fit: cover;
+  display: block;
+  transition: transform $transition-slow;
+  
+  .Card:hover & {
+    transform: scale(1.1);
+  }
+}
+
+.CardImageOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  @include flex-center;
+  background: rgba(0, 0, 0, 0.6);
+  opacity: 0;
+  transition: opacity $transition-base;
+}
+
+.QuickViewButton {
+  @include button-reset;
+  @include flex-center;
+  width: 56px;
+  height: 56px;
+  border-radius: $border-radius-full;
+  background: var(--background-glass);
+  backdrop-filter: blur(10px);
+  border: 2px solid var(--border-glow);
+  color: var(--text-accent);
+  transition: all $transition-base;
+  
+  .material-icons {
+    font-size: 32px;
+  }
+
+  &:hover {
+    transform: scale(1.15);
+    box-shadow: var(--shadow-glow-strong);
+    background: var(--background-glass-hover);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
 .CardContent {
-  padding: $spacing-lg;
+  padding: $spacing-xl;
+  @include flex-column;
+  gap: $spacing-lg;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.CardHeader {
   @include flex-column;
   gap: $spacing-md;
 }
 
 .CardTitle {
-  font-size: $font-size-2xl;
+  font-size: $font-size-xl;
   font-weight: $font-weight-bold;
   color: var(--text-primary);
   margin: 0;
-  display: flex;
-  align-items: center;
-  gap: $spacing-sm;
+  line-height: 1.3;
+  @include line-clamp(2);
+  min-height: calc($font-size-xl * 1.3 * 2);
+}
+
+.CardBadge {
+  @include flex-center;
+  gap: $spacing-xs;
+  padding: $spacing-xs $spacing-md;
+  background: linear-gradient(135deg, rgba(124, 77, 255, 0.2), rgba(0, 229, 255, 0.2));
+  border: 1px solid var(--charity-hope);
+  border-radius: $border-radius-full;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-bold;
+  color: var(--charity-hope);
+  width: fit-content;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
   
   .material-icons {
-    font-size: 24px;
-    color: var(--text-accent);
+    font-size: 14px;
   }
 }
 
-.Description {
+.CardDescription {
   font-size: $font-size-base;
   color: var(--text-secondary);
   margin: 0;
   line-height: 1.6;
+  @include line-clamp(3);
+  min-height: calc($font-size-base * 1.6 * 3);
 }
 
-.ButtonGroup {
+.CardProgress {
+  @include flex-column;
+  gap: $spacing-sm;
+  padding: $spacing-md;
+  background: var(--background-glass);
+  border-radius: $border-radius-md;
+  border: 1px solid var(--border-light);
+}
+
+.ProgressBar {
+  width: 100%;
+  height: 8px;
+  background: var(--background-glass);
+  border-radius: $border-radius-full;
+  overflow: hidden;
+  position: relative;
+}
+
+.ProgressFill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--charity-heart), var(--charity-hope));
+  border-radius: $border-radius-full;
+  transition: width $transition-slow;
+  position: relative;
+  
+  &::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.3), transparent);
+    animation: shimmer 2s infinite;
+  }
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+.ProgressInfo {
+  @include flex-between;
+  align-items: center;
+}
+
+.ProgressText {
   @include flex-center;
-  gap: $spacing-lg;
-  margin-top: $spacing-md;
+  gap: $spacing-xs;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  color: var(--text-primary);
+  
+  .material-icons {
+    font-size: 16px;
+    color: var(--charity-heart);
+  }
 }
 
-.Button {
+.ProgressDonors {
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  color: var(--text-secondary);
+}
+
+.CardActions {
+  display: flex;
+  gap: $spacing-md;
+  margin-top: auto;
+}
+
+.DonateButton {
   @include button-reset;
-  @include glass-button;
-  padding: $spacing-sm $spacing-lg;
+  @include flex-center;
+  gap: $spacing-sm;
+  padding: $spacing-md $spacing-lg;
+  font-size: $font-size-base;
+  font-weight: $font-weight-bold;
+  color: var(--text-primary);
+  background: linear-gradient(135deg, var(--charity-heart), var(--charity-hope));
+  border: none;
+  border-radius: $border-radius-md;
+  transition: all $transition-base;
+  flex: 1;
+
+  .material-icons {
+    font-size: 20px;
+  }
+
+  &:hover {
+    box-shadow: 0 4px 20px rgba(255, 64, 129, 0.4);
+    transform: translateY(-2px);
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.ViewButton {
+  @include button-reset;
+  @include flex-center;
+  padding: $spacing-md;
   font-size: $font-size-base;
   font-weight: $font-weight-semibold;
-  display: inline-flex;
-  align-items: center;
-  gap: $spacing-sm;
+  color: var(--text-primary);
+  background: var(--background-glass);
+  border: 2px solid var(--border-medium);
+  border-radius: $border-radius-md;
+  transition: all $transition-base;
+  min-width: 48px;
 
-  &:first-of-type {
-    background: var(--gradient-accent);
+  .material-icons {
+    font-size: 24px;
+  }
+
+  &:hover {
+    background: var(--background-glass-hover);
     border-color: var(--border-glow);
+    transform: translateY(-2px);
   }
 
-  .material-icons {
-    font-size: 18px;
-  }
-}
-
-.Loading,
-.Error {
-  @include flex-center;
-  @include flex-column;
-  min-height: 50vh;
-  font-size: $font-size-xl;
-  color: var(--text-secondary);
-  gap: $spacing-md;
-  
-  .material-icons {
-    font-size: 48px;
-  }
-}
-
-.Loading .material-icons {
-  animation: rotate 2s linear infinite;
-}
-
-@keyframes rotate {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-.Error {
-  color: var(--error);
-  
-  .material-icons {
-    color: var(--error);
+  &:active {
+    transform: translateY(0);
   }
 }

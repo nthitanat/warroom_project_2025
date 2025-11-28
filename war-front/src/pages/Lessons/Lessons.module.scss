@@ -5,9 +5,11 @@
   padding: $spacing-xl 0;
   background: var(--gradient-primary);
   @include flex-column;
-  gap: $spacing-xl;
+  gap: $spacing-2xl;
   position: relative;
   @include page-transition-fade;
+  max-width: 80%;
+  margin: 0 auto;
   
   &::before {
     content: '';
@@ -18,110 +20,282 @@
     bottom: 0;
     background: radial-gradient(circle at 30% 40%, rgba(0, 212, 255, 0.08) 0%, transparent 50%);
     pointer-events: none;
+    z-index: 0;
+  }
+
+  @include media-down($breakpoint-lg) {
+    max-width: 90%;
+  }
+
+  @include media-down($breakpoint-md) {
+    max-width: 95%;
+  }
+
+  @include media-down($breakpoint-sm) {
+    max-width: 100%;
+    padding: $spacing-xl $spacing-md;
   }
 }
 
 .Loading {
   @include flex-center;
+  @include flex-column;
   min-height: 50vh;
   font-size: $font-size-xl;
   color: var(--text-secondary);
+  gap: $spacing-md;
+  position: relative;
+  z-index: 1;
   
   .material-icons {
     font-size: 48px;
-    animation: spin 1s linear infinite;
-  }
-}
-
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to { transform: rotate(360deg); }
-}
-
-.Tabs {
-  @include glass-panel;
-  display: flex;
-  justify-content: center;
-  gap: $spacing-md;
-  padding: $spacing-md $spacing-lg;
-  margin: 0 $spacing-lg;
-  border-bottom: none;
-
-  @include media-down($breakpoint-md) {
-    gap: $spacing-sm;
-    overflow-x: auto;
-    justify-content: flex-start;
-  }
-}
-
-.Tab {
-  @include button-reset;
-  padding: $spacing-md $spacing-xl;
-  font-size: $font-size-base;
-  font-weight: $font-weight-semibold;
-  color: var(--text-secondary);
-  background: transparent;
-  border: 1px solid transparent;
-  border-radius: $border-radius-md;
-  transition: all $transition-base;
-  cursor: pointer;
-  white-space: nowrap;
-  display: inline-flex;
-  align-items: center;
-  gap: $spacing-sm;
-
-  &:hover {
-    color: var(--text-primary);
-    background: var(--background-glass-hover);
-    border-color: var(--border-light);
-  }
-
-  @include media-down($breakpoint-md) {
-    padding: $spacing-sm $spacing-lg;
-    font-size: $font-size-sm;
+    @include animate-pulse(2s);
   }
   
+  p {
+    margin: 0;
+  }
+}
+
+// Content wrapper with sidebar
+.ContentWrapper {
+  display: flex;
+  gap: $spacing-xl;
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  
+  @include media-down($breakpoint-lg) {
+    gap: $spacing-lg;
+  }
+
+  @include media-down($breakpoint-md) {
+    flex-direction: column;
+  }
+}
+
+// Vertical Sidebar
+.Sidebar {
+  @include glass-panel;
+  width: 260px;
+  min-width: 260px;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xs;
+  padding: $spacing-lg;
+  border-radius: $border-radius-lg;
+  position: sticky;
+  top: $spacing-xl;
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
+  @include animate-slide-in-left(0.6s);
+
+  @include media-down($breakpoint-lg) {
+    width: 220px;
+    min-width: 220px;
+  }
+
+  @include media-down($breakpoint-md) {
+    width: 100%;
+    position: static;
+    max-height: none;
+    flex-direction: row;
+    overflow-x: auto;
+    padding: $spacing-md $spacing-lg;
+    gap: $spacing-sm;
+  }
+
+  // Custom scrollbar
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 3px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: rgba(0, 212, 255, 0.3);
+    border-radius: 3px;
+
+    &:hover {
+      background: rgba(0, 212, 255, 0.5);
+    }
+  }
+}
+
+.SidebarHeader {
+  @include flex-center;
+  gap: $spacing-xs;
+  color: var(--text-accent);
+  font-weight: $font-weight-semibold;
+  font-size: $font-size-base;
+  margin-bottom: $spacing-sm;
+  padding-bottom: $spacing-sm;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+
   .material-icons {
     font-size: 20px;
   }
+
+  @include media-down($breakpoint-md) {
+    display: none;
+  }
 }
 
-.TabActive {
+.SidebarTab {
+  @include button-reset;
+  @include flex-center;
+  justify-content: flex-start;
+  gap: $spacing-sm;
+  padding: $spacing-md $spacing-lg;
+  background: transparent;
+  color: var(--text-secondary);
+  border-radius: $border-radius-md;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  cursor: pointer;
+  transition: all $transition-base;
+  border: 1px solid transparent;
+  white-space: nowrap;
+
+  .material-icons {
+    font-size: 20px;
+    transition: transform $transition-base;
+  }
+
+  &:hover {
+    background: rgba(0, 212, 255, 0.08);
+    color: var(--text-primary);
+    transform: translateX(4px);
+
+    .material-icons {
+      transform: scale(1.1);
+    }
+  }
+
+  @include media-down($breakpoint-md) {
+    padding: $spacing-sm $spacing-md;
+    min-width: auto;
+    
+    &:hover {
+      transform: none;
+    }
+  }
+}
+
+.SidebarTabActive {
+  background: linear-gradient(135deg, rgba(0, 212, 255, 0.15) 0%, rgba(0, 150, 255, 0.15) 100%);
   color: var(--text-accent);
-  background: var(--background-glass-active);
-  border-color: var(--border-glow);
-  box-shadow: var(--shadow-glow);
+  border: 1px solid rgba(0, 212, 255, 0.3);
+  box-shadow: 0 0 15px rgba(0, 212, 255, 0.2);
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    width: 3px;
+    background: linear-gradient(to bottom, var(--primary-400), var(--primary-600));
+    border-radius: 0 3px 3px 0;
+  }
+
+  &:hover {
+    background: linear-gradient(135deg, rgba(0, 212, 255, 0.2) 0%, rgba(0, 150, 255, 0.2) 100%);
+    transform: translateX(4px);
+  }
+
+  @include media-down($breakpoint-md) {
+    &::before {
+      left: 0;
+      right: 0;
+      top: auto;
+      bottom: 0;
+      width: auto;
+      height: 3px;
+      border-radius: 3px 3px 0 0;
+    }
+
+    &:hover {
+      transform: none;
+    }
+  }
+}
+
+// Main content area
+.MainContent {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: $spacing-xl;
+  min-width: 0; // Allow flex item to shrink below its content size
+  
+  @include media-down($breakpoint-md) {
+    gap: $spacing-lg;
+  }
+}
+
+.PlaylistHeader {
+  padding: 0;
+  position: relative;
+  z-index: 1;
 }
 
 .PlaylistTitle {
+  @include flex-center;
+  gap: $spacing-md;
   font-size: $font-size-3xl;
   font-weight: $font-weight-bold;
   color: var(--text-primary);
   margin: 0;
-  padding: 0 $spacing-xl;
+
+  .material-icons {
+    font-size: 36px;
+    color: var(--text-accent);
+  }
 
   @include media-down($breakpoint-md) {
     font-size: $font-size-2xl;
-    padding: 0 $spacing-lg;
+    
+    .material-icons {
+      font-size: 28px;
+    }
   }
 }
 
-.Grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
-  gap: $spacing-lg;
-  padding: 0 $spacing-xl;
+.FeaturedSection {
+  padding: 0;
+  position: relative;
+  z-index: 1;
+}
 
-  @include media-down($breakpoint-md) {
-    grid-template-columns: 1fr;
-    padding: 0 $spacing-lg;
+.FeaturedLabel {
+  @include flex-center;
+  gap: $spacing-sm;
+  font-size: $font-size-lg;
+  font-weight: $font-weight-bold;
+  color: var(--text-accent);
+  margin-bottom: $spacing-lg;
+  
+  .material-icons {
+    font-size: 24px;
+    @include animate-pulse(2s);
   }
 }
 
-.Card {
+.FeaturedCard {
   @include glass-card;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 0;
+  padding: 0;
   overflow: hidden;
   position: relative;
+  min-height: 400px;
 
   &::before {
     content: '';
@@ -129,7 +303,268 @@
     top: 0;
     left: 0;
     right: 0;
-    height: 2px;
+    height: 4px;
+    background: var(--gradient-accent);
+    z-index: 2;
+  }
+
+  &:hover {
+    .FeaturedImage {
+      transform: scale(1.08);
+    }
+  }
+
+  @include media-down($breakpoint-md) {
+    grid-template-columns: 1fr;
+    min-height: auto;
+  }
+}
+
+.FeaturedImageWrapper {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-height: 400px;
+  overflow: hidden;
+
+  @include media-down($breakpoint-md) {
+    min-height: 300px;
+  }
+}
+
+.FeaturedImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  transition: transform $transition-slow;
+}
+
+.FeaturedBadge {
+  position: absolute;
+  top: $spacing-lg;
+  left: $spacing-lg;
+  @include flex-center;
+  gap: $spacing-xs;
+  padding: $spacing-sm $spacing-lg;
+  background: var(--gradient-accent);
+  border-radius: $border-radius-full;
+  color: var(--text-primary);
+  font-size: $font-size-sm;
+  font-weight: $font-weight-bold;
+  box-shadow: var(--shadow-lg);
+  z-index: 2;
+  @include animate-pulse(3s);
+  
+  .material-icons {
+    font-size: 18px;
+  }
+}
+
+.FeaturedGradientOverlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 40%;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.7), transparent);
+  pointer-events: none;
+}
+
+.FeaturedContent {
+  @include flex-column;
+  gap: $spacing-lg;
+  padding: $spacing-2xl;
+  justify-content: space-between;
+  background: var(--background-paper);
+
+  @include media-down($breakpoint-md) {
+    padding: $spacing-xl;
+    gap: $spacing-md;
+  }
+}
+
+.FeaturedMeta {
+  @include flex-between;
+  align-items: center;
+}
+
+.FeaturedAuthors {
+  @include flex-center;
+  gap: $spacing-sm;
+}
+
+.FeaturedAvatar {
+  width: 40px;
+  height: 40px;
+  border-radius: $border-radius-full;
+  border: 2px solid var(--border-light);
+  object-fit: cover;
+  transition: all $transition-base;
+
+  &:not(:first-child) {
+    margin-left: calc(-1 * $spacing-md);
+  }
+  
+  &:hover {
+    transform: translateY(-2px) scale(1.1);
+    z-index: 10;
+    border-color: var(--border-glow);
+    box-shadow: var(--shadow-md);
+  }
+}
+
+.FeaturedAuthorName {
+  font-size: $font-size-base;
+  font-weight: $font-weight-semibold;
+  color: var(--text-primary);
+  margin-left: $spacing-sm;
+}
+
+.FeaturedMoreAuthors {
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  color: var(--text-secondary);
+  padding: $spacing-xs $spacing-sm;
+  background: var(--background-glass);
+  border-radius: $border-radius-full;
+}
+
+.FeaturedTitle {
+  font-size: $font-size-3xl;
+  font-weight: $font-weight-extrabold;
+  color: var(--text-primary);
+  margin: 0;
+  line-height: 1.2;
+  @include line-clamp(2);
+
+  @include media-down($breakpoint-md) {
+    font-size: $font-size-2xl;
+  }
+}
+
+.FeaturedDescription {
+  font-size: $font-size-lg;
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: 1.7;
+  @include line-clamp(3);
+
+  @include media-down($breakpoint-md) {
+    font-size: $font-size-base;
+  }
+}
+
+.FeaturedActions {
+  @include flex-column;
+  gap: $spacing-lg;
+}
+
+.FeaturedPlayButton {
+  @include button-reset;
+  @include flex-center;
+  gap: $spacing-md;
+  padding: $spacing-lg $spacing-2xl;
+  font-size: $font-size-lg;
+  font-weight: $font-weight-bold;
+  color: var(--text-primary);
+  background: var(--gradient-accent);
+  border: 2px solid var(--border-glow);
+  border-radius: $border-radius-lg;
+  transition: all $transition-base;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: $border-radius-full;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width $transition-slow, height $transition-slow;
+  }
+
+  .material-icons {
+    font-size: 32px;
+    transition: transform $transition-base;
+    z-index: 1;
+  }
+
+  span:not(.material-icons) {
+    z-index: 1;
+  }
+
+  &:hover {
+    box-shadow: var(--shadow-glow-strong);
+    transform: translateY(-2px);
+    
+    &::before {
+      width: 300px;
+      height: 300px;
+    }
+    
+    .material-icons {
+      transform: scale(1.2);
+    }
+  }
+
+  &:active {
+    transform: translateY(0);
+  }
+}
+
+.FeaturedInfo {
+  @include flex-center;
+  gap: $spacing-xl;
+  justify-content: center;
+}
+
+.FeaturedInfoItem {
+  @include flex-center;
+  gap: $spacing-xs;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: var(--text-secondary);
+  
+  .material-icons {
+    font-size: 18px;
+    color: var(--text-accent);
+  }
+}
+
+.Grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+  gap: $spacing-xl;
+  padding: 0;
+  position: relative;
+  z-index: 1;
+
+  @include media-down($breakpoint-md) {
+    grid-template-columns: 1fr;
+    gap: $spacing-lg;
+  }
+}
+
+.Card {
+  @include glass-card;
+  overflow: hidden;
+  position: relative;
+  display: flex;
+  flex-direction: column;
+
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
     background: var(--gradient-accent);
     opacity: 0;
     transition: opacity $transition-base;
@@ -141,20 +576,68 @@
     &::before {
       opacity: 1;
     }
+    
+    .CardImageOverlay {
+      opacity: 1;
+    }
   }
+}
+
+.CardImageWrapper {
+  position: relative;
+  width: 100%;
+  overflow: hidden;
 }
 
 .CardImage {
   width: 100%;
-  aspect-ratio: 16 / 12;
+  aspect-ratio: 16 / 9;
   object-fit: cover;
   display: block;
-  border-bottom: 1px solid var(--border-light);
-  filter: brightness(0.9);
-  transition: filter $transition-base;
+  transition: transform $transition-slow, filter $transition-base;
   
   .Card:hover & {
-    filter: brightness(1);
+    transform: scale(1.05);
+    filter: brightness(0.8);
+  }
+}
+
+.CardImageOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  @include flex-center;
+  background: rgba(0, 0, 0, 0.4);
+  opacity: 0;
+  transition: opacity $transition-base;
+}
+
+.PlayButtonOverlay {
+  @include button-reset;
+  @include flex-center;
+  width: 64px;
+  height: 64px;
+  border-radius: $border-radius-full;
+  background: var(--background-glass);
+  backdrop-filter: blur(10px);
+  border: 2px solid var(--border-glow);
+  color: var(--text-accent);
+  transition: all $transition-base;
+  
+  .material-icons {
+    font-size: 40px;
+  }
+
+  &:hover {
+    transform: scale(1.1);
+    box-shadow: var(--shadow-glow-strong);
+    background: var(--background-glass-hover);
+  }
+
+  &:active {
+    transform: scale(0.95);
   }
 }
 
@@ -162,20 +645,28 @@
   padding: $spacing-lg;
   @include flex-column;
   gap: $spacing-md;
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.CardHeader {
+  @include flex-column;
+  gap: $spacing-sm;
 }
 
 .CardTitle {
-  font-size: $font-size-2xl;
+  font-size: $font-size-xl;
   font-weight: $font-weight-bold;
   color: var(--text-primary);
   margin: 0;
-  display: flex;
-  align-items: center;
-  gap: $spacing-sm;
-  
-  .material-icons {
-    font-size: 24px;
-    color: var(--text-accent);
+  line-height: 1.4;
+  @include line-clamp(2);
+  min-height: calc($font-size-xl * 1.4 * 2);
+
+  @include media-down($breakpoint-sm) {
+    font-size: $font-size-lg;
+    min-height: calc($font-size-lg * 1.4 * 2);
   }
 }
 
@@ -184,49 +675,108 @@
   color: var(--text-secondary);
   margin: 0;
   line-height: 1.6;
+  @include line-clamp(3);
+  min-height: calc($font-size-base * 1.6 * 3);
+  flex-shrink: 0;
+
+  @include media-down($breakpoint-sm) {
+    font-size: $font-size-md;
+  }
+}
+
+.CardFooter {
+  @include flex-column;
+  gap: $spacing-lg;
+  margin-top: auto;
+  padding-top: $spacing-md;
+  border-top: 1px solid var(--border-light);
 }
 
 .Authors {
+  @include flex-column;
+  gap: $spacing-sm;
+}
+
+.AuthorAvatars {
   display: flex;
   align-items: center;
-  gap: $spacing-xs;
 }
 
 .Avatar {
-  width: 32px;
-  height: 32px;
-  border-radius: 50%;
+  width: 36px;
+  height: 36px;
+  border-radius: $border-radius-full;
   border: 2px solid var(--background-paper);
   object-fit: cover;
+  transition: transform $transition-base;
 
   &:not(:first-child) {
-    margin-left: -#{$spacing-sm};
+    margin-left: calc(-1 * $spacing-sm);
+  }
+  
+  &:hover {
+    transform: translateY(-2px) scale(1.1);
+    z-index: 10;
+    box-shadow: var(--shadow-md);
+  }
+}
+
+.AuthorInfo {
+  @include flex-between;
+  gap: $spacing-sm;
+  flex-wrap: wrap;
+}
+
+.AuthorLabel {
+  @include flex-center;
+  gap: $spacing-xs;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: var(--text-secondary);
+  
+  .material-icons {
+    font-size: 16px;
   }
 }
 
 .MoreAuthors {
-  margin-left: $spacing-xs;
-  font-size: $font-size-sm;
-  color: var(--text-secondary);
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  color: var(--text-disabled);
+  padding: $spacing-xs $spacing-sm;
+  background: var(--background-glass);
+  border-radius: $border-radius-sm;
 }
 
 .PlayButton {
   @include button-reset;
-  @include glass-button;
   @include flex-center;
   gap: $spacing-sm;
-  padding: $spacing-sm $spacing-lg;
+  padding: $spacing-md $spacing-lg;
   font-size: $font-size-base;
   font-weight: $font-weight-semibold;
-  margin-top: auto;
+  color: var(--text-primary);
   background: var(--gradient-accent);
   border: 1px solid var(--border-glow);
-
-  &:hover {
-    box-shadow: var(--shadow-glow-strong);
-  }
+  border-radius: $border-radius-md;
+  transition: all $transition-base;
+  width: 100%;
 
   .material-icons {
     font-size: 20px;
+    transition: transform $transition-base;
+  }
+
+  &:hover {
+    box-shadow: var(--shadow-glow-strong);
+    transform: translateY(-2px);
+    
+    .material-icons {
+      transform: scale(1.2);
+    }
+  }
+
+  &:active {
+    transform: translateY(0);
   }
 }
