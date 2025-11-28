@@ -13,6 +13,7 @@ export const getLayers = () => [
   {
     id: 'contour20m',
     title: 'เส้นชั้นความสูง 20ม.',
+    icon: 'terrain',
     sourceId: 'contour20m-src',
     tiles: [createTileUrl('contour20m')],
     sourceLayer: 'contour20m',
@@ -28,6 +29,7 @@ export const getLayers = () => [
   {
     id: 'contour50m',
     title: 'เส้นชั้นความสูง 50ม.',
+    icon: 'landscape',
     sourceId: 'contour50m-src',
     tiles: [createTileUrl('contour50m')],
     sourceLayer: 'contour50m',
@@ -43,6 +45,7 @@ export const getLayers = () => [
   {
     id: 'major_stream',
     title: 'ลำน้ำสายหลัก',
+    icon: 'water',
     sourceId: 'major_stream-src',
     tiles: [createTileUrl('major_stream')],
     sourceLayer: 'major_stream',
@@ -58,6 +61,7 @@ export const getLayers = () => [
   {
     id: 'minor_stream',
     title: 'ลำน้ำสายย่อย',
+    icon: 'waves',
     sourceId: 'minor_stream-src',
     tiles: [createTileUrl('minor_stream')],
     sourceLayer: 'minor_stream',
@@ -73,6 +77,7 @@ export const getLayers = () => [
   {
     id: 'drainage_system',
     title: 'พื้นที่รองรับน้ำ',
+    icon: 'opacity',
     sourceId: 'drainage_system-src',
     tiles: [createTileUrl('drainage_system')],
     sourceLayer: 'drainage_system',
@@ -155,6 +160,7 @@ export const getLayers = () => [
   {
     id: 'ridge',
     title: 'เส้นสันเขา',
+    icon: 'mountain',
     sourceId: 'ridge-src',
     tiles: [createTileUrl('ridge')],
     sourceLayer: 'ridge',
@@ -170,6 +176,7 @@ export const getLayers = () => [
   {
     id: 'roadxvalley',
     title: 'จุดเสี่ยงน้ำตัดถนน',
+    icon: 'warning',
     sourceId: 'roadxvalley-src',
     tiles: [createTileUrl('roadxvalley')],
     sourceLayer: 'roadxvalley',
@@ -190,6 +197,7 @@ export const getLayers = () => [
   {
     id: 'roadxridge',
     title: 'จุดอพยพหนีน้ำท่วม',
+    icon: 'shield',
     sourceId: 'roadxridge-src',
     tiles: [createTileUrl('roadxridge')],
     sourceLayer: 'roadxridge',
@@ -210,6 +218,7 @@ export const getLayers = () => [
   {
     id: 'village',
     title: 'หมู่บ้านเสี่ยงต่อน้ำท่วม',
+    icon: 'home',
     sourceId: 'village-src',
     tiles: [createTileUrl('village')],
     sourceLayer: 'village',

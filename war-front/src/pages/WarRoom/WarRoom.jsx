@@ -49,9 +49,9 @@ export default function WarRoom() {
       ) : (
         <div className={styles.VideoWrapper}>
           <img
-            src="/warroom/liveCover.jpg"
+            src={`${process.env.PUBLIC_URL}/warroom/liveCover.jpg`}
             alt="War Room Live Cover"
-            className={styles.CoverImage}
+            className={styles.LiveCover}
           />
         </div>
       )}

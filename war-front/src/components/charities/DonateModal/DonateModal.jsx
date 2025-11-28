@@ -18,7 +18,7 @@ export default function DonateModal({ open, handleClose }) {
         <div className={styles.QRCodeContainer}>
           <div className={styles.QRCodeWrapper}>
             <img
-              src="/charities/images/donate1.png"
+              src={`${process.env.PUBLIC_URL}/charities/images/donate1.png`}
               alt="Donation QR Code"
               className={styles.QRCodeImage}
             />

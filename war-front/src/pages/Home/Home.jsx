@@ -34,25 +34,25 @@ export default function Home() {
       name: 'Professor Wilert Puriwat, D.Phil. (Oxon)',
       title: 'Chulalongkorn University President',
       description: 'Leading the university with academic excellence and innovation in higher education.',
-      image: '/about/dsn-team-1.jpg'
+      image: `${process.env.PUBLIC_URL}/about/dsn-team-1.jpg`
     },
     {
       name: 'Associate Professor Siridej Sujiva, Ph.D.',
       title: 'Vice President',
       description: 'Supporting university leadership and driving institutional development initiatives.',
-      image: '/about/dsn-team-2.jpg'
+      image: `${process.env.PUBLIC_URL}/about/dsn-team-2.jpg`
     },
     {
       name: 'Professor JAITIP NASONGKHLA, Ph.D.',
       title: 'Educational Technologies',
       description: 'Distinguished professor specializing in educational technologies and innovation.',
-      image: '/about/dsn-team-3.jpg'
+      image: `${process.env.PUBLIC_URL}/about/dsn-team-3.jpg`
     },
     {
       name: 'Professor Dr. Santi Pailoplee',
       title: 'Earthquake Geology Specialist',
       description: 'Expert in earthquake geology, seismic hazard analysis, and statistical seismology.',
-      image: '/about/dsn-team-4.jpg'
+      image: `${process.env.PUBLIC_URL}/about/dsn-team-4.jpg`
     }
   ];
 

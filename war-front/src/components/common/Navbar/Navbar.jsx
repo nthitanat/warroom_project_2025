@@ -35,7 +35,7 @@ export default function Navbar() {
             aria-label="Home"
           >
             <img
-              src="/common/logo.png"
+              src={`${process.env.PUBLIC_URL}/common/logo.png`}
               alt="War Room Logo"
               className={styles.NavLogo}
               onError={(e) => {

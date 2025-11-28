@@ -262,6 +262,7 @@ export default function AnalyticMaps({ provinces }) {
                                 >
                                   <div className={styles.LayerItemLeft}>
                                     <span className="material-icons" style={{fontSize: '16px', opacity: 0.5}}>drag_indicator</span>
+                                    <span className="material-icons" style={{fontSize: '18px', color: 'var(--primary-500)'}}>{spec.icon}</span>
                                     <span className={styles.LayerTitle}>{spec.title}</span>
                                   </div>
                                   <div className={styles.LayerControls}>
@@ -308,6 +309,7 @@ export default function AnalyticMaps({ provinces }) {
                     const spec = layerById(id);
                     return (
                       <div key={id} className={styles.LayerItem}>
+                        <span className="material-icons" style={{fontSize: '18px', color: 'var(--primary-500)', marginRight: '8px'}}>{spec.icon}</span>
                         <span className={styles.LayerTitle}>{spec.title}</span>
                         <button
                           className={styles.AddButton}
