@@ -1,13 +1,10 @@
 @import '../../styles/main.scss';
 
 .Container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 2rem 1rem;
   min-height: 100vh;
+  padding: $spacing-xl 0;
   background: var(--gradient-primary);
   position: relative;
-  @include page-transition-fade;
   
   &::before {
     content: '';
@@ -16,223 +13,536 @@
     left: 0;
     right: 0;
     bottom: 0;
-    background: radial-gradient(circle at 60% 30%, rgba(0, 212, 255, 0.08) 0%, transparent 50%);
+    background: radial-gradient(circle at 70% 30%, rgba(255, 64, 129, 0.08) 0%, transparent 50%),
+                radial-gradient(circle at 30% 70%, rgba(124, 77, 255, 0.08) 0%, transparent 50%);
     pointer-events: none;
+    z-index: 0;
   }
 }
 
-.BackButtonContainer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 2rem;
-  padding-bottom: 1rem;
-  border-bottom: 1px solid var(--border-light);
+// Loading Animation
+.LoadingWrapper {
+  @include flex-center;
+  @include flex-column;
+  min-height: 70vh;
+  gap: $spacing-xl;
   position: relative;
   z-index: 1;
 }
 
-.BackButton {
-  @include glass-button;
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-  padding: 0.75rem 1.5rem;
-  font-size: 1rem;
-  font-weight: 500;
-  cursor: pointer;
-
-  .material-icons {
-    font-size: 20px;
-  }
-
-  &:hover {
-    transform: translateX(-4px);
-  }
-
-  &:focus-visible {
-    outline: 2px solid var(--border-glow);
-    outline-offset: 2px;
-  }
+.LoadingSpinner {
+  @include flex-center;
+  width: 120px;
+  height: 120px;
+  position: relative;
 }
 
-.Title {
-  margin: 0;
-  font-size: 2rem;
-  font-weight: 600;
-  color: var(--text-primary, #000);
-}
-
-.ContentGrid {
-  display: grid;
-  grid-template-columns: 2fr 1fr;
-  gap: 2rem;
-  margin-top: 2rem;
-
-  @media (max-width: 968px) {
-    grid-template-columns: 1fr;
-  }
-}
-
-.SliderSection {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-.SidebarSection {
-  position: sticky;
-  top: 2rem;
-  height: fit-content;
-}
-
-.Description {
-  @include glass-card;
-  padding: 1.5rem;
-  line-height: 1.6;
-  
-  p {
-    margin: 0;
-    color: var(--text-secondary);
-    white-space: pre-wrap;
-  }
-}
-
-.InfoCard {
-  @include glass-panel;
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
-.InfoTitle {
-  font-size: 1.75rem;
-  font-weight: 600;
-  margin: 0;
-  color: var(--text-primary, #000);
-}
-
-.InfoDescription {
-  p {
-    margin: 0;
-    line-height: 1.6;
-    color: var(--text-secondary, #666);
-    white-space: pre-wrap;
-  }
-}
-
-.FundInfo {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-  padding: 1rem;
-  background-color: var(--background-secondary, #f5f5f5);
-  border-radius: 4px;
-}
-
-.FundLabel {
-  margin: 0;
-  font-size: 0.875rem;
-  color: var(--text-secondary, #666);
-  font-weight: 500;
-}
-
-.FundAmount {
-  margin: 0;
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: var(--primary-color, #1976d2);
-}
-
-.DonateButton {
-  padding: 0.75rem 1.5rem;
-  background: var(--gradient-accent);
-  color: var(--text-primary);
-  border: 1px solid var(--border-glow);
-  border-radius: $border-radius-md;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s ease;
+.Spinner {
+  width: 100%;
+  height: 100%;
+  border: 4px solid var(--background-glass);
+  border-top: 4px solid var(--charity-heart);
+  border-right: 4px solid var(--charity-hope);
+  border-radius: $border-radius-full;
+  @include animate-rotate(1s);
   box-shadow: var(--shadow-glow);
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-  justify-content: center;
-
-  .material-icons {
-    font-size: 20px;
-  }
-
-  &:hover {
-    box-shadow: var(--shadow-glow-strong);
-    transform: translateY(-2px);
-  }
-
-  &:focus-visible {
-    outline: 2px solid var(--border-glow);
-    outline-offset: 2px;
-  }
-
-  &:active {
-    transform: translateY(0);
-  }
 }
 
-.Loading {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 400px;
-  font-size: 1.25rem;
-  color: var(--text-secondary, #666);
+.LoadingText {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-semibold;
+  color: var(--text-primary);
+  margin: 0;
+  @include animate-pulse(2s);
 }
 
-.Error {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  min-height: 400px;
-  padding: 2rem;
+// Error & Empty States
+.Error,
+.Empty {
+  @include flex-center;
+  @include flex-column;
+  min-height: 70vh;
+  gap: $spacing-lg;
   text-align: center;
+  padding: $spacing-2xl;
+  position: relative;
+  z-index: 1;
+  @include animate-fade-in(0.5s);
+  
+  .material-icons {
+    font-size: 80px;
+    color: var(--error);
+    @include animate-bounce(2s);
+  }
   
   h2 {
-    margin: 0 0 1rem;
-    color: var(--error-color, #d32f2f);
+    font-size: $font-size-3xl;
+    font-weight: $font-weight-bold;
+    color: var(--text-primary);
+    margin: 0;
   }
   
   p {
+    font-size: $font-size-lg;
+    color: var(--text-secondary);
     margin: 0;
-    color: var(--text-secondary, #666);
+    max-width: 500px;
   }
 }
 
 .Empty {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  min-height: 400px;
-  font-size: 1.25rem;
-  color: var(--text-secondary, #666);
+  .material-icons {
+    color: var(--text-secondary);
+  }
 }
 
-@media (max-width: 768px) {
-  .Container {
-    padding: 1rem;
+.ErrorButton {
+  @include button-reset;
+  @include flex-center;
+  gap: $spacing-sm;
+  padding: $spacing-md $spacing-xl;
+  font-size: $font-size-base;
+  font-weight: $font-weight-bold;
+  color: var(--text-primary);
+  background: var(--background-glass);
+  border: 2px solid var(--border-medium);
+  border-radius: $border-radius-lg;
+  margin-top: $spacing-md;
+  transition: all $transition-base;
+  
+  .material-icons {
+    font-size: 20px;
   }
-
-  .Title {
-    font-size: 1.5rem;
+  
+  &:hover {
+    background: var(--background-glass-hover);
+    border-color: var(--border-glow);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-lg);
   }
+}
 
-  .BackButtonContainer {
+// Header Section
+.Header {
+  @include flex-between;
+  align-items: center;
+  max-width: 90%;
+  margin: 0 auto $spacing-2xl;
+  padding-bottom: $spacing-xl;
+  border-bottom: 2px solid var(--border-light);
+  position: relative;
+  z-index: 1;
+  @include animate-slide-in-left(0.6s);
+  
+  @include media-down($breakpoint-md) {
     flex-direction: column;
+    gap: $spacing-lg;
     align-items: flex-start;
-    gap: 1rem;
   }
+}
 
-  .SidebarSection {
+.BackButton {
+  @include button-reset;
+  @include flex-center;
+  gap: $spacing-sm;
+  padding: $spacing-md $spacing-xl;
+  font-size: $font-size-base;
+  font-weight: $font-weight-semibold;
+  color: var(--text-primary);
+  background: var(--background-glass);
+  backdrop-filter: blur(10px);
+  border: 2px solid var(--border-medium);
+  border-radius: $border-radius-lg;
+  transition: all $transition-base;
+  
+  .material-icons {
+    font-size: 20px;
+  }
+  
+  &:hover {
+    background: var(--background-glass-hover);
+    border-color: var(--border-glow);
+    transform: translateX(-4px);
+    box-shadow: var(--shadow-lg);
+  }
+  
+  &:active {
+    transform: translateX(-2px);
+  }
+}
+
+.HeaderBadge {
+  @include flex-center;
+  gap: $spacing-sm;
+  padding: $spacing-sm $spacing-lg;
+  background: linear-gradient(135deg, rgba(124, 77, 255, 0.2), rgba(0, 229, 255, 0.2));
+  border: 2px solid var(--charity-hope);
+  border-radius: $border-radius-full;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-bold;
+  color: var(--charity-hope);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  
+  .material-icons {
+    font-size: 18px;
+  }
+}
+
+// Content Wrapper
+.ContentWrapper {
+  max-width: 90%;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+  
+  @include media-down($breakpoint-lg) {
+    max-width: 95%;
+  }
+}
+
+// Title Section
+.TitleSection {
+  margin-bottom: $spacing-2xl;
+  @include animate-fade-in(0.7s, 0.2s);
+}
+
+.PageTitle {
+  font-size: $font-size-4xl;
+  font-weight: $font-weight-black;
+  color: var(--text-primary);
+  margin: 0 0 $spacing-lg;
+  line-height: 1.2;
+  
+  @include media-down($breakpoint-md) {
+    font-size: $font-size-3xl;
+  }
+}
+
+.CampaignMeta {
+  @include flex-center;
+  gap: $spacing-lg;
+  flex-wrap: wrap;
+  
+  @include media-down($breakpoint-sm) {
+    justify-content: flex-start;
+  }
+}
+
+.MetaItem {
+  @include flex-center;
+  gap: $spacing-xs;
+  font-size: $font-size-base;
+  font-weight: $font-weight-semibold;
+  color: var(--text-secondary);
+  
+  .material-icons {
+    font-size: 20px;
+    color: var(--charity-heart);
+  }
+}
+
+.MetaDivider {
+  width: 1px;
+  height: 20px;
+  background: var(--border-medium);
+  
+  @include media-down($breakpoint-sm) {
+    display: none;
+  }
+}
+
+// Content Grid
+.ContentGrid {
+  display: grid;
+  grid-template-columns: 1fr 400px;
+  gap: $spacing-2xl;
+  
+  @include media-down($breakpoint-lg) {
+    grid-template-columns: 1fr;
+    gap: $spacing-xl;
+  }
+}
+
+// Main Column
+.MainColumn {
+  @include flex-column;
+  gap: $spacing-xl;
+  @include animate-slide-up(0.8s, 0.3s);
+}
+
+.SliderWrapper {
+  @include glass-card;
+  padding: 0;
+  overflow: hidden;
+}
+
+.EmptySlides {
+  @include flex-center;
+  @include flex-column;
+  gap: $spacing-md;
+  padding: $spacing-3xl;
+  min-height: 400px;
+  
+  .material-icons {
+    font-size: 64px;
+    color: var(--text-secondary);
+    opacity: 0.5;
+  }
+  
+  p {
+    font-size: $font-size-lg;
+    color: var(--text-secondary);
+    margin: 0;
+  }
+}
+
+.DescriptionCard {
+  @include glass-card;
+  padding: $spacing-xl;
+  @include flex-column;
+  gap: $spacing-lg;
+}
+
+.DescriptionHeader {
+  @include flex-center;
+  gap: $spacing-md;
+  padding-bottom: $spacing-md;
+  border-bottom: 2px solid var(--border-light);
+  
+  .material-icons {
+    font-size: 28px;
+    color: var(--charity-heart);
+  }
+  
+  h2 {
+    font-size: $font-size-2xl;
+    font-weight: $font-weight-bold;
+    color: var(--text-primary);
+    margin: 0;
+  }
+}
+
+.DescriptionContent {
+  p {
+    font-size: $font-size-lg;
+    line-height: 1.8;
+    color: var(--text-secondary);
+    margin: 0;
+    white-space: pre-wrap;
+  }
+}
+
+// Sidebar Column
+.SidebarColumn {
+  position: sticky;
+  top: $spacing-xl;
+  height: fit-content;
+  @include animate-slide-in-right(0.8s, 0.4s);
+  
+  @include media-down($breakpoint-lg) {
     position: static;
+  }
+}
+
+.ActionCard {
+  @include glass-panel;
+  @include flex-column;
+  gap: $spacing-xl;
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--charity-heart), var(--charity-hope));
+  }
+}
+
+.ActionHeader {
+  @include flex-center;
+  gap: $spacing-md;
+  
+  .material-icons {
+    font-size: 32px;
+    color: var(--charity-heart);
+    @include animate-pulse(3s);
+  }
+  
+  h3 {
+    font-size: $font-size-2xl;
+    font-weight: $font-weight-bold;
+    color: var(--text-primary);
+    margin: 0;
+  }
+}
+
+.ImpactSection {
+  @include flex-column;
+  gap: $spacing-lg;
+  padding: $spacing-lg;
+  background: var(--background-glass);
+  border-radius: $border-radius-lg;
+  border: 1px solid var(--border-light);
+}
+
+.ImpactText {
+  font-size: $font-size-base;
+  line-height: 1.6;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.ImpactStats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-md;
+}
+
+.StatBox {
+  @include flex-center;
+  gap: $spacing-sm;
+  padding: $spacing-md;
+  background: var(--background-glass-hover);
+  border-radius: $border-radius-md;
+  border: 1px solid var(--border-light);
+  transition: all $transition-base;
+  
+  .material-icons {
+    font-size: 28px;
+    color: var(--charity-hope);
+  }
+  
+  &:hover {
+    border-color: var(--border-glow);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+}
+
+.StatInfo {
+  @include flex-column;
+  gap: $spacing-xs;
+}
+
+.StatLabel {
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.StatValue {
+  font-size: $font-size-base;
+  font-weight: $font-weight-bold;
+  color: var(--text-primary);
+}
+
+.DonateButton {
+  @include button-reset;
+  @include flex-center;
+  gap: $spacing-md;
+  padding: $spacing-lg $spacing-2xl;
+  font-size: $font-size-lg;
+  font-weight: $font-weight-bold;
+  color: var(--text-primary);
+  background: linear-gradient(135deg, var(--charity-heart), var(--charity-hope));
+  border: none;
+  border-radius: $border-radius-lg;
+  transition: all $transition-base;
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: $border-radius-full;
+    background: rgba(255, 255, 255, 0.3);
+    transform: translate(-50%, -50%);
+    transition: width $transition-slow, height $transition-slow;
+  }
+  
+  .material-icons {
+    font-size: 28px;
+    z-index: 1;
+  }
+  
+  span:not(.material-icons) {
+    z-index: 1;
+  }
+  
+  &:hover {
+    box-shadow: 0 8px 32px rgba(255, 64, 129, 0.4);
+    transform: translateY(-4px);
+    
+    &::before {
+      width: 300px;
+      height: 300px;
+    }
+  }
+  
+  &:active {
+    transform: translateY(-2px);
+  }
+}
+
+.SecurityNote {
+  @include flex-center;
+  gap: $spacing-xs;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: var(--text-secondary);
+  padding-top: $spacing-md;
+  border-top: 1px solid var(--border-light);
+  
+  .material-icons {
+    font-size: 16px;
+    color: var(--charity-hope);
+  }
+}
+
+// Responsive Design
+@include media-down($breakpoint-lg) {
+  .Container {
+    padding: $spacing-lg 0;
+  }
+  
+  .Header {
+    margin-bottom: $spacing-xl;
+  }
+}
+
+@include media-down($breakpoint-md) {
+  .PageTitle {
+    font-size: $font-size-2xl;
+  }
+  
+  .ImpactStats {
+    grid-template-columns: 1fr;
+  }
+}
+
+@include media-down($breakpoint-sm) {
+  .Container {
+    padding: $spacing-md 0;
+  }
+  
+  .ContentWrapper {
+    max-width: 100%;
+    padding: 0 $spacing-md;
+  }
+  
+  .Header {
+    max-width: 100%;
+    padding: 0 $spacing-md $spacing-lg;
   }
 }

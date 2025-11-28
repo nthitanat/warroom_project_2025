@@ -36,13 +36,43 @@ const CharityDetailHandler = (stateCharityDetail, setCharityDetail, setMultipleF
     try {
       const response = await getCharitySlides(charityId);
       if (response && response.data && response.data.slides) {
-        setCharityDetail('slideItems', response.data.slides);
+        // Create a thumbnail slide object to prepend
+        const thumbnailSlide = {
+          id: `thumbnail-${charityId}`,
+          charity_id: charityId,
+          img: null, // Will be fetched by Slide component using charity thumbnail endpoint
+          description: 'Campaign Overview',
+          display_order: 0,
+          isThumbnail: true // Flag to identify this as the thumbnail slide
+        };
+        
+        // Prepend thumbnail slide to the slides array
+        const slidesWithThumbnail = [thumbnailSlide, ...response.data.slides];
+        setCharityDetail('slideItems', slidesWithThumbnail);
       } else {
-        setCharityDetail('slideItems', []);
+        // If no slides, just show the thumbnail
+        const thumbnailSlide = {
+          id: `thumbnail-${charityId}`,
+          charity_id: charityId,
+          img: null,
+          description: 'Campaign Overview',
+          display_order: 0,
+          isThumbnail: true
+        };
+        setCharityDetail('slideItems', [thumbnailSlide]);
       }
     } catch (error) {
       console.error('Error fetching charity slide data:', error);
-      setCharityDetail('slideItems', []);
+      // Even on error, try to show the thumbnail
+      const thumbnailSlide = {
+        id: `thumbnail-${charityId}`,
+        charity_id: charityId,
+        img: null,
+        description: 'Campaign Overview',
+        display_order: 0,
+        isThumbnail: true
+      };
+      setCharityDetail('slideItems', [thumbnailSlide]);
     }
   };
 

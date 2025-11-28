@@ -178,6 +178,7 @@ export default function Charities() {
                     src={thumbnailUrls[charity.id]} 
                     alt={charity.title}
                     className={styles.CardImage}
+                    style={{ maxHeight: '200px', height: '200px' }}
                     onError={(e) => {
                       console.error('Thumbnail loading error:', e);
                       e.target.src = '/images/fallback.jpg';

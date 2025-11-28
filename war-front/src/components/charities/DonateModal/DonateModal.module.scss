@@ -57,31 +57,55 @@
   }
 }
 
-.ImageGrid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: $spacing-xl;
-  justify-items: center;
-  align-items: center;
+.QRCodeContainer {
+  @include flex-center;
+  @include flex-column;
+  gap: $spacing-lg;
+  padding: $spacing-xl 0;
+}
 
+.QRCodeWrapper {
+  @include flex-center;
+  width: 100%;
+  max-width: 400px;
+  padding: $spacing-lg;
+  background: var(--background-glass);
+  border-radius: $border-radius-lg;
+  border: 2px solid var(--border-light);
+  transition: all $transition-base;
+  
+  &:hover {
+    border-color: var(--border-glow);
+    box-shadow: var(--shadow-glow);
+    transform: scale(1.02);
+  }
+  
   @include media-down($breakpoint-md) {
-    grid-template-columns: 1fr;
-    gap: $spacing-lg;
+    max-width: 100%;
+    padding: $spacing-md;
   }
 }
 
-.ImageWrapper {
-  @include flex-center;
-  width: 100%;
-  max-width: 350px;
-}
-
-.Image {
+.QRCodeImage {
   width: 100%;
   height: auto;
-  max-height: 500px;
+  max-width: 350px;
   object-fit: contain;
-  border: 1px solid var(--border-light);
   border-radius: $border-radius-md;
-  box-shadow: var(--shadow-md);
+  
+  @include media-down($breakpoint-md) {
+    max-width: 100%;
+  }
+}
+
+.Instructions {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-medium;
+  color: var(--text-secondary);
+  text-align: center;
+  margin: 0;
+  
+  @include media-down($breakpoint-md) {
+    font-size: $font-size-base;
+  }
 }

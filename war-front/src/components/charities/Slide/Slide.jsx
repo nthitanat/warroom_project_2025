@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import useSlide from './useSlide';
 import SlideHandler from './SlideHandler';
-import { getCharitySlideImage } from '../../../api/charitiesService';
+import { getCharitySlideImage, getCharityThumbnail } from '../../../api/charitiesService';
 import styles from './Slide.module.scss';
 
 // Helper function to determine if URL is a video
@@ -22,8 +22,20 @@ export default function Slide({ items }) {
 
       const urls = {};
       for (const item of items) {
+        // Check if this is the thumbnail slide
+        if (item.isThumbnail) {
+          try {
+            const response = await getCharityThumbnail(item.charity_id);
+            const imageBlob = new Blob([response.data]);
+            const imageObjectURL = URL.createObjectURL(imageBlob);
+            urls[item.id] = imageObjectURL;
+          } catch (error) {
+            console.error(`Failed to load thumbnail for charity ${item.charity_id}:`, error);
+            urls[item.id] = '/images/fallback.jpg';
+          }
+        }
         // Skip if it's an external URL (video)
-        if (item.img && (item.img.startsWith('http://') || item.img.startsWith('https://'))) {
+        else if (item.img && (item.img.startsWith('http://') || item.img.startsWith('https://'))) {
           urls[item.id] = item.img;
         } else {
           try {

@@ -15,21 +15,17 @@ export default function DonateModal({ open, handleClose }) {
           ร่วมเป็นส่วนหนึ่งในการช่วยเหลือผู้ประสบภัย
         </h2>
         
-        <div className={styles.ImageGrid}>
-          <div className={styles.ImageWrapper}>
+        <div className={styles.QRCodeContainer}>
+          <div className={styles.QRCodeWrapper}>
             <img
-              src="/charities/image/donate1.png"
-              alt="Donation QR Code 1"
-              className={styles.Image}
+              src="/charities/images/donate1.png"
+              alt="Donation QR Code"
+              className={styles.QRCodeImage}
             />
           </div>
-          <div className={styles.ImageWrapper}>
-            <img
-              src="/charities/image/donate2.png"
-              alt="Donation QR Code 2"
-              className={styles.Image}
-            />
-          </div>
+          <p className={styles.Instructions}>
+            สแกน QR Code เพื่อบริจาคผ่านธนาคาร
+          </p>
         </div>
       </div>
     </div>
