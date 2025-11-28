@@ -61,16 +61,39 @@ cd war-front
 npm install
 ```
 
-3. Create environment file:
-```bash
-cp .env.example .env
-```
+3. **Environment Configuration:**
 
-4. Update `.env` with your configuration:
-```
-REACT_APP_API_BASE_URL=http://localhost:5000/api
-REACT_APP_MAPTILER_API_KEY=your_maptiler_api_key
-```
+   This project uses a **centralized `.env` file** located at the project root (`../env`). 
+   
+   The React app automatically syncs environment variables from the root `.env` file before starting or building:
+   
+   - Before `npm start` runs, it automatically executes `sync-env.js`
+   - Before `npm run build` runs, it automatically executes `sync-env.js`
+   - The script reads `DEPLOYMENT_MODE` from root `.env` (development/production)
+   - It extracts the appropriate `REACT_APP_*` variables based on the mode
+   - It generates `war-front/.env` with the correct variables
+   
+   **You don't need to manually create or edit `war-front/.env`** - it's auto-generated!
+
+4. Configure the root `.env` file:
+   
+   Edit the root `.env` file (in the project root, not war-front):
+   
+   ```bash
+   # Set deployment mode
+   DEPLOYMENT_MODE=development  # or 'production'
+   
+   # Development React variables
+   DEV_REACT_APP_API_BASE_URL=http://localhost:4000/api
+   DEV_REACT_APP_ENABLE_API_LOGGING=true
+   
+   # Production React variables
+   PROD_REACT_APP_API_BASE_URL=https://engagement.chula.ac.th/war-room-api/api
+   PROD_REACT_APP_ENABLE_API_LOGGING=false
+   
+   # Shared variables (all environments)
+   REACT_APP_MAPTILER_API_KEY=your_maptiler_api_key
+   ```
 
 ### Running the Application
 
@@ -78,10 +101,17 @@ Development mode:
 ```bash
 npm start
 ```
+The app will automatically sync environment variables from the root `.env` file before starting.
 
 Build for production:
 ```bash
 npm run build
+```
+The build will automatically sync environment variables from the root `.env` file before building.
+
+Manual environment sync (if needed):
+```bash
+npm run sync-env
 ```
 
 The application will open at `http://localhost:3000`

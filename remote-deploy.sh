@@ -31,22 +31,24 @@ echo ""
 echo -e "${YELLOW}Select an action:${NC}"
 echo "1) Full Deploy (git pull + build + restart containers)"
 echo "2) Quick Update (git pull + restart containers, no rebuild)"
-echo "3) Start containers"
-echo "4) Stop containers"
-echo "5) Restart containers"
-echo "6) View logs"
-echo "7) Container status"
+echo "3) Client Rebuild Only (git pull + rebuild React client only)"
+echo "4) Start containers"
+echo "5) Stop containers"
+echo "6) Restart containers"
+echo "7) View logs"
+echo "8) Container status"
 echo ""
-read -p "Enter your choice [1-7]: " ACTION_CHOICE
+read -p "Enter your choice [1-8]: " ACTION_CHOICE
 
 case $ACTION_CHOICE in
     1) ACTION="deploy" ;;
     2) ACTION="update" ;;
-    3) ACTION="start" ;;
-    4) ACTION="stop" ;;
-    5) ACTION="restart" ;;
-    6) ACTION="logs" ;;
-    7) ACTION="status" ;;
+    3) ACTION="client" ;;
+    4) ACTION="start" ;;
+    5) ACTION="stop" ;;
+    6) ACTION="restart" ;;
+    7) ACTION="logs" ;;
+    8) ACTION="status" ;;
     *)
         echo -e "${RED}❌ Invalid choice. Exiting.${NC}"
         exit 1
@@ -233,6 +235,19 @@ deploy_app() {
     else
         npm install
     fi
+    
+    # Source centralized .env and extract REACT_APP_* variables for build
+    echo "📦 Injecting environment variables from centralized .env..."
+    if [ -f "$DEPLOY_PATH/.env" ]; then
+        # Export all REACT_APP_* variables from centralized .env
+        set -a
+        source "$DEPLOY_PATH/.env"
+        set +a
+        # Also set production API URL
+        export REACT_APP_API_BASE_URL="$PROD_REACT_APP_API_BASE_URL"
+        export REACT_APP_ENABLE_API_LOGGING="$PROD_REACT_APP_ENABLE_API_LOGGING"
+    fi
+    
     # Set PUBLIC_URL for production deployment to /war-room subdirectory
     PUBLIC_URL=/war-room npm run build
 
@@ -319,6 +334,74 @@ update_app() {
     echo "$REMOTE_SUDO_PASS" | sudo -S docker-compose -f docker-compose.prod.yml --env-file .env ps
 }
 
+# Function to rebuild client only (git pull + rebuild React, no Docker rebuild)
+rebuild_client() {
+    echo "🎨 Rebuilding React client only..."
+
+    if [ ! -d "$DEPLOY_PATH/.git" ]; then
+        echo "❌ Repository not found. Please run Full Deploy first."
+        exit 1
+    fi
+
+    echo "Pulling latest changes..."
+    cd "$DEPLOY_PATH"
+    git fetch --all --prune
+    git reset --hard origin/main || git pull origin main
+
+    echo "📤 Updating .env file in project root..."
+    if [ -f /tmp/.env.warroom ]; then
+        cp /tmp/.env.warroom "$DEPLOY_PATH/.env"
+        rm /tmp/.env.warroom
+        echo "✅ .env file updated in project root"
+    else
+        echo "⚠️  Warning: .env file not found in /tmp"
+    fi
+
+    echo "🔧 Setting up environment for production..."
+    if [ -f .env ]; then
+        sed -i 's/^DEPLOYMENT_MODE=.*/DEPLOYMENT_MODE=production/' .env 2>/dev/null || true
+    fi
+
+    echo "🏗️ Building React client for production..."
+    cd "$DEPLOY_PATH/war-front"
+    # Try npm ci first, fall back to npm install if lock file is out of sync
+    if [ -f package-lock.json ]; then
+        echo "Attempting clean install with npm ci..."
+        if ! npm ci; then
+            echo "⚠️  npm ci failed, regenerating lock file with npm install..."
+            rm -f package-lock.json
+            npm install
+        fi
+    else
+        npm install
+    fi
+    
+    # Source centralized .env and extract REACT_APP_* variables for build
+    echo "📦 Injecting environment variables from centralized .env..."
+    if [ -f "$DEPLOY_PATH/.env" ]; then
+        # Export all REACT_APP_* variables from centralized .env
+        set -a
+        source "$DEPLOY_PATH/.env"
+        set +a
+        # Also set production API URL
+        export REACT_APP_API_BASE_URL="$PROD_REACT_APP_API_BASE_URL"
+        export REACT_APP_ENABLE_API_LOGGING="$PROD_REACT_APP_ENABLE_API_LOGGING"
+    fi
+    
+    # Set PUBLIC_URL for production deployment to /war-room subdirectory
+    PUBLIC_URL=/war-room npm run build
+
+    echo "📁 Deploying React build to /www/wwwroot/engagement.chula.ac.th/..."
+    echo "$REMOTE_SUDO_PASS" | sudo -S mkdir -p /www/wwwroot/engagement.chula.ac.th
+    echo "$REMOTE_SUDO_PASS" | sudo -S rm -rf /www/wwwroot/engagement.chula.ac.th/war-room || true
+    echo "$REMOTE_SUDO_PASS" | sudo -S mv "$DEPLOY_PATH/war-front/build" /www/wwwroot/engagement.chula.ac.th/war-room
+    echo "$REMOTE_SUDO_PASS" | sudo -S chown -R $USER:$USER /www/wwwroot/engagement.chula.ac.th 2>/dev/null || true
+
+    echo "✅ React client rebuild complete!"
+    echo ""
+    echo "🌐 Client deployed to: https://engagement.chula.ac.th/war-room/"
+}
+
 # Function to start containers
 start_containers() {
     echo "🚀 Starting Docker containers..."
@@ -374,6 +457,9 @@ case $ACTION in
     update)
         update_app
         ;;
+    client)
+        rebuild_client
+        ;;
     start)
         start_containers
         ;;
@@ -404,6 +490,27 @@ if [ "$ACTION" == "deploy" ] || [ "$ACTION" == "update" ]; then
     echo -e "${BLUE}🔍 Step 6: Verifying deployment...${NC}"
 
     sleep 5
+elif [ "$ACTION" == "client" ]; then
+    echo -e "${BLUE}🔍 Step 6: Verifying client rebuild...${NC}"
+
+    sleep 3
+    
+    echo -e "${YELLOW}Testing Web Client...${NC}"
+    if curl -f -s "https://engagement.chula.ac.th/war-room/" > /dev/null 2>&1; then
+        echo -e "${GREEN}✅ Web Client is responding${NC}"
+    else
+        echo -e "${YELLOW}⚠️  Web Client health check failed (may still be starting up)${NC}"
+    fi
+
+    echo ""
+    echo -e "${GREEN}═══════════════════════════════════════════════${NC}"
+    echo -e "${GREEN}🎉 Client Rebuild Completed Successfully!${NC}"
+    echo -e "${GREEN}═══════════════════════════════════════════════${NC}"
+    echo ""
+    echo -e "${BLUE}🌐 Access your application at:${NC}"
+    echo -e "   Web Client:  ${YELLOW}https://engagement.chula.ac.th/war-room/${NC}"
+    echo ""
+    exit 0
 elif [ "$ACTION" == "logs" ]; then
     echo -e "${GREEN}✅ Log viewing session ended${NC}"
     exit 0
@@ -444,10 +551,11 @@ echo -e "   Web Client:  ${YELLOW}http://$REMOTE_HOST:4001${NC}"
 echo -e "   API Server:  ${YELLOW}http://$REMOTE_HOST:4000/api${NC}"
 echo ""
 echo -e "${BLUE}📌 Useful commands:${NC}"
-echo -e "   Full Deploy: ${YELLOW}./remote-deploy.sh${NC} (select option 1)"
-echo -e "   Quick Update:${YELLOW}./remote-deploy.sh${NC} (select option 2)"
-echo -e "   View logs:   ${YELLOW}./remote-deploy.sh${NC} (select option 6)"
-echo -e "   Status:      ${YELLOW}./remote-deploy.sh${NC} (select option 7)"
+echo -e "   Full Deploy:   ${YELLOW}./remote-deploy.sh${NC} (select option 1)"
+echo -e "   Quick Update:  ${YELLOW}./remote-deploy.sh${NC} (select option 2)"
+echo -e "   Client Rebuild:${YELLOW}./remote-deploy.sh${NC} (select option 3)"
+echo -e "   View logs:     ${YELLOW}./remote-deploy.sh${NC} (select option 7)"
+echo -e "   Status:        ${YELLOW}./remote-deploy.sh${NC} (select option 8)"
 echo ""
 echo -e "${BLUE}🔌 To disconnect VPN:${NC}"
 echo -e "   ${YELLOW}./disconnect-vpn.sh${NC}"

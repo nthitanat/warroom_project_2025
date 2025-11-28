@@ -17,7 +17,10 @@
     "sass": "^1.83.3"
   },
   "scripts": {
+    "sync-env": "node sync-env.js",
+    "prestart": "npm run sync-env",
     "start": "react-scripts start",
+    "prebuild": "npm run sync-env",
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject"

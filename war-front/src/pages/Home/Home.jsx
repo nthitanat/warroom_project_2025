@@ -5,6 +5,56 @@ import styles from './Home.module.scss';
 export default function Home() {
   const navigate = useNavigate();
 
+  const nanLearningActivities = [
+    {
+      title: 'Landslide Risk Analysis',
+      description: 'Understanding pan-shaped mountain formations and their impact on water penetration and landslide risks.',
+      location: 'Ban Sob Puen, Chalerm Prakiat District'
+    },
+    {
+      title: 'Sustainable Agriculture',
+      description: 'Learning sediment and water retention agriculture and the "3 forests, 4 benefits" planting concept.',
+      location: 'Alternative to monoculture farming'
+    },
+    {
+      title: 'Forest Rehabilitation',
+      description: 'Implementing King Bhumibol\'s philosophy of "forest mountains" and "wet forests" for resilient production systems.',
+      location: 'Restoring Life to the Land'
+    },
+    {
+      title: 'Nan Province Field Study',
+      description: 'Exploring areas affected by severe floods and mudslides in August 2024, intensified by Yagi and Sulik typhoons.',
+      location: 'March 29-31, 2025'
+    }
+  ];
+
+  const executiveTeam = [
+    {
+      name: 'Professor Wilert Puriwat, D.Phil. (Oxon)',
+      title: 'Chulalongkorn University President',
+      description: 'Leading the university with academic excellence and innovation in higher education.',
+      image: '/about/dsn-team-1.jpg'
+    },
+    {
+      name: 'Associate Professor Siridej Sujiva, Ph.D.',
+      title: 'Vice President',
+      description: 'Supporting university leadership and driving institutional development initiatives.',
+      image: '/about/dsn-team-2.jpg'
+    },
+    {
+      name: 'Professor JAITIP NASONGKHLA, Ph.D.',
+      title: 'Educational Technologies',
+      description: 'Distinguished professor specializing in educational technologies and innovation.',
+      image: '/about/dsn-team-3.jpg'
+    },
+    {
+      name: 'Professor Dr. Santi Pailoplee',
+      title: 'Earthquake Geology Specialist',
+      description: 'Expert in earthquake geology, seismic hazard analysis, and statistical seismology.',
+      image: '/about/dsn-team-4.jpg'
+    }
+  ];
+
   return (
     <div className={styles.Container}>
       <section className={styles.Hero}>
@@ -16,121 +66,69 @@ export default function Home() {
             Digital War Room - Building Resilience Through Innovation
           </h2>
           <p className={styles.HeroDescription}>
-            Thailand faces continuous natural disasters from devastating floods to PM2.5 air pollution.
-            Our platform provides real-time disaster management, data analytics, and community support.
+            Thailand faces continuous natural disasters from devastating floods to PM2.5 air pollution. In response, Chulalongkorn University launched the Digital War Room (DSN) as a pioneering innovation in disaster management, empowering society to proactively prevent, mitigate, prepare for, respond to, and recover from disasters through digital technologies.
           </p>
-          <div className={styles.HeroButtons}>
-            <button
-              onClick={() => navigate('/analytics')}
-              className={styles.PrimaryButton}
-            >
-              View Analytics
-            </button>
-            <button
-              onClick={() => navigate('/warroom')}
-              className={styles.SecondaryButton}
-            >
-              War Room
-            </button>
-          </div>
-        </div>
-        <div className={styles.HeroImage}>
-          <img
-            src="/about/hero-illustration.png"
-            alt="Disaster Management"
-            onError={(e) => {
-              e.target.style.display = 'none';
-            }}
-          />
         </div>
       </section>
 
-      <section className={styles.Features}>
+      <section className={styles.NanLearning}>
         <div className={styles.SectionHeader}>
-          <h2 className={styles.SectionTitle}>Our Solutions</h2>
-          <p className={styles.SectionDescription}>
-            Comprehensive tools for disaster management and community resilience
+          <h2 className={styles.SectionTitle}>Nan Learning Journey</h2>
+          <h3 className={styles.SectionSubtitle}>Building awareness through community-based natural resource restoration</h3>
+        </div>
+        <div className={styles.NanIntro}>
+          <p className={styles.NanDescription}>
+            Thailand, a land of beauty, faces continuous natural disasters and environmental challenges. From widespread floods, like the devastating 2011 event that impacted 65 provinces, to the more recent floods in 2019 affecting over 400,000 people, and persistent issues like PM2.5 air pollution, these events have caused significant economic damage and hardship to millions.
+          </p>
+          <p className={styles.NanDescription}>
+            Our Nan Learning Journey is a field trip designed for international graduate students from Chulalongkorn University, aimed at building awareness and understanding of community-based natural resource restoration processes, especially in Nan's headwater areas. This immersive experience brings together students from diverse academic backgrounds to address complex environmental and social challenges through hands-on learning and cultural exchange.
           </p>
         </div>
-        <div className={styles.FeatureGrid}>
-          <div className={styles.FeatureCard}>
-            <div className={styles.FeatureIcon}>
-              <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path>
-                <polyline points="3.27 6.96 12 12.01 20.73 6.96"></polyline>
-                <line x1="12" y1="22.08" x2="12" y2="12"></line>
-              </svg>
+        <div className={styles.ActivityGrid}>
+          {nanLearningActivities.map((activity, index) => (
+            <div key={index} className={styles.ActivityCard}>
+              <h3 className={styles.ActivityTitle}>{activity.title}</h3>
+              <p className={styles.ActivityDescription}>{activity.description}</p>
+              <p className={styles.ActivityLocation}>{activity.location}</p>
             </div>
-            <h3 className={styles.FeatureTitle}>Real-Time Analytics</h3>
-            <p className={styles.FeatureDescription}>
-              Interactive maps and data visualization for disaster monitoring and response planning
-            </p>
-            <button onClick={() => navigate('/analytics')} className={styles.FeatureLink}>
-              Learn More →
-            </button>
-          </div>
-
-          <div className={styles.FeatureCard}>
-            <div className={styles.FeatureIcon}>
-              <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                <circle cx="9" cy="7" r="4"></circle>
-                <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-              </svg>
-            </div>
-            <h3 className={styles.FeatureTitle}>Community Support</h3>
-            <p className={styles.FeatureDescription}>
-              Connect with charities and learn from experts through our comprehensive lesson library
-            </p>
-            <button onClick={() => navigate('/charities')} className={styles.FeatureLink}>
-              Learn More →
-            </button>
-          </div>
-
-          <div className={styles.FeatureCard}>
-            <div className={styles.FeatureIcon}>
-              <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
-                <path d="M16 21V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v16"></path>
-              </svg>
-            </div>
-            <h3 className={styles.FeatureTitle}>War Room</h3>
-            <p className={styles.FeatureDescription}>
-              Live disaster updates, archived sessions, and podcasts for continuous learning
-            </p>
-            <button onClick={() => navigate('/warroom')} className={styles.FeatureLink}>
-              Learn More →
-            </button>
-          </div>
-
-          <div className={styles.FeatureCard}>
-            <div className={styles.FeatureIcon}>
-              <svg xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
-                <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
-              </svg>
-            </div>
-            <h3 className={styles.FeatureTitle}>Learning Resources</h3>
-            <p className={styles.FeatureDescription}>
-              Access curated lessons and playlists from disaster management experts
-            </p>
-            <button onClick={() => navigate('/lessons')} className={styles.FeatureLink}>
-              Learn More →
-            </button>
-          </div>
+          ))}
+        </div>
+        <div className={styles.NanConclusion}>
+          <h3 className={styles.ConclusionTitle}>"Restoring Life to the Land"</h3>
+          <p className={styles.NanDescription}>
+            The impact of this journey on international students is profound. Many reflect on the importance of cross-disciplinary collaboration and the direct application of theoretical research to real-world problems, especially in social dimensions. They recognize the crucial role of local communities in strengthening resilience against crises through sustainable forest management and cooperation with government agencies.
+          </p>
+          <p className={styles.NanDescription}>
+            This journey exemplifies Chulalongkorn University's commitment to sustainable development, aligning with SDG 13: Climate Action, by enhancing resilience, integrating climate change measures into national policies, and raising awareness. Through these initiatives, we continue to drive impactful change, foster social responsibility, and empower future leaders.
+          </p>
         </div>
       </section>
 
-      <section className={styles.CTA}>
-        <div className={styles.CTAContent}>
-          <h2 className={styles.CTATitle}>Join Our Mission</h2>
-          <p className={styles.CTADescription}>
-            Be part of the solution. Help build resilient communities through technology and collaboration.
-          </p>
-          <button onClick={() => navigate('/signup')} className={styles.CTAButton}>
-            Get Started
-          </button>
+      <section className={styles.ExecutiveTeam}>
+        <div className={styles.SectionHeader}>
+          <h2 className={styles.SectionTitle}>Executive Team</h2>
+          <h3 className={styles.SectionSubtitle}>Executive and leading researchers from Chulalongkorn University driving innovation in disaster management</h3>
+        </div>
+        <div className={styles.TeamGrid}>
+          {executiveTeam.map((member, index) => (
+            <div key={index} className={styles.TeamCard}>
+              <div className={styles.TeamImageWrapper}>
+                <img 
+                  src={member.image} 
+                  alt={member.name}
+                  className={styles.TeamImage}
+                  onError={(e) => {
+                    e.target.style.display = 'none';
+                  }}
+                />
+              </div>
+              <div className={styles.TeamInfo}>
+                <h3 className={styles.TeamName}>{member.name}</h3>
+                <h4 className={styles.TeamTitle}>{member.title}</h4>
+                <p className={styles.TeamDescription}>{member.description}</p>
+              </div>
+            </div>
+          ))}
         </div>
       </section>
     </div>

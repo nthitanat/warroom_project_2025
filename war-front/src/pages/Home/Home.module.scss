@@ -20,20 +20,19 @@
 }
 
 .Hero {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: $spacing-3xl;
+  display: flex;
+  flex-direction: column;
   align-items: center;
-  min-height: 80vh;
+  justify-content: center;
+  text-align: center;
+  min-height: 70vh;
   padding: $spacing-3xl $spacing-2xl;
-  max-width: 1400px;
+  max-width: 1200px;
   margin: 0 auto;
   position: relative;
   z-index: 1;
 
   @include media-down($breakpoint-lg) {
-    grid-template-columns: 1fr;
-    gap: $spacing-2xl;
     padding: $spacing-2xl $spacing-lg;
   }
 }
@@ -41,6 +40,7 @@
 .HeroContent {
   @include flex-column;
   gap: $spacing-xl;
+  max-width: 900px;
 }
 
 .HeroTitle {
@@ -77,76 +77,6 @@
   }
 }
 
-.HeroButtons {
-  display: flex;
-  gap: $spacing-lg;
-  margin-top: $spacing-lg;
-
-  @include media-down($breakpoint-sm) {
-    flex-direction: column;
-  }
-}
-
-.PrimaryButton {
-  @include button-reset;
-  @include glass-button;
-  padding: $spacing-md $spacing-2xl;
-  font-size: $font-size-lg;
-  font-weight: $font-weight-semibold;
-  color: var(--text-primary);
-  background: var(--gradient-accent);
-  border: 1px solid var(--border-glow);
-  display: inline-flex;
-  align-items: center;
-  gap: $spacing-sm;
-
-  &:hover {
-    box-shadow: var(--shadow-glow-strong);
-    transform: translateY(-2px);
-  }
-
-  .material-icons {
-    font-size: 20px;
-  }
-}
-
-.SecondaryButton {
-  @include button-reset;
-  @include glass-button;
-  padding: $spacing-md $spacing-2xl;
-  font-size: $font-size-lg;
-  font-weight: $font-weight-semibold;
-  color: var(--text-primary);
-  display: inline-flex;
-  align-items: center;
-  gap: $spacing-sm;
-
-  .material-icons {
-    font-size: 20px;
-  }
-}
-
-.HeroImage {
-  @include flex-center;
-
-  img {
-    width: 100%;
-    max-width: 600px;
-    height: auto;
-    object-fit: contain;
-  }
-
-  @include media-down($breakpoint-lg) {
-    display: none;
-  }
-}
-
-.Features {
-  padding: $spacing-3xl $spacing-2xl;
-  max-width: 1400px;
-  margin: 0 auto;
-}
-
 .SectionHeader {
   text-align: center;
   margin-bottom: $spacing-3xl;
@@ -163,77 +93,81 @@
   }
 }
 
-.SectionDescription {
+.SectionSubtitle {
   font-size: $font-size-lg;
+  font-weight: $font-weight-medium;
   color: var(--text-secondary);
-  margin: 0;
+  margin: $spacing-sm 0 0 0;
 
   @include media-down($breakpoint-md) {
     font-size: $font-size-base;
   }
 }
 
-.FeatureGrid {
+// Nan Learning Journey Section
+.NanLearning {
+  padding: $spacing-3xl $spacing-2xl;
+  max-width: 1400px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+}
+
+.NanIntro {
+  max-width: 1000px;
+  margin: 0 auto $spacing-3xl;
+  text-align: center;
+}
+
+.NanDescription {
+  font-size: $font-size-base;
+  color: var(--text-secondary);
+  line-height: 1.8;
+  margin: 0 0 $spacing-lg 0;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  @include media-down($breakpoint-md) {
+    font-size: $font-size-sm;
+  }
+}
+
+.ActivityGrid {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
   gap: $spacing-xl;
+  margin-bottom: $spacing-3xl;
 
   @include media-down($breakpoint-md) {
     grid-template-columns: 1fr;
   }
 }
 
-.FeatureCard {
+.ActivityCard {
   @include flex-column;
   @include glass-card;
   gap: $spacing-md;
   padding: $spacing-2xl;
   position: relative;
   overflow: hidden;
-
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    height: 3px;
-    background: var(--gradient-accent);
-    opacity: 0;
-    transition: opacity $transition-base;
-  }
+  border-left: 4px solid var(--primary-500);
 
   &:hover {
-    transform: translateY(-8px);
-    
-    &::before {
-      opacity: 1;
-    }
+    transform: translateY(-4px);
+    border-left-color: var(--primary-600);
   }
 }
 
-.FeatureIcon {
-  @include flex-center;
-  width: 64px;
-  height: 64px;
-  background: var(--gradient-accent);
-  border-radius: $border-radius-lg;
-  color: var(--text-primary);
-  box-shadow: var(--shadow-glow);
-  
-  .material-icons {
-    font-size: 32px;
-  }
-}
-
-.FeatureTitle {
+.ActivityTitle {
   font-size: $font-size-xl;
   font-weight: $font-weight-bold;
   color: var(--text-primary);
   margin: 0;
 }
 
-.FeatureDescription {
+.ActivityDescription {
   font-size: $font-size-base;
   color: var(--text-secondary);
   line-height: 1.6;
@@ -241,95 +175,111 @@
   flex-grow: 1;
 }
 
-.FeatureLink {
-  @include button-reset;
-  padding: $spacing-sm $spacing-md;
-  font-size: $font-size-base;
-  font-weight: $font-weight-semibold;
-  color: var(--primary-500);
-  background: transparent;
-  border: none;
-  text-align: left;
-  transition: all $transition-base;
-
-  &:hover {
-    color: var(--primary-600);
-    transform: translateX(4px);
-  }
+.ActivityLocation {
+  font-size: $font-size-sm;
+  color: var(--text-tertiary);
+  font-style: italic;
+  margin: $spacing-sm 0 0 0;
 }
 
-.CTA {
-  padding: $spacing-3xl $spacing-2xl;
-  position: relative;
-  overflow: hidden;
-  
-  &::before {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: var(--gradient-accent);
-    opacity: 0.1;
-    z-index: 0;
-  }
-}
-
-.CTAContent {
+.NanConclusion {
   @include glass-panel;
-  max-width: 800px;
+  max-width: 1000px;
   margin: 0 auto;
   text-align: center;
-  @include flex-column;
-  align-items: center;
-  gap: $spacing-xl;
-  position: relative;
-  z-index: 1;
 }
 
-.CTATitle {
-  font-size: $font-size-3xl;
+.ConclusionTitle {
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-bold;
+  color: var(--text-primary);
+  margin: 0 0 $spacing-xl 0;
+
+  @include media-down($breakpoint-md) {
+    font-size: $font-size-xl;
+  }
+}
+
+// Executive Team Section
+.ExecutiveTeam {
+  padding: $spacing-3xl $spacing-2xl;
+  max-width: 1400px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 1;
+  background: var(--surface-secondary);
+}
+
+.TeamGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: $spacing-2xl;
+
+  @include media-down($breakpoint-md) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.TeamCard {
+  @include flex-column;
+  @include glass-card;
+  gap: $spacing-lg;
+  padding: 0;
+  overflow: hidden;
+
+  &:hover {
+    transform: translateY(-8px);
+    box-shadow: var(--shadow-glow-strong);
+  }
+}
+
+.TeamImageWrapper {
+  width: 100%;
+  height: 300px;
+  overflow: hidden;
+  background: var(--surface-tertiary);
+
+  @include media-down($breakpoint-md) {
+    height: 250px;
+  }
+}
+
+.TeamImage {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform $transition-base;
+
+  .TeamCard:hover & {
+    transform: scale(1.05);
+  }
+}
+
+.TeamInfo {
+  padding: $spacing-xl;
+  @include flex-column;
+  gap: $spacing-sm;
+}
+
+.TeamName {
+  font-size: $font-size-lg;
   font-weight: $font-weight-bold;
   color: var(--text-primary);
   margin: 0;
-
-  @include media-down($breakpoint-md) {
-    font-size: $font-size-2xl;
-  }
+  line-height: 1.3;
 }
 
-.CTADescription {
-  font-size: $font-size-lg;
-  color: var(--text-secondary);
-  margin: 0;
-
-  @include media-down($breakpoint-md) {
-    font-size: $font-size-base;
-  }
-}
-
-.CTAButton {
-  @include button-reset;
-  padding: $spacing-md $spacing-2xl;
-  font-size: $font-size-lg;
+.TeamTitle {
+  font-size: $font-size-base;
   font-weight: $font-weight-semibold;
-  color: var(--text-primary);
-  background: var(--gradient-accent);
-  border: 1px solid var(--border-glow);
-  border-radius: $border-radius-lg;
-  transition: all $transition-base;
-  display: inline-flex;
-  align-items: center;
-  gap: $spacing-sm;
-  box-shadow: var(--shadow-glow);
+  color: var(--primary-500);
+  margin: 0;
+  line-height: 1.3;
+}
 
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: var(--shadow-glow-strong);
-  }
-  
-  .material-icons {
-    font-size: 20px;
-  }
+.TeamDescription {
+  font-size: $font-size-sm;
+  color: var(--text-secondary);
+  line-height: 1.6;
+  margin: 0;
 }
