@@ -13,7 +13,7 @@
   background: var(--glass-bg);
   border-bottom: 1px solid var(--border-light);
   box-shadow: var(--shadow-md);
-  padding: $spacing-xs 0;
+  padding: $spacing-sm 0;
 }
 
 .NavContent {
@@ -24,6 +24,46 @@
   align-items: center;
   justify-content: space-between;
   gap: $spacing-lg;
+}
+
+.LogoButton {
+  @include button-reset;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: $spacing-xs;
+  background: transparent;
+  border: 2px solid transparent;
+  border-radius: $border-radius-md;
+  transition: all $transition-base;
+  flex-shrink: 0;
+  
+  &:hover {
+    background: var(--background-glass-hover);
+    border-color: var(--border-light);
+    transform: scale(1.05);
+    
+    .NavLogo {
+      transform: rotate(5deg);
+    }
+  }
+  
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+.NavLogo {
+  width: 70px;
+  height: 70px;
+  object-fit: cover;
+  border-radius: $border-radius-full;
+  transition: transform $transition-base;
+  
+  @include media-down($breakpoint-md) {
+    width: 56px;
+    height: 56px;
+  }
 }
 
 .NavLinks {

@@ -28,6 +28,22 @@ export default function Navbar() {
     <div className={styles.Container}>
       <nav className={styles.Navbar}>
         <div className={styles.NavContent}>
+          {/* Logo */}
+          <button
+            onClick={() => navigate('/')}
+            className={styles.LogoButton}
+            aria-label="Home"
+          >
+            <img
+              src="/common/logo.png"
+              alt="War Room Logo"
+              className={styles.NavLogo}
+              onError={(e) => {
+                e.target.style.display = 'none';
+              }}
+            />
+          </button>
+
           {/* Desktop Navigation */}
           <div className={styles.NavLinks}>
             <button
@@ -167,12 +183,6 @@ export default function Navbar() {
       {showBanner && pageTitle && (
         <div className={styles.Banner}>
           <div className={styles.BannerContent}>
-            <img
-              src="/common/logo.png"
-              alt="Logo"
-              className={styles.Logo}
-              onError={(e) => { e.target.style.display = 'none'; }}
-            />
             <h1 className={styles.BannerTitle}>
               {pageTitle.main && <span className={styles.BannerMain}>{pageTitle.main} </span>}
               <span className={styles.BannerHighlight}>{pageTitle.highlight}</span>
