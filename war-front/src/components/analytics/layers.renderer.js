@@ -11,8 +11,8 @@ export const ensureVectorSource = (map, spec) => {
     map.addSource(spec.sourceId, {
       type: 'vector',
       tiles: spec.tiles,
-      minzoom: 0,
-      maxzoom: 14  // Actual tile availability - tiles exist up to zoom 14
+      minzoom: spec.minzoom ?? 0,
+      maxzoom: spec.tileMaxZoom ?? 14  // Use tileMaxZoom for actual tile availability
     });
   }
 };

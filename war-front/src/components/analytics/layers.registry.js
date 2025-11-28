@@ -19,7 +19,9 @@ export const getLayers = () => [
     geometry: 'line',
     interactive: true,
     paint: { 'line-color': '#666666', 'line-width': 1 },
-    minzoom: 0, maxzoom: 14,
+    minzoom: 0,
+    tileMaxZoom: 9,  // Actual tile data availability
+    maxzoom: 22,     // Keep rendering beyond tile zoom using oversampling
     labelConfig: 'none',
     click: { enabled: true }
   },
@@ -32,7 +34,9 @@ export const getLayers = () => [
     geometry: 'line',
     interactive: true,
     paint: { 'line-color': '#444444', 'line-width': 1 },
-    minzoom: 0, maxzoom: 14,
+    minzoom: 0,
+    tileMaxZoom: 9,
+    maxzoom: 22,
     labelConfig: 'none',
     click: { enabled: true }
   },
@@ -45,7 +49,9 @@ export const getLayers = () => [
     geometry: 'line',
     interactive: true,
     paint: { 'line-color': '#0000FF', 'line-width': 1.2 },
-    minzoom: 0, maxzoom: 14,
+    minzoom: 0,
+    tileMaxZoom: 11,
+    maxzoom: 22,
     labelConfig: { placement: 'line', field: 'hy_mriver' },
     click: { enabled: true }
   },
@@ -58,7 +64,9 @@ export const getLayers = () => [
     geometry: 'line',
     interactive: true,
     paint: { 'line-color': '#00BFFF', 'line-width': 1.2 },
-    minzoom: 0, maxzoom: 14,
+    minzoom: 0,
+    tileMaxZoom: 11,
+    maxzoom: 22,
     labelConfig: { placement: 'line', field: 'HY_LNAME' },
     click: { enabled: true }
   },
@@ -139,7 +147,8 @@ export const getLayers = () => [
       ]
     },
     minzoom: 0,
-    maxzoom: 14,
+    tileMaxZoom: 10,
+    maxzoom: 22,
     labelConfig: 'none',
     click: { enabled: true }
   },
@@ -151,7 +160,9 @@ export const getLayers = () => [
     sourceLayer: 'ridge',
     geometry: 'line',
     paint: { 'line-color': '#444444', 'line-width': 1 },
-    minzoom: 0, maxzoom: 14,
+    minzoom: 0,
+    tileMaxZoom: 10,
+    maxzoom: 22,
     labelConfig: 'none',
     interactive: true,
     click: { enabled: true }
@@ -169,7 +180,9 @@ export const getLayers = () => [
       'circle-stroke-color': '#ffffff',
       'circle-stroke-width': 1
     },
-    minzoom: 0, maxzoom: 14,
+    minzoom: 0,
+    tileMaxZoom: 13,
+    maxzoom: 22,
     labelConfig: 'none',
     interactive: true,
     click: { enabled: true }
@@ -187,7 +200,9 @@ export const getLayers = () => [
       'circle-stroke-color': '#ffffff',
       'circle-stroke-width': 1
     },
-    minzoom: 0, maxzoom: 14,
+    minzoom: 0,
+    tileMaxZoom: 13,
+    maxzoom: 22,
     labelConfig: 'none',
     interactive: true,
     click: { enabled: true }
@@ -205,7 +220,9 @@ export const getLayers = () => [
       'circle-stroke-color': '#ffffff',
       'circle-stroke-width': 1
     },
-    minzoom: 0, maxzoom: 14,
+    minzoom: 0,
+    tileMaxZoom: 5,
+    maxzoom: 22,
     labelConfig: { placement: 'point', field: 'Name' },
     interactive: true,
     click: { enabled: true }
