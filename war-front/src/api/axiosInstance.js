@@ -7,7 +7,8 @@ const getApiBaseUrl = () => {
     return process.env.REACT_APP_API_BASE_URL;
   }
   // Production default (for static deployment)
-  return 'https://engagement.chula.ac.th/war-room-api';
+  // Note: Must include /api suffix since all routes use /api prefix
+  return 'https://engagement.chula.ac.th/war-room-api/api';
 };
 
 const axiosInstance = axios.create({
