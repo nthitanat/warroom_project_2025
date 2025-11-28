@@ -2,12 +2,14 @@
 
 .Container {
   @include flex-column;
-  min-height: 100vh;
   width: 100%;
-  padding: $spacing-xl;
+  height: 100vh;
+  padding: 0;
   background: var(--gradient-primary);
   position: relative;
-  
+  overflow: hidden;
+  @include page-transition-fade;
+
   &::before {
     content: '';
     position: absolute;

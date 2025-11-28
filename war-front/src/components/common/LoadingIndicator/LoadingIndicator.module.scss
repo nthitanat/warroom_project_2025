@@ -1,0 +1,91 @@
+@import '../../../styles/main.scss';
+
+.FullScreenContainer {
+  @include flex-center;
+  min-height: 100vh;
+  width: 100%;
+  background: var(--background-default);
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 9999;
+  @include page-transition-fade;
+}
+
+.InlineContainer {
+  @include flex-center;
+  @include flex-column;
+  padding: $spacing-3xl;
+  gap: $spacing-lg;
+}
+
+.LoadingContent {
+  @include flex-center;
+  @include flex-column;
+  gap: $spacing-xl;
+}
+
+.Spinner {
+  position: relative;
+  width: 80px;
+  height: 80px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.SpinnerRing {
+  position: absolute;
+  width: 64px;
+  height: 64px;
+  border: 4px solid transparent;
+  border-radius: $border-radius-full;
+  animation: spinnerRotate 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
+
+  &:nth-child(1) {
+    border-top-color: var(--primary-500);
+    animation-delay: -0.45s;
+  }
+
+  &:nth-child(2) {
+    border-top-color: var(--secondary-500);
+    animation-delay: -0.3s;
+    width: 52px;
+    height: 52px;
+  }
+
+  &:nth-child(3) {
+    border-top-color: var(--primary-300);
+    animation-delay: -0.15s;
+    width: 40px;
+    height: 40px;
+  }
+}
+
+@keyframes spinnerRotate {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.Message {
+  font-size: $font-size-lg;
+  font-weight: $font-weight-medium;
+  color: #ffffff;
+  margin: 0;
+  text-align: center;
+  background: var(--gradient-secondary);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  @include animate-pulse;
+
+  @include media-down($breakpoint-md) {
+    font-size: $font-size-base;
+  }
+}

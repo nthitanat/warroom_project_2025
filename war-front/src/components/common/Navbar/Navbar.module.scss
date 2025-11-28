@@ -258,46 +258,46 @@
 .BannerContent {
   max-width: 1400px;
   margin: 0 auto;
-  padding: $spacing-xl $spacing-lg;
+  padding: $spacing-md $spacing-lg;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: $spacing-xl;
+  gap: $spacing-md;
 
   @include media-down($breakpoint-md) {
     flex-direction: column;
-    padding: $spacing-lg;
-    gap: $spacing-md;
+    padding: $spacing-sm $spacing-md;
+    gap: $spacing-xs;
   }
 
   @include media-down($breakpoint-sm) {
-    padding: $spacing-md;
+    padding: $spacing-xs $spacing-sm;
   }
 }
 
 .Logo {
-  width: 80px;
-  height: 80px;
+  width: 50px;
+  height: 50px;
   object-fit: contain;
 
   @include media-down($breakpoint-sm) {
-    width: 60px;
-    height: 60px;
+    width: 40px;
+    height: 40px;
   }
 }
 
 .BannerTitle {
-  font-size: $font-size-4xl;
+  font-size: $font-size-2xl;
   font-weight: $font-weight-bold;
   margin: 0;
   text-align: center;
 
   @include media-down($breakpoint-md) {
-    font-size: $font-size-3xl;
+    font-size: $font-size-xl;
   }
 
   @include media-down($breakpoint-sm) {
-    font-size: $font-size-2xl;
+    font-size: $font-size-lg;
   }
 }
 

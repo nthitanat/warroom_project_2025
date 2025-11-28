@@ -4,15 +4,29 @@
   @include flex-column;
   align-items: center;
   width: 100%;
-  padding: $spacing-lg;
+  height: calc(100vh - var(--navbar-height, 140px));
+  padding: 0;
+  position: relative;
 }
 
 .SearchWrapper {
-  @include flex-between;
+  position: absolute;
+  top: $spacing-md;
+  left: 50%;
+  transform: translateX(-50%);
   width: 100%;
   max-width: 600px;
-  margin: $spacing-lg 0;
+  padding: 0 $spacing-md;
+  z-index: $z-index-dropdown;
+  display: flex;
   gap: $spacing-sm;
+
+  @include media-down($breakpoint-md) {
+    top: 60px;
+    max-width: calc(100% - 32px);
+    padding: 0 $spacing-md;
+    gap: $spacing-xs;
+  }
 }
 
 .SearchInput {
@@ -22,12 +36,20 @@
   border-radius: $border-radius-md;
   font-size: $font-size-base;
   color: var(--text-primary);
-  background: var(--background-default);
-  transition: border-color $transition-base;
+  background: var(--background-paper);
+  backdrop-filter: blur(10px);
+  box-shadow: var(--shadow-md);
+  transition: all $transition-base;
+
+  @include media-down($breakpoint-md) {
+    padding: $spacing-xs $spacing-sm;
+    font-size: $font-size-sm;
+  }
 
   &:focus {
     outline: none;
     border-color: var(--primary-500);
+    box-shadow: var(--shadow-lg);
   }
 
   &::placeholder {
@@ -42,24 +64,32 @@
   color: var(--text-inverse);
   border-radius: $border-radius-md;
   font-weight: $font-weight-medium;
-  transition: background $transition-base;
+  box-shadow: var(--shadow-md);
+  transition: all $transition-base;
+
+  @include media-down($breakpoint-md) {
+    padding: $spacing-xs $spacing-sm;
+    font-size: $font-size-sm;
+  }
 
   &:hover {
     background: var(--primary-600);
+    box-shadow: var(--shadow-lg);
   }
 
   &:active {
     background: var(--primary-700);
+    transform: scale(0.98);
   }
 }
 
 .MapWrapper {
   position: relative;
   width: 100%;
-  height: 70vh;
-  border-radius: $border-radius-lg;
+  height: 100%;
+  border-radius: 0;
   overflow: hidden;
-  box-shadow: var(--shadow-lg);
+  box-shadow: none;
 }
 
 .MapContainer {
@@ -78,6 +108,13 @@
   box-shadow: var(--shadow-md);
   overflow: hidden;
   z-index: $z-index-dropdown;
+
+  @include media-down($breakpoint-md) {
+    bottom: auto;
+    top: $spacing-sm;
+    right: $spacing-sm;
+    left: auto;
+  }
 }
 
 .ToggleButton {
@@ -99,130 +136,282 @@
   }
 }
 
-.LayersPanel {
-  display: flex;
-  flex-direction: row;
+.LayersToggleButton {
+  @include button-reset;
+  position: absolute;
+  bottom: $spacing-md;
+  right: $spacing-md;
+  width: 48px;
+  height: 48px;
+  background: var(--background-paper);
+  border-radius: $border-radius-full;
+  box-shadow: var(--shadow-md);
+  display: none;
+  align-items: center;
   justify-content: center;
-  gap: $spacing-2xl;
-  width: 100%;
-  max-width: 1000px;
-  margin-top: $spacing-2xl;
+  z-index: $z-index-dropdown + 1;
+  transition: all $transition-base;
+
+  .material-icons {
+    font-size: 24px;
+    color: var(--text-primary);
+  }
+
+  &:hover {
+    background: var(--background-glass-hover);
+    box-shadow: var(--shadow-lg);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
 
   @include media-down($breakpoint-md) {
-    flex-direction: column;
-    gap: $spacing-lg;
+    display: flex;
+  }
+}
+
+.LayersPanel {
+  position: absolute;
+  top: $spacing-md;
+  right: $spacing-md;
+  width: 320px;
+  max-height: calc(100vh - 32px);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  background: var(--background-paper);
+  backdrop-filter: blur(20px);
+  border-radius: $border-radius-lg;
+  box-shadow: var(--shadow-xl);
+  border: 1px solid var(--border-light);
+  z-index: $z-index-dropdown;
+  transition: transform $transition-base, opacity $transition-base;
+
+  @include media-down($breakpoint-md) {
+    top: auto;
+    bottom: $spacing-md;
+    left: $spacing-md;
+    right: $spacing-md;
+    width: auto;
+    max-height: 50vh;
+  }
+
+  &.Hidden {
+    @include media-down($breakpoint-md) {
+      transform: translateY(calc(100% + #{$spacing-md}));
+      opacity: 0;
+      pointer-events: none;
+    }
+  }
+}
+
+.LayersPanelHeader {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-md $spacing-lg;
+  border-bottom: 1px solid var(--border-light);
+  background: var(--background-glass);
+  flex-shrink: 0;
+  
+  .material-icons {
+    font-size: 20px;
+    color: var(--text-accent);
+  }
+  
+  strong {
+    font-size: $font-size-lg;
+    font-weight: $font-weight-bold;
+    color: var(--text-primary);
+  }
+
+  @include media-down($breakpoint-md) {
+    padding: $spacing-sm $spacing-md;
+    
+    .material-icons {
+      font-size: 18px;
+    }
+    
+    strong {
+      font-size: $font-size-base;
+    }
+  }
+}
+
+.LayersSections {
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  flex: 1;
+  min-height: 0;
+
+  @include media-down($breakpoint-md) {
+    flex-direction: row;
+    overflow-x: auto;
+    overflow-y: hidden;
   }
 }
 
 .LayerSection {
-  flex: 1;
+  padding: $spacing-md;
+  
+  &:not(:last-child) {
+    border-bottom: 1px solid var(--border-light);
+  }
 
-  strong {
-    display: block;
-    font-size: $font-size-lg;
-    font-weight: $font-weight-bold;
-    color: var(--text-primary);
-    margin-bottom: $spacing-md;
+  @include media-down($breakpoint-md) {
+    flex: 1;
+    min-width: 250px;
+    overflow-y: auto;
+    
+    &:not(:last-child) {
+      border-bottom: none;
+      border-right: 1px solid var(--border-light);
+    }
+  }
+}
+
+.SectionLabel {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: $spacing-sm;
+  
+  .material-icons {
+    font-size: 16px;
+    opacity: 0.7;
   }
 }
 
 .LayerList {
   @include flex-column;
-  gap: $spacing-sm;
+  gap: $spacing-xs;
+}
+
+.EmptyMessage {
+  padding: $spacing-md;
+  text-align: center;
+  font-size: $font-size-sm;
+  color: var(--text-disabled);
+  font-style: italic;
 }
 
 .LayerItem {
   @include flex-between;
-  padding: $spacing-md;
-  background: var(--grey-100);
+  padding: $spacing-sm $spacing-md;
+  background: transparent;
   border-radius: $border-radius-md;
   transition: background $transition-base;
+  align-items: center;
 
   &:hover {
-    background: var(--grey-200);
+    background: var(--background-glass-hover);
   }
+}
 
-  span {
-    color: var(--text-primary);
-    font-size: $font-size-base;
-  }
+.LayerTitle {
+  color: var(--text-primary);
+  font-size: $font-size-sm;
+  flex: 1;
 }
 
 .AddButton {
   @include button-reset;
-  padding: $spacing-xs $spacing-md;
+  padding: $spacing-xs;
   background: transparent;
   color: var(--primary-500);
-  border: 1px solid var(--primary-500);
   border-radius: $border-radius-sm;
-  font-size: $font-size-sm;
-  font-weight: $font-weight-medium;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   transition: all $transition-base;
+
+  .material-icons {
+    font-size: 18px;
+  }
 
   &:hover {
     background: var(--primary-500);
-    color: var(--text-inverse);
+    color: white;
   }
 }
 
 .ActiveLayerItem {
   @include flex-between;
-  padding: $spacing-md;
-  background: var(--background-paper);
+  padding: $spacing-sm $spacing-md;
+  background: var(--background-glass-hover);
   border: 1px solid var(--border-light);
   border-radius: $border-radius-md;
   cursor: grab;
   transition: all $transition-base;
+  align-items: center;
 
   &:hover {
     box-shadow: var(--shadow-sm);
     border-color: var(--border-medium);
+    background: var(--background-glass-active);
   }
 
   &:active {
     cursor: grabbing;
   }
+}
 
-  span {
-    color: var(--text-primary);
-    font-size: $font-size-base;
+.LayerItemLeft {
+  display: flex;
+  align-items: center;
+  gap: $spacing-xs;
+  flex: 1;
+  min-width: 0;
+  
+  .LayerTitle {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 }
 
 .LayerControls {
   @include flex-center;
-  gap: $spacing-md;
+  gap: $spacing-xs;
+  flex-shrink: 0;
 }
 
-.CheckboxLabel {
-  @include flex-center;
-  gap: $spacing-xs;
-  cursor: pointer;
-  user-select: none;
-
-  input[type='checkbox'] {
-    cursor: pointer;
+.VisibilityButton,
+.RemoveButton {
+  @include button-reset;
+  padding: $spacing-xs;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: $border-radius-sm;
+  transition: all $transition-base;
+  
+  .material-icons {
+    font-size: 18px;
   }
+}
 
-  span {
-    font-size: $font-size-sm;
-    color: var(--text-secondary);
+.VisibilityButton {
+  color: var(--text-secondary);
+  
+  &:hover {
+    background: var(--background-glass);
+    color: var(--text-primary);
   }
 }
 
 .RemoveButton {
-  @include button-reset;
-  padding: $spacing-xs $spacing-sm;
-  background: transparent;
-  color: var(--error);
-  border: 1px solid var(--error);
-  border-radius: $border-radius-sm;
-  font-size: $font-size-sm;
-  font-weight: $font-weight-medium;
-  transition: all $transition-base;
-
+  color: var(--text-secondary);
+  
   &:hover {
     background: var(--error);
-    color: var(--text-inverse);
+    color: white;
   }
 }

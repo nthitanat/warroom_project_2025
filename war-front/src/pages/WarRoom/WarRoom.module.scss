@@ -7,6 +7,7 @@
   @include flex-column;
   gap: $spacing-2xl;
   position: relative;
+  @include page-transition-fade;
   
   &::before {
     content: '';

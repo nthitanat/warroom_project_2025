@@ -1,6 +1,6 @@
 // Color Palette Variables - Dark Blue Glassmorphism Theme
 :root {
-  /* Primary Colors - Deep Blue Scale */
+  /* Primary Colors - Dark Blue Scale */
   --primary-50: #e3f2fd;
   --primary-100: #bbdefb;
   --primary-200: #90caf9;
@@ -11,24 +11,28 @@
   --primary-700: #1976d2;
   --primary-800: #1565c0;
   --primary-900: #0d47a1;
+  --primary-dark: rgba(21, 101, 192, 0.8);
   
   /* Primary RGB values for transparency */
   --primary-500-rgb: 33, 150, 243;
+  --primary-dark-rgb: 21, 101, 192;
 
-  /* Secondary Colors - Cyan/Teal Scale */
-  --secondary-50: #e0f7fa;
-  --secondary-100: #b2ebf2;
-  --secondary-200: #80deea;
-  --secondary-300: #4dd0e1;
-  --secondary-400: #26c6da;
-  --secondary-500: #00bcd4;
-  --secondary-600: #00acc1;
-  --secondary-700: #0097a7;
-  --secondary-800: #00838f;
-  --secondary-900: #006064;
+  /* Secondary Colors - Purple Scale */
+  --secondary-50: #f3e5f5;
+  --secondary-100: #e1bee7;
+  --secondary-200: #ce93d8;
+  --secondary-300: #ba68c8;
+  --secondary-400: #ab47bc;
+  --secondary-500: #9c27b0;
+  --secondary-600: #8e24aa;
+  --secondary-700: #7b1fa2;
+  --secondary-800: #6a1b9a;
+  --secondary-900: #4a148c;
+  --secondary-dark: rgba(156, 39, 176, 0.6);
   
   /* Secondary RGB values for transparency */
-  --secondary-500-rgb: 0, 188, 212;
+  --secondary-500-rgb: 156, 39, 176;
+  --secondary-dark-rgb: 156, 39, 176;
 
   /* Accent Color - Electric Blue */
   --accent-primary: #00d4ff;
@@ -53,18 +57,18 @@
   --error: #ff5252;
   --info: #40c4ff;
 
-  // Background Colors - Dark Blue with Glassmorphism
-  --background-default: #0a1929;
-  --background-paper: rgba(15, 30, 50, 0.7);
-  --background-overlay: rgba(10, 25, 41, 0.8);
+  // Background Colors - Dark Theme
+  --background-default: #0a0e27;
+  --background-paper: rgba(15, 20, 45, 0.8);
+  --background-overlay: rgba(10, 14, 39, 0.9);
   --background-glass: rgba(255, 255, 255, 0.05);
   --background-glass-hover: rgba(255, 255, 255, 0.08);
   --background-glass-active: rgba(255, 255, 255, 0.12);
   
   /* Background RGB values for transparency */
-  --background-default-rgb: 10, 25, 41;
-  --background-paper-rgb: 15, 30, 50;
-  --background-dark: #050d18;
+  --background-default-rgb: 10, 14, 39;
+  --background-paper-rgb: 15, 20, 45;
+  --background-dark: #050714;
 
   // Glassmorphism specific
   --glass-bg: rgba(255, 255, 255, 0.05);
@@ -94,9 +98,10 @@
   --shadow-glow-strong: 0 0 30px rgba(0, 212, 255, 0.5);
 
   // Gradient backgrounds
-  --gradient-primary: linear-gradient(135deg, #1e3a8a 0%, #0a1929 100%);
-  --gradient-secondary: linear-gradient(135deg, #0c4a6e 0%, #0a1929 100%);
-  --gradient-accent: linear-gradient(135deg, #00d4ff 0%, #0088ff 100%);
+  --gradient-primary: linear-gradient(135deg, #0a0e27 0%, #1a1f3a 100%);
+  --gradient-secondary: linear-gradient(135deg, #1565c0 0%, #9c27b0 100%);
+  --gradient-hero: linear-gradient(135deg, rgba(21, 101, 192, 0.95) 0%, rgba(156, 39, 176, 0.85) 100%);
+  --gradient-accent: linear-gradient(135deg, #1e88e5 0%, #ab47bc 100%);
   --gradient-glass: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
 }
 

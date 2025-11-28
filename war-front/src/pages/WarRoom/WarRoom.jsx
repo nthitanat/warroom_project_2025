@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import useWarRoom from './useWarRoom';
 import WarRoomHandler from './WarRoomHandler';
 import WarRoomMainContent from '../../components/warRoom/WarRoomMainContent';
+import { LoadingIndicator } from '../../components/common';
 import styles from './WarRoom.module.scss';
 
 export default function WarRoom() {
@@ -14,11 +15,7 @@ export default function WarRoom() {
   }, []);
 
   if (stateWarRoom.loading) {
-    return (
-      <div className={styles.Container}>
-        <div className={styles.Loading}>Loading War Room data...</div>
-      </div>
-    );
+    return <LoadingIndicator message="Loading War Room data..." />;
   }
 
   return (

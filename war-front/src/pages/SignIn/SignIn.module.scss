@@ -6,6 +6,7 @@
   padding: $spacing-lg;
   background: var(--gradient-primary);
   position: relative;
+  @include page-transition-fade;
   
   &::before {
     content: '';

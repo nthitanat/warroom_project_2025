@@ -3,6 +3,7 @@ import useLessons from './useLessons';
 import LessonsHandler from './LessonsHandler';
 import { getLessonThumbnail, getAuthorAvatar } from '../../api/lessonsService';
 import VideoModal from '../../components/lesson/VideoModal';
+import { LoadingIndicator } from '../../components/common';
 import styles from './Lessons.module.scss';
 
 export default function Lessons() {

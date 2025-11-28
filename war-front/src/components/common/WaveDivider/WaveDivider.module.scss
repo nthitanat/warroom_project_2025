@@ -1,0 +1,60 @@
+@import '../../../styles/main.scss';
+
+.WaveContainer {
+  position: absolute;
+  width: 100%;
+  overflow: hidden;
+  line-height: 0;
+  left: 0;
+  z-index: 1;
+}
+
+.Wave {
+  position: relative;
+  display: block;
+  width: calc(100% + 1.3px);
+  height: 120px;
+
+  @include media-down($breakpoint-md) {
+    height: 80px;
+  }
+
+  @include media-down($breakpoint-sm) {
+    height: 60px;
+  }
+}
+
+// Position variants
+.top {
+  top: 0;
+  transform: rotate(180deg);
+}
+
+.bottom {
+  bottom: 0;
+}
+
+// Color variants
+.blue {
+  path {
+    fill: var(--wave-blue);
+  }
+}
+
+.lightBlue {
+  path {
+    fill: var(--wave-light-blue);
+  }
+}
+
+.white {
+  path {
+    fill: #ffffff;
+  }
+}
+
+.gradient {
+  path {
+    fill: url(#waveGradient);
+  }
+}

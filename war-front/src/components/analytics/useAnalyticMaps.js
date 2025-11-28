@@ -8,6 +8,7 @@ const useAnalyticMaps = (provinces) => {
     mapStyle: 'street',
     orderedLayers: [],
     activeLayers: {},
+    layersPanelOpen: true,
   });
 
   const setAnalyticMaps = (field, value) => {

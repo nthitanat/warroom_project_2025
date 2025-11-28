@@ -192,7 +192,7 @@ export default function AnalyticMaps({ provinces }) {
         <input
           type="text"
           className={styles.SearchInput}
-          placeholder='Search for a province or "lat, lng"'
+          placeholder='Search for any place, address, or "lat, lng"'
           value={stateAnalyticMaps.searchValue}
           onChange={(e) => setAnalyticMaps('searchValue', e.target.value)}
           onKeyPress={(e) => e.key === 'Enter' && handlers.handleSearch()}
@@ -219,73 +219,110 @@ export default function AnalyticMaps({ provinces }) {
             Satellite
           </button>
         </div>
-      </div>
 
-      <div className={styles.LayersPanel}>
-        <div className={styles.LayerSection}>
-          <strong>Available Layers</strong>
-          <div className={styles.LayerList}>
-            {availableLayers.map((id) => {
-              const spec = layerById(id);
-              return (
-                <div key={id} className={styles.LayerItem}>
-                  <span>{spec.title}</span>
-                  <button
-                    className={styles.AddButton}
-                    onClick={() => handlers.handleAddLayer(id)}
-                  >
-                    Add
-                  </button>
-                </div>
-              );
-            })}
+        <button 
+          className={styles.LayersToggleButton}
+          onClick={() => setAnalyticMaps('layersPanelOpen', !stateAnalyticMaps.layersPanelOpen)}
+          title={stateAnalyticMaps.layersPanelOpen ? 'Hide layers' : 'Show layers'}
+        >
+          <span className="material-icons">
+            {stateAnalyticMaps.layersPanelOpen ? 'expand_more' : 'layers'}
+          </span>
+        </button>
+
+        <div className={`${styles.LayersPanel} ${!stateAnalyticMaps.layersPanelOpen ? styles.Hidden : ''}`}>
+          <div className={styles.LayersPanelHeader}>
+            <span className="material-icons">layers</span>
+            <strong>Layers</strong>
           </div>
-        </div>
 
-        <div className={styles.LayerSection}>
-          <strong>Active Layers</strong>
-          <DragDropContext onDragEnd={handlers.onDragEnd}>
-            <Droppable droppableId="layers-droppable">
-              {(provided) => (
-                <div {...provided.droppableProps} ref={provided.innerRef} className={styles.LayerList}>
-                  {stateAnalyticMaps.orderedLayers.map((id, index) => {
+          <div className={styles.LayersSections}>
+            <div className={styles.LayerSection}>
+              <div className={styles.SectionLabel}>
+                <span className="material-icons">visibility</span>
+                Active Layers
+              </div>
+              <DragDropContext onDragEnd={handlers.onDragEnd}>
+                <Droppable droppableId="layers-droppable">
+                  {(provided) => (
+                    <div {...provided.droppableProps} ref={provided.innerRef} className={styles.LayerList}>
+                      {stateAnalyticMaps.orderedLayers.length === 0 ? (
+                        <div className={styles.EmptyMessage}>No active layers</div>
+                      ) : (
+                        stateAnalyticMaps.orderedLayers.map((id, index) => {
+                          const spec = layerById(id);
+                          return (
+                            <Draggable key={id} draggableId={id} index={index}>
+                              {(drag) => (
+                                <div
+                                  ref={drag.innerRef}
+                                  {...drag.draggableProps}
+                                  {...drag.dragHandleProps}
+                                  className={styles.ActiveLayerItem}
+                                >
+                                  <div className={styles.LayerItemLeft}>
+                                    <span className="material-icons" style={{fontSize: '16px', opacity: 0.5}}>drag_indicator</span>
+                                    <span className={styles.LayerTitle}>{spec.title}</span>
+                                  </div>
+                                  <div className={styles.LayerControls}>
+                                    <button
+                                      className={styles.VisibilityButton}
+                                      onClick={() => handlers.handleToggleVisibility(id)}
+                                      title={stateAnalyticMaps.activeLayers[id] ? 'Hide layer' : 'Show layer'}
+                                    >
+                                      <span className="material-icons">
+                                        {stateAnalyticMaps.activeLayers[id] ? 'visibility' : 'visibility_off'}
+                                      </span>
+                                    </button>
+                                    <button
+                                      className={styles.RemoveButton}
+                                      onClick={() => handlers.handleRemoveLayer(id)}
+                                      title="Remove layer"
+                                    >
+                                      <span className="material-icons">close</span>
+                                    </button>
+                                  </div>
+                                </div>
+                              )}
+                            </Draggable>
+                          );
+                        })
+                      )}
+                      {provided.placeholder}
+                    </div>
+                  )}
+                </Droppable>
+              </DragDropContext>
+            </div>
+
+            <div className={styles.LayerSection}>
+              <div className={styles.SectionLabel}>
+                <span className="material-icons">add_circle_outline</span>
+                Available Layers
+              </div>
+              <div className={styles.LayerList}>
+                {availableLayers.length === 0 ? (
+                  <div className={styles.EmptyMessage}>All layers added</div>
+                ) : (
+                  availableLayers.map((id) => {
                     const spec = layerById(id);
                     return (
-                      <Draggable key={id} draggableId={id} index={index}>
-                        {(drag) => (
-                          <div
-                            ref={drag.innerRef}
-                            {...drag.draggableProps}
-                            {...drag.dragHandleProps}
-                            className={styles.ActiveLayerItem}
-                          >
-                            <span>{spec.title}</span>
-                            <div className={styles.LayerControls}>
-                              <label className={styles.CheckboxLabel}>
-                                <input
-                                  type="checkbox"
-                                  checked={!!stateAnalyticMaps.activeLayers[id]}
-                                  onChange={() => handlers.handleToggleVisibility(id)}
-                                />
-                                <span>Visible</span>
-                              </label>
-                              <button
-                                className={styles.RemoveButton}
-                                onClick={() => handlers.handleRemoveLayer(id)}
-                              >
-                                Remove
-                              </button>
-                            </div>
-                          </div>
-                        )}
-                      </Draggable>
+                      <div key={id} className={styles.LayerItem}>
+                        <span className={styles.LayerTitle}>{spec.title}</span>
+                        <button
+                          className={styles.AddButton}
+                          onClick={() => handlers.handleAddLayer(id)}
+                          title="Add layer"
+                        >
+                          <span className="material-icons">add</span>
+                        </button>
+                      </div>
                     );
-                  })}
-                  {provided.placeholder}
-                </div>
-              )}
-            </Droppable>
-          </DragDropContext>
+                  })
+                )}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>

@@ -1,9 +1,14 @@
-// Import colors
+// Import Google Fonts - Professional Inter
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap');
+
+// Import colors and animations
 @import './colors.scss';
+@import './animations.scss';
 
 // Typography
 $font-family-primary: 'Chula-Fonts', -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
 $font-family-secondary: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+$font-family-hero: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
 
 // Font sizes
 $font-size-xs: 0.625rem;   // 10px
@@ -16,12 +21,19 @@ $font-size-2xl: 1.5rem;    // 24px
 $font-size-3xl: 2.25rem;   // 36px
 $font-size-4xl: 2.875rem;  // 46px
 
+// Hero-specific larger font sizes
+$font-size-hero-title: 4.5rem;      // 72px - Main hero title
+$font-size-hero-subtitle: 2rem;     // 32px - Hero subtitle
+$font-size-hero-description: 1.25rem; // 20px - Hero description
+
 // Font weights
 $font-weight-light: 300;
 $font-weight-normal: 400;
 $font-weight-medium: 500;
 $font-weight-semibold: 600;
 $font-weight-bold: 700;
+$font-weight-extrabold: 800;
+$font-weight-black: 900;
 
 // Spacing
 $spacing-xs: 0.25rem;   // 4px
@@ -59,6 +71,11 @@ $z-index-modal-backdrop: 1040;
 $z-index-modal: 1050;
 $z-index-popover: 1060;
 $z-index-tooltip: 1070;
+
+// Wave colors
+$wave-blue: #2196F3;
+$wave-light-blue: #64B5F6;
+$wave-white: #ffffff;
 
 // Mixins
 @mixin flex-center {
@@ -224,34 +241,7 @@ $z-index-tooltip: 1070;
   }
 }
 
-// Animation mixins
-@mixin fade-in($duration: $transition-base) {
-  animation: fadeIn $duration;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-@mixin slide-up($duration: $transition-base) {
-  animation: slideUp $duration;
-}
-
-@keyframes slideUp {
-  from {
-    transform: translateY(20px);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0);
-    opacity: 1;
-  }
-}
+// Animation mixins (imported from animations.scss)
 
 // Global reset
 * {

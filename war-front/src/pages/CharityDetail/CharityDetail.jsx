@@ -4,6 +4,7 @@ import useCharityDetail from './useCharityDetail';
 import CharityDetailHandler from './CharityDetailHandler';
 import Slide from '../../components/charities/Slide/Slide';
 import DonateModal from '../../components/charities/DonateModal/DonateModal';
+import { LoadingIndicator } from '../../components/common';
 import styles from './CharityDetail.module.scss';
 
 export default function CharityDetail() {
@@ -28,11 +29,7 @@ export default function CharityDetail() {
   };
 
   if (stateCharityDetail.loading) {
-    return (
-      <div className={styles.Container}>
-        <div className={styles.Loading}>Loading charity details...</div>
-      </div>
-    );
+    return <LoadingIndicator message="Loading charity details..." />;
   }
 
   if (stateCharityDetail.error) {

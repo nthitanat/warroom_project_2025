@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import AnalyticMaps from '../../components/analytics/AnalyticMaps';
 import { fetchAnalyticsData } from '../../api/analyticsService';
+import { LoadingIndicator } from '../../components/common';
 import styles from './Analytics.module.scss';
 
 export default function Analytics() {
@@ -24,7 +25,7 @@ export default function Analytics() {
   }, []);
 
   if (loading) {
-    return <div className={styles.LoadingContainer}>Loading analytics data...</div>;
+    return <LoadingIndicator message="Loading analytics data..." />;
   }
 
   if (error) {
@@ -33,7 +34,6 @@ export default function Analytics() {
 
   return (
     <div className={styles.Container}>
-      <h1 className={styles.Title}>Analytics Dashboard</h1>
       <AnalyticMaps provinces={provinces} />
     </div>
   );

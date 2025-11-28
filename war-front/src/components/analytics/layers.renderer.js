@@ -6,12 +6,13 @@ export const labelLayerId = (spec) => `${spec.id}-labels`;
 const bound = new Set();
 
 export const ensureVectorSource = (map, spec) => {
-  if (!map.getSource(spec.sourceId)) {
+  const existingSource = map.getSource(spec.sourceId);
+  if (!existingSource) {
     map.addSource(spec.sourceId, {
       type: 'vector',
       tiles: spec.tiles,
       minzoom: 0,
-      maxzoom: 14
+      maxzoom: 14  // Actual tile availability - tiles exist up to zoom 14
     });
   }
 };
@@ -21,7 +22,7 @@ export const removeLayerCompletely = (map, spec) => {
   const lblId = labelLayerId(spec);
   if (map.getLayer(lblId)) map.removeLayer(lblId);
   if (map.getLayer(baseId)) map.removeLayer(baseId);
-  if (map.getSource(spec.sourceId)) map.removeSource(spec.sourceId);
+  // Don't remove source - keep it for reuse
   unbindInteractivity(map, spec);
 };
 
@@ -39,12 +40,17 @@ export const addOrReplaceBase = (map, spec) => {
     source: spec.sourceId,
     'source-layer': spec.sourceLayer,
     minzoom: spec.minzoom ?? 0,
-    maxzoom: spec.maxzoom ?? 24
+    maxzoom: spec.maxzoom ?? 24,
+    layout: {
+      visibility: 'visible',
+      ...(spec.layout || {})
+    }
   };
-  if (spec.layout) layer.layout = spec.layout;
   if (spec.paint)  layer.paint  = spec.paint;
 
   map.addLayer(layer);
+  
+  console.log(`Added layer ${id} with minzoom: ${layer.minzoom}, maxzoom: ${layer.maxzoom}`);
 };
 
 export const addOrReplaceLabel = (map, spec) => {
@@ -71,8 +77,8 @@ export const addOrReplaceLabel = (map, spec) => {
       'symbol-placement': placement,
       'text-field': ['get', field],
       'text-size': ['interpolate', ['linear'], ['zoom'], 6, 12, 12, 14, 16, 18],
-      'text-allow-overlap': true,
-      'text-ignore-placement': true,
+      'text-allow-overlap': false,
+      'text-ignore-placement': false,
       'symbol-avoid-edges': false,
       ...(placement === 'line'
         ? {
@@ -83,7 +89,7 @@ export const addOrReplaceLabel = (map, spec) => {
             'text-offset': [0, 0.8],
             'text-anchor': 'top'
           }),
-      'text-font': ['Open Sans Regular', 'Arial Unicode MS Regular']
+      'text-font': ['Noto Sans Regular']
     },
     paint: {
       'text-color': '#333',
@@ -91,6 +97,8 @@ export const addOrReplaceLabel = (map, spec) => {
       'text-halo-width': 1.5
     }
   });
+  
+  console.log(`Added label ${id} with minzoom: ${base.minzoom}, maxzoom: ${base.maxzoom}`);
 };
 
 export const buildPopupHTML = (props = {}, fields, customFormatter) => {
