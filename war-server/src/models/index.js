@@ -6,6 +6,7 @@
 const User = require('./User');
 const Charity = require('./Charity');
 const CharitySlide = require('./CharitySlide');
+const CharityItem = require('./CharityItem');
 const Lesson = require('./Lesson');
 const LessonPlaylist = require('./LessonPlaylist');
 const Warroom = require('./Warroom');
@@ -21,6 +22,7 @@ async function initializeTables() {
     await User.ensureTable();
     await Charity.ensureTable();
     await CharitySlide.ensureTable();
+    await CharityItem.ensureTable();
     await LessonPlaylist.ensureTable();
     await Lesson.ensureTable();
     await Warroom.ensureTable();
@@ -37,6 +39,7 @@ module.exports = {
   User,
   Charity,
   CharitySlide,
+  CharityItem,
   Lesson,
   LessonPlaylist,
   Warroom

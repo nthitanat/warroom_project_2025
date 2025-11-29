@@ -126,7 +126,7 @@ export default function SlideModal({
         <div className={styles.ModalHeader}>
           <h2 className={styles.ModalTitle}>
             <span className="material-icons">collections</span>
-            Manage Slides - {charity?.title}
+            จัดการสไลด์ - {charity?.title}
           </h2>
           <button onClick={handleClose} className={styles.CloseButton}>
             <span className="material-icons">close</span>
@@ -140,54 +140,54 @@ export default function SlideModal({
               <span className="material-icons">
                 {editingSlide ? 'edit' : 'add_photo_alternate'}
               </span>
-              {editingSlide ? 'Edit Slide' : 'Add New Slide'}
+              {editingSlide ? 'แก้ไขสไลด์' : 'เพิ่มสไลด์ใหม่'}
             </h3>
 
             <form onSubmit={handleAddSlide} className={styles.Form}>
               <div className={styles.FormRow}>
                 <div className={styles.FormGroup}>
-                  <label className={styles.Label}>Description</label>
+                  <label className={styles.Label}>รายละเอียด</label>
                   <input
                     type="text"
                     name="description"
                     value={slideForm.description}
                     onChange={handleFormChange}
-                    placeholder="Enter slide description (optional)"
+                    placeholder="กรอกรายละเอียดสไลด์ (ไม่บังคับ)"
                     className={styles.Input}
                   />
                 </div>
 
                 <div className={styles.FormGroup}>
-                  <label className={styles.Label}>Display Order</label>
+                  <label className={styles.Label}>ลำดับการแสดง</label>
                   <input
                     type="number"
                     name="display_order"
                     value={slideForm.display_order}
                     onChange={handleFormChange}
-                    placeholder="Auto"
+                    placeholder="อัตโนมัติ"
                     min="1"
                     className={styles.Input}
                   />
-                  <span className={styles.HelpText}>Leave empty for auto-increment</span>
+                  <span className={styles.HelpText}>ปล่อยว่างเพื่อเพิ่มลำดับอัตโนมัติ</span>
                 </div>
               </div>
 
               <div className={styles.FormActions}>
                 {editingSlide && (
                   <button type="button" onClick={handleCancelEdit} className={styles.CancelButton}>
-                    Cancel
+                    ยกเลิก
                   </button>
                 )}
                 <button type="submit" disabled={saving} className={styles.SubmitButton}>
                   {saving ? (
                     <>
                       <span className="material-icons">hourglass_empty</span>
-                      <span>Saving...</span>
+                      <span>กำลังบันทึก...</span>
                     </>
                   ) : (
                     <>
                       <span className="material-icons">{editingSlide ? 'save' : 'add'}</span>
-                      <span>{editingSlide ? 'Update Slide' : 'Add Slide'}</span>
+                      <span>{editingSlide ? 'อัพเดตสไลด์' : 'เพิ่มสไลด์'}</span>
                     </>
                   )}
                 </button>
@@ -199,13 +199,13 @@ export default function SlideModal({
           <div className={styles.SlidesSection}>
             <h3 className={styles.SectionTitle}>
               <span className="material-icons">view_carousel</span>
-              Slides ({slides?.length || 0})
+              สไลด์ ({slides?.length || 0})
             </h3>
 
             {!slides || slides.length === 0 ? (
               <div className={styles.EmptyState}>
                 <span className="material-icons">image_not_supported</span>
-                <p>No slides yet. Add your first slide above.</p>
+                <p>ยังไม่มีสไลด์ เพิ่มสไลด์แรกของคุณด้านบน</p>
               </div>
             ) : (
               <div className={styles.SlidesGrid}>
@@ -223,20 +223,20 @@ export default function SlideModal({
                     </div>
                     <div className={styles.SlideInfo}>
                       <p className={styles.SlideDescription}>
-                        {slide.description || 'No description'}
+                        {slide.description || 'ไม่มีรายละเอียด'}
                       </p>
                       <div className={styles.SlideActions}>
                         <button
                           onClick={() => handleEditSlide(slide)}
                           className={`${styles.SlideActionButton} ${styles.edit}`}
-                          title="Edit"
+                          title="แก้ไข"
                         >
                           <span className="material-icons">edit</span>
                         </button>
                         <button
                           onClick={() => handleDeleteClick(slide)}
                           className={`${styles.SlideActionButton} ${styles.delete}`}
-                          title="Delete"
+                          title="ลบ"
                         >
                           <span className="material-icons">delete</span>
                         </button>
@@ -254,13 +254,13 @@ export default function SlideModal({
           <div className={styles.DeleteOverlay}>
             <div className={styles.DeleteConfirm}>
               <span className="material-icons">warning</span>
-              <p>Delete this slide?</p>
+              <p>ลบสไลด์นี้?</p>
               <div className={styles.DeleteActions}>
                 <button onClick={() => setDeleteConfirm(null)} className={styles.CancelButton}>
-                  Cancel
+                  ยกเลิก
                 </button>
                 <button onClick={handleConfirmDelete} disabled={deleting} className={styles.DeleteButton}>
-                  {deleting ? 'Deleting...' : 'Delete'}
+                  {deleting ? 'กำลังลบ...' : 'ลบ'}
                 </button>
               </div>
             </div>

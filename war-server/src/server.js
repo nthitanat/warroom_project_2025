@@ -66,6 +66,7 @@ app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/admin', require('./routes/adminRoutes'));
 app.use('/api/users', require('./routes/userRoutes'));
 app.use('/api/charities', require('./routes/charityRoutes'));
+app.use('/api/charity-items', require('./routes/charityItemRoutes'));
 app.use('/api/lessons', require('./routes/lessonRoutes'));
 app.use('/api/warroom', require('./routes/warroomRoutes'));
 app.use('/api/analytics', require('./routes/analyticsRoutes'));

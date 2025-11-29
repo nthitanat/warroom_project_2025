@@ -6,6 +6,7 @@ import { getCharityThumbnail } from '../../api/charitiesService';
 import { useAuth } from '../../context/AuthContext';
 import CharityModal from '../../components/dashboard/CharityModal/CharityModal';
 import SlideModal from '../../components/dashboard/SlideModal/SlideModal';
+import ItemModal from '../../components/dashboard/ItemModal/ItemModal';
 import ConfirmModal from '../../components/dashboard/ConfirmModal/ConfirmModal';
 import { LoadingIndicator } from '../../components/common';
 import styles from './CharityDashboard.module.scss';
@@ -54,7 +55,7 @@ export default function CharityDashboard() {
 
   // Auth loading state
   if (authLoading) {
-    return <LoadingIndicator message="Checking authentication..." />;
+    return <LoadingIndicator message="กำลังตรวจสอบสิทธิ์..." />;
   }
 
   // Auth check - redirect if not admin
@@ -68,7 +69,7 @@ export default function CharityDashboard() {
 
   // Data loading state
   if (stateCharityDashboard.loading) {
-    return <LoadingIndicator message="Loading charities..." />;
+    return <LoadingIndicator message="กำลังโหลดข้อมูลการกุศล..." />;
   }
 
   // Error state
@@ -109,19 +110,19 @@ export default function CharityDashboard() {
       {/* Back Button */}
       <button onClick={() => handlers.handleNavigate('/')} className={styles.BackButton}>
         <span className="material-icons">arrow_back</span>
-        <span>Back to Home</span>
+        <span>กลับหน้าหลัก</span>
       </button>
 
       {/* Header */}
       <div className={styles.Header}>
         <div className={styles.HeaderLeft}>
-          <h1 className={styles.Title}>Charity Dashboard</h1>
-          <p className={styles.Subtitle}>Manage your charity campaigns and slides</p>
+          <h1 className={styles.Title}>แดชบอร์ดการกุศล</h1>
+          <p className={styles.Subtitle}>จัดการแคมเปญการกุศลและสไลด์ของคุณ</p>
         </div>
         <div className={styles.HeaderActions}>
           <button onClick={() => handlers.handleOpenCharityModal()} className={styles.AddButton}>
             <span className="material-icons">add</span>
-            <span>Add Charity</span>
+            <span>เพิ่มการกุศล</span>
           </button>
         </div>
       </div>
@@ -130,7 +131,7 @@ export default function CharityDashboard() {
       <div className={styles.StatsGrid}>
         <div className={styles.StatCard}>
           <div className={styles.StatHeader}>
-            <span className={styles.StatLabel}>Total Charities</span>
+            <span className={styles.StatLabel}>การกุศลทั้งหมด</span>
             <div className={`${styles.StatIcon} ${styles.total}`}>
               <span className="material-icons">volunteer_activism</span>
             </div>
@@ -139,7 +140,7 @@ export default function CharityDashboard() {
         </div>
         <div className={styles.StatCard}>
           <div className={styles.StatHeader}>
-            <span className={styles.StatLabel}>Active</span>
+            <span className={styles.StatLabel}>กำลังดำเนินการ</span>
             <div className={`${styles.StatIcon} ${styles.active}`}>
               <span className="material-icons">play_circle</span>
             </div>
@@ -148,7 +149,7 @@ export default function CharityDashboard() {
         </div>
         <div className={styles.StatCard}>
           <div className={styles.StatHeader}>
-            <span className={styles.StatLabel}>Paused</span>
+            <span className={styles.StatLabel}>หยุดชั่วคราว</span>
             <div className={`${styles.StatIcon} ${styles.paused}`}>
               <span className="material-icons">pause_circle</span>
             </div>
@@ -157,7 +158,7 @@ export default function CharityDashboard() {
         </div>
         <div className={styles.StatCard}>
           <div className={styles.StatHeader}>
-            <span className={styles.StatLabel}>Completed</span>
+            <span className={styles.StatLabel}>เสร็จสิ้นแล้ว</span>
             <div className={`${styles.StatIcon} ${styles.completed}`}>
               <span className="material-icons">check_circle</span>
             </div>
@@ -172,7 +173,7 @@ export default function CharityDashboard() {
           <span className={`material-icons ${styles.SearchIcon}`}>search</span>
           <input
             type="text"
-            placeholder="Search charities..."
+            placeholder="ค้นหาการกุศล..."
             value={stateCharityDashboard.searchQuery}
             onChange={(e) => handlers.handleSearchChange(e.target.value)}
             className={styles.SearchInput}
@@ -183,10 +184,10 @@ export default function CharityDashboard() {
           onChange={(e) => handlers.handleStatusFilterChange(e.target.value)}
           className={styles.FilterSelect}
         >
-          <option value="">All Status</option>
-          <option value="active">Active</option>
-          <option value="paused">Paused</option>
-          <option value="completed">Completed</option>
+          <option value="">สถานะทั้งหมด</option>
+          <option value="active">กำลังดำเนินการ</option>
+          <option value="paused">หยุดชั่วคราว</option>
+          <option value="completed">เสร็จสิ้นแล้ว</option>
         </select>
       </div>
 
@@ -195,26 +196,26 @@ export default function CharityDashboard() {
         <div className={styles.TableHeader}>
           <h2 className={styles.TableTitle}>
             <span className="material-icons">list</span>
-            <span>Charities List</span>
+            <span>รายการการกุศล</span>
           </h2>
           <span className={styles.TableCount}>
-            {filteredCharities.length} of {stateCharityDashboard.charities.length} charities
+            {filteredCharities.length} จาก {stateCharityDashboard.charities.length} การกุศล
           </span>
         </div>
 
         {filteredCharities.length === 0 ? (
           <div className={styles.EmptyState}>
             <span className="material-icons">inbox</span>
-            <h3 className={styles.EmptyTitle}>No charities found</h3>
+            <h3 className={styles.EmptyTitle}>ไม่พบการกุศล</h3>
             <p className={styles.EmptyText}>
               {stateCharityDashboard.searchQuery || stateCharityDashboard.statusFilter
-                ? 'Try adjusting your search or filter criteria'
-                : 'Get started by adding your first charity campaign'}
+                ? 'ลองปรับคำค้นหาหรือตัวกรองของคุณ'
+                : 'เริ่มต้นโดยเพิ่มแคมเปญการกุศลแรกของคุณ'}
             </p>
             {!stateCharityDashboard.searchQuery && !stateCharityDashboard.statusFilter && (
               <button onClick={() => handlers.handleOpenCharityModal()} className={styles.AddButton}>
                 <span className="material-icons">add</span>
-                <span>Add Charity</span>
+                <span>เพิ่มการกุศล</span>
               </button>
             )}
           </div>
@@ -223,11 +224,11 @@ export default function CharityDashboard() {
             <table className={styles.Table}>
               <thead>
                 <tr>
-                  <th>Charity</th>
-                  <th>Description</th>
-                  <th>Status</th>
-                  <th>Fund Progress</th>
-                  <th>Actions</th>
+                  <th>การกุศล</th>
+                  <th>รายละเอียด</th>
+                  <th>สถานะ</th>
+                  <th>ความคืบหน้าเงินทุน</th>
+                  <th>การดำเนินการ</th>
                 </tr>
               </thead>
               <tbody>
@@ -254,7 +255,7 @@ export default function CharityDashboard() {
                     </td>
                     <td>
                       <p className={styles.CharityDescription}>
-                        {charity.description || 'No description'}
+                        {charity.description || 'ไม่มีรายละเอียด'}
                       </p>
                     </td>
                     <td>
@@ -283,28 +284,35 @@ export default function CharityDashboard() {
                         <button
                           onClick={() => handlers.handleNavigate(`/charity/${charity.id}`)}
                           className={`${styles.ActionButton} ${styles.view}`}
-                          title="View"
+                          title="ดู"
                         >
                           <span className="material-icons">visibility</span>
                         </button>
                         <button
                           onClick={() => handlers.handleOpenCharityModal(charity)}
                           className={`${styles.ActionButton} ${styles.edit}`}
-                          title="Edit"
+                          title="แก้ไข"
                         >
                           <span className="material-icons">edit</span>
                         </button>
                         <button
                           onClick={() => handlers.handleOpenSlideModal(charity)}
                           className={`${styles.ActionButton} ${styles.slides}`}
-                          title="Manage Slides"
+                          title="จัดการสไลด์"
                         >
                           <span className="material-icons">collections</span>
                         </button>
                         <button
+                          onClick={() => handlers.handleOpenItemModal(charity)}
+                          className={`${styles.ActionButton} ${styles.items}`}
+                          title="จัดการสิ่งของ"
+                        >
+                          <span className="material-icons">inventory_2</span>
+                        </button>
+                        <button
                           onClick={() => handlers.handleOpenDeleteModal(charity)}
                           className={`${styles.ActionButton} ${styles.delete}`}
-                          title="Delete"
+                          title="ลบ"
                         >
                           <span className="material-icons">delete</span>
                         </button>
@@ -339,13 +347,22 @@ export default function CharityDashboard() {
         saving={stateCharityDashboard.saving}
       />
 
+      {/* Item Modal */}
+      <ItemModal
+        open={stateCharityDashboard.itemModalOpen}
+        handleClose={handlers.handleCloseItemModal}
+        charity={stateCharityDashboard.selectedCharity}
+        onSaveItem={handlers.handleSaveItem}
+        saving={stateCharityDashboard.saving}
+      />
+
       {/* Delete Confirmation Modal */}
       <ConfirmModal
         open={stateCharityDashboard.deleteModalOpen}
         handleClose={handlers.handleCloseDeleteModal}
-        title="Delete Charity"
-        message={`Are you sure you want to delete "${stateCharityDashboard.selectedCharity?.title}"? This action cannot be undone.`}
-        confirmText="Delete"
+        title="ลบการกุศล"
+        message={`คุณแน่ใจหรือว่าต้องการลบ "${stateCharityDashboard.selectedCharity?.title}"? การดำเนินการนี้ไม่สามารถย้อนกลับได้`}
+        confirmText="ลบ"
         onConfirm={handlers.handleDeleteCharity}
         saving={stateCharityDashboard.saving}
         variant="danger"

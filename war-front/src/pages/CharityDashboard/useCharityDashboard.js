@@ -10,6 +10,7 @@ const useCharityDashboard = () => {
     error: null,
     charityModalOpen: false,
     slideModalOpen: false,
+    itemModalOpen: false,
     deleteModalOpen: false,
     deleteSlideModalOpen: false,
     isEditing: false,

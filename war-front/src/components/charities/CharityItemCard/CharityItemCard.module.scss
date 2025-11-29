@@ -1,0 +1,472 @@
+@import '../../../styles/main.scss';
+
+// Container
+.Container {
+  @include glass-card;
+  padding: $spacing-xl;
+  @include flex-column;
+  gap: $spacing-xl;
+  position: relative;
+  overflow: hidden;
+  
+  &::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    background: linear-gradient(90deg, var(--charity-heart), var(--charity-hope), var(--primary-500));
+  }
+}
+
+// Header
+.Header {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  
+  @include media-down($breakpoint-sm) {
+    flex-wrap: wrap;
+  }
+}
+
+.HeaderIcon {
+  width: 56px;
+  height: 56px;
+  @include flex-center;
+  background: linear-gradient(135deg, var(--charity-heart), var(--charity-hope));
+  border-radius: $border-radius-lg;
+  box-shadow: 0 4px 20px rgba(255, 64, 129, 0.3);
+  
+  .material-icons {
+    font-size: 28px;
+    color: white;
+    @include animate-pulse(2s);
+  }
+}
+
+.HeaderContent {
+  flex: 1;
+  
+  h2 {
+    font-size: $font-size-2xl;
+    font-weight: $font-weight-bold;
+    color: var(--text-primary);
+    margin: 0 0 $spacing-xs;
+  }
+}
+
+.HeaderSubtitle {
+  font-size: $font-size-sm;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.HeaderStats {
+  @include media-down($breakpoint-sm) {
+    width: 100%;
+    margin-top: $spacing-sm;
+  }
+}
+
+.StatPill {
+  @include flex-center;
+  gap: $spacing-xs;
+  padding: $spacing-sm $spacing-md;
+  background: rgba(124, 77, 255, 0.15);
+  border: 1px solid var(--charity-hope);
+  border-radius: $border-radius-full;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-bold;
+  color: var(--charity-hope);
+  
+  .material-icons {
+    font-size: 18px;
+  }
+}
+
+// Stats Bar
+.StatsBar {
+  display: flex;
+  gap: $spacing-md;
+  padding: $spacing-md;
+  background: var(--background-glass);
+  border-radius: $border-radius-lg;
+  border: 1px solid var(--border-light);
+  
+  @include media-down($breakpoint-sm) {
+    flex-direction: column;
+    gap: $spacing-sm;
+  }
+}
+
+.StatItem {
+  flex: 1;
+  @include flex-center;
+  gap: $spacing-xs;
+  padding: $spacing-sm $spacing-md;
+  border-radius: $border-radius-md;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  transition: all $transition-base;
+  
+  .material-icons {
+    font-size: 18px;
+  }
+  
+  &.waiting {
+    background: rgba(255, 183, 77, 0.1);
+    color: var(--status-paused);
+    
+    &:hover {
+      background: rgba(255, 183, 77, 0.2);
+    }
+  }
+  
+  &.progress {
+    background: rgba(33, 150, 243, 0.1);
+    color: var(--info);
+    
+    .material-icons {
+      animation: spin 2s linear infinite;
+    }
+    
+    &:hover {
+      background: rgba(33, 150, 243, 0.2);
+    }
+  }
+  
+  &.done {
+    background: rgba(102, 187, 106, 0.1);
+    color: var(--status-completed);
+    
+    &:hover {
+      background: rgba(102, 187, 106, 0.2);
+    }
+  }
+}
+
+@keyframes spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+// Items Grid
+.ItemsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: $spacing-lg;
+  
+  @include media-down($breakpoint-sm) {
+    grid-template-columns: 1fr;
+  }
+}
+
+// Empty State
+.EmptyState {
+  @include flex-center;
+  @include flex-column;
+  gap: $spacing-md;
+  padding: $spacing-2xl;
+  background: var(--background-glass);
+  border: 2px dashed var(--border-medium);
+  border-radius: $border-radius-lg;
+  text-align: center;
+  
+  .material-icons {
+    font-size: 48px;
+    color: var(--text-secondary);
+    opacity: 0.5;
+  }
+  
+  p {
+    font-size: $font-size-base;
+    color: var(--text-secondary);
+    margin: 0;
+  }
+}
+
+// Item Card
+.ItemCard {
+  display: flex;
+  gap: $spacing-md;
+  padding: $spacing-lg;
+  background: var(--background-glass);
+  border: 1px solid var(--border-light);
+  border-radius: $border-radius-xl;
+  transition: all $transition-base;
+  animation: fadeInUp 0.5s ease-out both;
+  
+  &:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-lg);
+    
+    .ItemIcon {
+      transform: scale(1.1) rotate(5deg);
+    }
+  }
+  
+  &.pending {
+    border-left: 4px solid var(--status-paused);
+  }
+  
+  &.in_progress {
+    border-left: 4px solid var(--info);
+  }
+  
+  &.completed {
+    border-left: 4px solid var(--status-completed);
+    background: linear-gradient(135deg, var(--background-glass), rgba(102, 187, 106, 0.05));
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// Item Icon
+.ItemIconWrapper {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.ItemIcon {
+  width: 52px;
+  height: 52px;
+  @include flex-center;
+  border-radius: $border-radius-lg;
+  transition: all $transition-base;
+  
+  .material-icons {
+    font-size: 26px;
+  }
+  
+  &.pending {
+    background: rgba(255, 183, 77, 0.15);
+    color: var(--status-paused);
+  }
+  
+  &.in_progress {
+    background: rgba(33, 150, 243, 0.15);
+    color: var(--info);
+    
+    .material-icons {
+      animation: pulse 2s ease-in-out infinite;
+    }
+  }
+  
+  &.completed {
+    background: rgba(102, 187, 106, 0.15);
+    color: var(--status-completed);
+  }
+}
+
+@keyframes pulse {
+  0%, 100% { transform: scale(1); }
+  50% { transform: scale(1.1); }
+}
+
+.CompletedBadge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  width: 20px;
+  height: 20px;
+  @include flex-center;
+  background: var(--status-completed);
+  border-radius: $border-radius-full;
+  box-shadow: 0 2px 8px rgba(102, 187, 106, 0.4);
+  
+  .material-icons {
+    font-size: 12px;
+    color: white;
+  }
+}
+
+// Item Content
+.ItemContent {
+  flex: 1;
+  min-width: 0;
+  @include flex-column;
+  gap: $spacing-sm;
+}
+
+.ItemHeader {
+  @include flex-between;
+  align-items: flex-start;
+  gap: $spacing-sm;
+}
+
+.ItemName {
+  font-size: $font-size-base;
+  font-weight: $font-weight-semibold;
+  color: var(--text-primary);
+  margin: 0;
+  @include line-clamp(2);
+}
+
+.StatusEmoji {
+  font-size: $font-size-lg;
+  flex-shrink: 0;
+}
+
+// Quantity Section
+.QuantitySection {
+  padding: $spacing-sm 0;
+}
+
+.QuantityInfo {
+  @include flex-center;
+  gap: $spacing-sm;
+  justify-content: flex-start;
+}
+
+.CurrentQuantity,
+.NeededQuantity {
+  @include flex-center;
+  gap: $spacing-xs;
+  
+  .material-icons {
+    font-size: 16px;
+    color: var(--text-secondary);
+  }
+}
+
+.QuantityValue {
+  font-size: $font-size-base;
+  font-weight: $font-weight-bold;
+  color: var(--text-primary);
+}
+
+.QuantityDivider {
+  font-size: $font-size-lg;
+  color: var(--text-disabled);
+  font-weight: $font-weight-light;
+}
+
+// Progress Section
+.ProgressWrapper {
+  @include flex-column;
+  gap: $spacing-xs;
+}
+
+.ProgressBar {
+  height: 8px;
+  background: var(--background-glass-hover);
+  border-radius: $border-radius-full;
+  overflow: hidden;
+  position: relative;
+}
+
+.ProgressFill {
+  height: 100%;
+  border-radius: $border-radius-full;
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  
+  &.pending {
+    background: linear-gradient(90deg, #ff9800, #ffb74d);
+  }
+  
+  &.in_progress {
+    background: linear-gradient(90deg, #2196f3, #64b5f6);
+  }
+  
+  &.completed {
+    background: linear-gradient(90deg, #4caf50, #81c784);
+  }
+}
+
+.ProgressGlow {
+  position: absolute;
+  right: 0;
+  top: 0;
+  width: 20px;
+  height: 100%;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5));
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% { opacity: 0; }
+  50% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+.ProgressLabel {
+  @include flex-between;
+  align-items: center;
+}
+
+.ProgressPercent {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-bold;
+  
+  &.pending {
+    color: var(--status-paused);
+  }
+  
+  &.in_progress {
+    color: var(--info);
+  }
+  
+  &.completed {
+    color: var(--status-completed);
+  }
+}
+
+.StatusLabel {
+  @include flex-center;
+  gap: $spacing-xs;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  
+  .material-icons {
+    font-size: 14px;
+  }
+  
+  &.pending {
+    color: var(--status-paused);
+  }
+  
+  &.in_progress {
+    color: var(--info);
+    
+    .material-icons {
+      animation: spin 2s linear infinite;
+    }
+  }
+  
+  &.completed {
+    color: var(--status-completed);
+  }
+}
+
+// Call to Action
+.CallToAction {
+  @include flex-center;
+  gap: $spacing-sm;
+  padding: $spacing-md $spacing-lg;
+  background: linear-gradient(135deg, rgba(255, 64, 129, 0.1), rgba(124, 77, 255, 0.1));
+  border: 1px dashed var(--charity-heart);
+  border-radius: $border-radius-lg;
+  font-size: $font-size-base;
+  font-weight: $font-weight-medium;
+  color: var(--charity-heart);
+  text-align: center;
+  
+  .material-icons {
+    font-size: 20px;
+    @include animate-pulse(1.5s);
+  }
+}

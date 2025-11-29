@@ -65,7 +65,7 @@ export default function Slide({ items }) {
   }, [items]);
 
   if (!items || items.length === 0) {
-    return <div className={styles.Empty}>No images available</div>;
+    return <div className={styles.Empty}>ไม่มีรูปภาพ</div>;
   }
 
   const currentItem = items[stateSlide.currentIndex];
@@ -114,7 +114,7 @@ export default function Slide({ items }) {
 
       <div className={styles.SlideCard}>
         {!mediaUrl ? (
-          <div className={styles.Loading}>Loading...</div>
+          <div className={styles.Loading}>กำลังโหลด...</div>
         ) : isVideo ? (
           <div className={styles.MediaContainer}>
             <iframe

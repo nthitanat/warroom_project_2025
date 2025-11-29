@@ -50,8 +50,14 @@
 .MediaContainer {
   position: relative;
   width: 100%;
-  padding-bottom: 56.25%; // 16:9 aspect ratio
+  max-height: 400px;
+  padding-bottom: 50%; // Reduced from 56.25% (16:9) to ~2:1 ratio
   border-bottom: 1px solid var(--border-light);
+  
+  @media (max-width: 768px) {
+    padding-bottom: 56.25%;
+    max-height: 300px;
+  }
 }
 
 .Video {
@@ -65,20 +71,28 @@
 
 .Image {
   width: 100%;
-  aspect-ratio: 16 / 9;
+  max-height: 400px;
   object-fit: contain;
   display: block;
   border-bottom: 1px solid var(--border-light);
   background: var(--background-default);
+  
+  @media (max-width: 768px) {
+    max-height: 300px;
+  }
+  
+  @media (max-width: 480px) {
+    max-height: 220px;
+  }
 }
 
 .Description {
-  padding: $spacing-md;
+  padding: $spacing-sm $spacing-md;
 
   p {
     margin: 0;
-    font-size: $font-size-base;
+    font-size: $font-size-sm;
     color: var(--text-primary);
-    line-height: 1.6;
+    line-height: 1.5;
   }
 }

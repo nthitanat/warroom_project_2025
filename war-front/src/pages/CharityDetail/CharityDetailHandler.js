@@ -1,4 +1,4 @@
-import { getCharityById, getCharitySlides } from '../../api/charitiesService';
+import { getCharityById, getCharitySlides, getCharityItemsByCharityId } from '../../api/charitiesService';
 
 const CharityDetailHandler = (stateCharityDetail, setCharityDetail, setMultipleFields, charityId) => {
   const fetchCharityData = async () => {
@@ -76,6 +76,22 @@ const CharityDetailHandler = (stateCharityDetail, setCharityDetail, setMultipleF
     }
   };
 
+  const fetchCharityItems = async () => {
+    if (!charityId) return;
+
+    try {
+      const response = await getCharityItemsByCharityId(charityId);
+      if (response && response.data && response.data.items) {
+        setCharityDetail('charityItems', response.data.items);
+      } else {
+        setCharityDetail('charityItems', []);
+      }
+    } catch (error) {
+      console.error('Error fetching charity items:', error);
+      setCharityDetail('charityItems', []);
+    }
+  };
+
   const handleOpenModal = () => {
     setCharityDetail('modalOpen', true);
   };
@@ -87,6 +103,7 @@ const CharityDetailHandler = (stateCharityDetail, setCharityDetail, setMultipleF
   return {
     fetchCharityData,
     fetchCharitySlideData,
+    fetchCharityItems,
     handleOpenModal,
     handleCloseModal,
   };

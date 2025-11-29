@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { getAllCharities } from '../../api/charitiesService';
+import { getAllCharities, getCharityItemsByCharityId } from '../../api/charitiesService';
 
 const CharitiesHandler = (stateCharities, setCharities) => {
   const navigate = useNavigate();
@@ -13,6 +13,21 @@ const CharitiesHandler = (stateCharities, setCharities) => {
       setCharities('error', 'Failed to load charities');
     } finally {
       setCharities('loading', false);
+    }
+  };
+
+  const fetchFeaturedItems = async (charityId) => {
+    if (!charityId) return;
+    
+    setCharities('featuredItemsLoading', true);
+    try {
+      const response = await getCharityItemsByCharityId(charityId);
+      setCharities('featuredItems', response.data.items || []);
+    } catch (error) {
+      console.error('Error fetching featured items:', error);
+      setCharities('featuredItems', []);
+    } finally {
+      setCharities('featuredItemsLoading', false);
     }
   };
 
@@ -32,6 +47,7 @@ const CharitiesHandler = (stateCharities, setCharities) => {
 
   return {
     fetchCharitiesData,
+    fetchFeaturedItems,
     handleOpenModal,
     handleCloseModal,
     handleRedirectToCharity,

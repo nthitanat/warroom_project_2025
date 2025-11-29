@@ -49,7 +49,47 @@ REMOTE_DB_NAME="${PROD_DB_NAME:-war_room_db}"
 
 # Temp directories for comparison
 TEMP_DIR=$(mktemp -d)
-trap "rm -rf $TEMP_DIR" EXIT
+
+# SSH Control Master socket for connection reuse
+# Use short path to avoid Unix socket path length limit (~104 chars)
+SSH_CONTROL_DIR="/tmp/ssh_ctl_$$"
+mkdir -p "$SSH_CONTROL_DIR"
+SSH_CONTROL_PATH="$SSH_CONTROL_DIR/ctl"
+
+# Cleanup function
+cleanup() {
+    # Close SSH control master if it exists
+    if [ -S "$SSH_CONTROL_PATH" ] 2>/dev/null; then
+        ssh -O exit -o ControlPath="$SSH_CONTROL_PATH" "$REMOTE_USER@$REMOTE_HOST" 2>/dev/null || true
+    fi
+    rm -rf "$TEMP_DIR"
+    rm -rf "$SSH_CONTROL_DIR"
+}
+trap cleanup EXIT
+
+# Start SSH Control Master (persistent connection)
+start_ssh_control_master() {
+    log "${CYAN}🔌 Establishing persistent SSH connection...${NC}"
+    sshpass -p "$REMOTE_PASSWORD" ssh -p "$REMOTE_PORT" \
+        -o StrictHostKeyChecking=no \
+        -o UserKnownHostsFile=/dev/null \
+        -o PreferredAuthentications=password \
+        -o PubkeyAuthentication=no \
+        -o LogLevel=ERROR \
+        -o ControlMaster=yes \
+        -o ControlPath="$SSH_CONTROL_PATH" \
+        -o ControlPersist=300 \
+        -f -N \
+        "$REMOTE_USER@$REMOTE_HOST"
+    
+    if [ $? -eq 0 ]; then
+        log "${GREEN}✅ SSH connection established (will be reused for all operations)${NC}"
+        return 0
+    else
+        log "${RED}❌ Failed to establish SSH connection${NC}"
+        return 1
+    fi
+}
 
 LOCAL_SCHEMA_DIR="$TEMP_DIR/local_schema"
 REMOTE_SCHEMA_DIR="$TEMP_DIR/remote_schema"
@@ -88,37 +128,92 @@ local_mysql() {
     mysql -h "$host" -P "$LOCAL_DB_PORT" -u "$LOCAL_DB_USER" -p"$LOCAL_DB_PASSWORD" "$LOCAL_DB_NAME" "$@" 2>/dev/null
 }
 
-# Execute remote MySQL command through SSH
+# Execute remote MySQL command through SSH (uses control master if available)
 remote_mysql_query() {
     local query="$1"
-    sshpass -p "$REMOTE_PASSWORD" ssh -p "$REMOTE_PORT" \
-        -o StrictHostKeyChecking=no \
-        -o UserKnownHostsFile=/dev/null \
-        -o PreferredAuthentications=password \
-        -o PubkeyAuthentication=no \
-        -o LogLevel=ERROR \
-        -o ServerAliveInterval=60 \
-        -o ServerAliveCountMax=3 \
-        -o BatchMode=no \
-        -n \
-        "$REMOTE_USER@$REMOTE_HOST" \
-        "mysql -h $REMOTE_DB_HOST -P $REMOTE_DB_PORT -u $REMOTE_DB_USER -p'$REMOTE_DB_PASSWORD' $REMOTE_DB_NAME -N -e \"$query\"" 2>/dev/null
+    # Check if control master socket exists
+    if [ -S "${SSH_CONTROL_PATH//\%h/$REMOTE_HOST}" ] 2>/dev/null || [ -S "$TEMP_DIR/ssh_control_${REMOTE_HOST}_${REMOTE_PORT}_${REMOTE_USER}" ] 2>/dev/null; then
+        # Use existing control master connection
+        ssh -p "$REMOTE_PORT" \
+            -o ControlPath="$SSH_CONTROL_PATH" \
+            -o LogLevel=ERROR \
+            "$REMOTE_USER@$REMOTE_HOST" \
+            "mysql -h $REMOTE_DB_HOST -P $REMOTE_DB_PORT -u $REMOTE_DB_USER -p'$REMOTE_DB_PASSWORD' $REMOTE_DB_NAME -N -e \"$query\"" 2>/dev/null
+    else
+        # Fallback to new connection with sshpass
+        sshpass -p "$REMOTE_PASSWORD" ssh -p "$REMOTE_PORT" \
+            -o StrictHostKeyChecking=no \
+            -o UserKnownHostsFile=/dev/null \
+            -o PreferredAuthentications=password \
+            -o PubkeyAuthentication=no \
+            -o LogLevel=ERROR \
+            -o ServerAliveInterval=60 \
+            -o ServerAliveCountMax=3 \
+            "$REMOTE_USER@$REMOTE_HOST" \
+            "mysql -h $REMOTE_DB_HOST -P $REMOTE_DB_PORT -u $REMOTE_DB_USER -p'$REMOTE_DB_PASSWORD' $REMOTE_DB_NAME -N -e \"$query\"" 2>/dev/null
+    fi
 }
 
-# Execute remote MySQL from file
+# Execute remote MySQL from file (uses control master if available)
 remote_mysql_file() {
     local file="$1"
-    sshpass -p "$REMOTE_PASSWORD" ssh -p "$REMOTE_PORT" \
-        -o StrictHostKeyChecking=no \
-        -o UserKnownHostsFile=/dev/null \
-        -o PreferredAuthentications=password \
-        -o PubkeyAuthentication=no \
-        -o LogLevel=ERROR \
-        -o ServerAliveInterval=60 \
-        -o ServerAliveCountMax=3 \
-        -n \
-        "$REMOTE_USER@$REMOTE_HOST" \
-        "mysql -h $REMOTE_DB_HOST -P $REMOTE_DB_PORT -u $REMOTE_DB_USER -p'$REMOTE_DB_PASSWORD' $REMOTE_DB_NAME < $file" 2>/dev/null
+    if [ -S "${SSH_CONTROL_PATH//\%h/$REMOTE_HOST}" ] 2>/dev/null || [ -S "$TEMP_DIR/ssh_control_${REMOTE_HOST}_${REMOTE_PORT}_${REMOTE_USER}" ] 2>/dev/null; then
+        ssh -p "$REMOTE_PORT" \
+            -o ControlPath="$SSH_CONTROL_PATH" \
+            -o LogLevel=ERROR \
+            "$REMOTE_USER@$REMOTE_HOST" \
+            "mysql -h $REMOTE_DB_HOST -P $REMOTE_DB_PORT -u $REMOTE_DB_USER -p'$REMOTE_DB_PASSWORD' $REMOTE_DB_NAME < $file" 2>/dev/null
+    else
+        sshpass -p "$REMOTE_PASSWORD" ssh -p "$REMOTE_PORT" \
+            -o StrictHostKeyChecking=no \
+            -o UserKnownHostsFile=/dev/null \
+            -o PreferredAuthentications=password \
+            -o PubkeyAuthentication=no \
+            -o LogLevel=ERROR \
+            -o ServerAliveInterval=60 \
+            -o ServerAliveCountMax=3 \
+            "$REMOTE_USER@$REMOTE_HOST" \
+            "mysql -h $REMOTE_DB_HOST -P $REMOTE_DB_PORT -u $REMOTE_DB_USER -p'$REMOTE_DB_PASSWORD' $REMOTE_DB_NAME < $file" 2>/dev/null
+    fi
+}
+
+# Execute remote SSH command (uses control master if available)
+remote_ssh() {
+    local cmd="$1"
+    if [ -S "${SSH_CONTROL_PATH//\%h/$REMOTE_HOST}" ] 2>/dev/null || [ -S "$TEMP_DIR/ssh_control_${REMOTE_HOST}_${REMOTE_PORT}_${REMOTE_USER}" ] 2>/dev/null; then
+        ssh -p "$REMOTE_PORT" \
+            -o ControlPath="$SSH_CONTROL_PATH" \
+            -o LogLevel=ERROR \
+            "$REMOTE_USER@$REMOTE_HOST" "$cmd" 2>/dev/null
+    else
+        sshpass -p "$REMOTE_PASSWORD" ssh -p "$REMOTE_PORT" \
+            -o StrictHostKeyChecking=no \
+            -o UserKnownHostsFile=/dev/null \
+            -o PreferredAuthentications=password \
+            -o PubkeyAuthentication=no \
+            -o LogLevel=ERROR \
+            "$REMOTE_USER@$REMOTE_HOST" "$cmd" 2>/dev/null
+    fi
+}
+
+# Execute remote SCP (uses control master if available)
+remote_scp() {
+    local src="$1"
+    local dst="$2"
+    if [ -S "${SSH_CONTROL_PATH//\%h/$REMOTE_HOST}" ] 2>/dev/null || [ -S "$TEMP_DIR/ssh_control_${REMOTE_HOST}_${REMOTE_PORT}_${REMOTE_USER}" ] 2>/dev/null; then
+        scp -P "$REMOTE_PORT" \
+            -o ControlPath="$SSH_CONTROL_PATH" \
+            -o LogLevel=ERROR \
+            "$src" "$REMOTE_USER@$REMOTE_HOST:$dst" 2>/dev/null
+    else
+        sshpass -p "$REMOTE_PASSWORD" scp -P "$REMOTE_PORT" \
+            -o StrictHostKeyChecking=no \
+            -o UserKnownHostsFile=/dev/null \
+            -o PreferredAuthentications=password \
+            -o PubkeyAuthentication=no \
+            -o LogLevel=ERROR \
+            "$src" "$REMOTE_USER@$REMOTE_HOST:$dst" 2>/dev/null
+    fi
 }
 
 # ============================================
@@ -519,6 +614,8 @@ sync_table_to_remote() {
     sshpass -p "$REMOTE_PASSWORD" scp -P "$REMOTE_PORT" \
         -o StrictHostKeyChecking=no \
         -o UserKnownHostsFile=/dev/null \
+        -o PreferredAuthentications=password \
+        -o PubkeyAuthentication=no \
         -o LogLevel=ERROR \
         "$dump_file" "$REMOTE_USER@$REMOTE_HOST:/tmp/${table}_dump.sql" 2>/dev/null
     
@@ -529,9 +626,10 @@ sync_table_to_remote() {
     sshpass -p "$REMOTE_PASSWORD" ssh -p "$REMOTE_PORT" \
         -o StrictHostKeyChecking=no \
         -o UserKnownHostsFile=/dev/null \
+        -o PreferredAuthentications=password \
+        -o PubkeyAuthentication=no \
         -o LogLevel=ERROR \
         -o ServerAliveInterval=60 \
-        -n \
         "$REMOTE_USER@$REMOTE_HOST" "rm -f /tmp/${table}_dump.sql" 2>/dev/null
     
     log "${GREEN}✅ Table '$table' data synced to remote${NC}"
@@ -561,9 +659,10 @@ sync_table_to_local() {
     sshpass -p "$REMOTE_PASSWORD" ssh -p "$REMOTE_PORT" \
         -o StrictHostKeyChecking=no \
         -o UserKnownHostsFile=/dev/null \
+        -o PreferredAuthentications=password \
+        -o PubkeyAuthentication=no \
         -o LogLevel=ERROR \
         -o ServerAliveInterval=60 \
-        -n \
         "$REMOTE_USER@$REMOTE_HOST" \
         "mysqldump -h $REMOTE_DB_HOST -P $REMOTE_DB_PORT -u $REMOTE_DB_USER -p'$REMOTE_DB_PASSWORD' \
         --no-create-info \
@@ -611,6 +710,8 @@ sync_schema_to_remote() {
     sshpass -p "$REMOTE_PASSWORD" scp -P "$REMOTE_PORT" \
         -o StrictHostKeyChecking=no \
         -o UserKnownHostsFile=/dev/null \
+        -o PreferredAuthentications=password \
+        -o PubkeyAuthentication=no \
         -o LogLevel=ERROR \
         "$schema_file" "$REMOTE_USER@$REMOTE_HOST:/tmp/${table}_schema.sql" 2>/dev/null
     
@@ -626,7 +727,6 @@ sync_schema_to_remote() {
         -o PubkeyAuthentication=no \
         -o LogLevel=ERROR \
         -o ServerAliveInterval=60 \
-        -n \
         "$REMOTE_USER@$REMOTE_HOST" \
         "mysql -h $REMOTE_DB_HOST -P $REMOTE_DB_PORT -u $REMOTE_DB_USER -p'$REMOTE_DB_PASSWORD' $REMOTE_DB_NAME < /tmp/${table}_schema.sql 2>&1")
     
@@ -662,9 +762,10 @@ sync_schema_to_remote() {
     sshpass -p "$REMOTE_PASSWORD" ssh -p "$REMOTE_PORT" \
         -o StrictHostKeyChecking=no \
         -o UserKnownHostsFile=/dev/null \
+        -o PreferredAuthentications=password \
+        -o PubkeyAuthentication=no \
         -o LogLevel=ERROR \
         -o ServerAliveInterval=60 \
-        -n \
         "$REMOTE_USER@$REMOTE_HOST" "rm -f /tmp/${table}_schema.sql" 2>/dev/null
 }
 
@@ -682,9 +783,10 @@ sync_schema_to_local() {
     sshpass -p "$REMOTE_PASSWORD" ssh -p "$REMOTE_PORT" \
         -o StrictHostKeyChecking=no \
         -o UserKnownHostsFile=/dev/null \
+        -o PreferredAuthentications=password \
+        -o PubkeyAuthentication=no \
         -o LogLevel=ERROR \
         -o ServerAliveInterval=60 \
-        -n \
         "$REMOTE_USER@$REMOTE_HOST" \
         "mysqldump -h $REMOTE_DB_HOST -P $REMOTE_DB_PORT -u $REMOTE_DB_USER -p'$REMOTE_DB_PASSWORD' \
         --no-data $REMOTE_DB_NAME $table" > "$schema_file" 2>/dev/null
@@ -972,192 +1074,421 @@ show_sync_menu() {
 
 sync_local_to_remote() {
     log ""
-    log "${BLUE}📤 Syncing LOCAL → REMOTE...${NC}"
+    log "${BLUE}📤 Syncing LOCAL → REMOTE (Optimized Single SSH)...${NC}"
     
-    # Step 1: Drop all foreign keys on remote to avoid constraint issues
-    drop_all_remote_foreign_keys
+    local host="$LOCAL_DB_HOST"
+    if [[ "$LOCAL_DB_HOST" == "host.docker.internal" ]]; then
+        host="127.0.0.1"
+    fi
     
-    # Collect all tables that need schema/data sync
+    # ========================================
+    # PHASE 1: Collect all local data (NO SSH)
+    # ========================================
+    log "${CYAN}📦 Phase 1: Preparing local data...${NC}"
+    
+    local SYNC_DIR="$TEMP_DIR/sync_bundle"
+    mkdir -p "$SYNC_DIR"
+    
+    # Collect all tables that need sync
     local -a all_tables_to_sync=()
+    local -a tables_need_schema=()
+    local -a tables_need_data=()
     
-    # Add tables only in local
+    # Tables only in local (need schema + data)
     for table in "${G_TABLES_ONLY_LOCAL[@]}"; do
         all_tables_to_sync+=("$table")
+        tables_need_schema+=("$table")
+        tables_need_data+=("$table")
     done
     
-    # Add tables with schema differences
+    # Tables with schema differences (need schema + data)
     for table in "${G_TABLES_SCHEMA_DIFF[@]}"; do
-        # Check if not already in list
         local found=false
         for t in "${all_tables_to_sync[@]}"; do
-            if [ "$t" == "$table" ]; then
-                found=true
-                break
-            fi
+            [ "$t" == "$table" ] && found=true && break
         done
         if ! $found; then
             all_tables_to_sync+=("$table")
+            tables_need_schema+=("$table")
+            tables_need_data+=("$table")
         fi
     done
     
-    # Sync schema changes (no need for dependency order now - FKs are dropped)
-    if [ ${#all_tables_to_sync[@]} -gt 0 ]; then
-        log "${CYAN}Tables to sync schema:${NC}"
-        for table in "${all_tables_to_sync[@]}"; do
-            log "   → $table"
-        done
-        log ""
-        
-        for table in "${all_tables_to_sync[@]}"; do
-            # Check if it's a new table (only in local)
-            local is_new=false
-            for t in "${G_TABLES_ONLY_LOCAL[@]}"; do
-                if [ "$t" == "$table" ]; then
-                    is_new=true
-                    break
-                fi
-            done
-            
-            if $is_new; then
-                log "${YELLOW}Creating table '$table' on remote...${NC}"
-                sync_schema_to_remote "$table"
-                sync_table_to_remote "$table"
-            else
-                log "${YELLOW}Updating schema for '$table' on remote...${NC}"
-                sync_schema_to_remote "$table"
-                sync_table_to_remote "$table"
-            fi
-        done
-    fi
-    
-    # Sync data differences for tables with matching schemas
+    # Tables with more local data (data only)
     for entry in "${G_TABLES_LOCAL_MORE[@]}"; do
         table=$(echo "$entry" | cut -d: -f1)
-        # Only sync if not already synced above
-        local already_synced=false
+        local found=false
         for t in "${all_tables_to_sync[@]}"; do
-            if [ "$t" == "$table" ]; then
-                already_synced=true
-                break
-            fi
+            [ "$t" == "$table" ] && found=true && break
         done
-        if ! $already_synced; then
-            sync_table_to_remote "$table"
+        if ! $found; then
+            all_tables_to_sync+=("$table")
+            tables_need_data+=("$table")
         fi
     done
     
+    # Tables with different data (data only)
     for table in "${G_TABLES_DATA_DIFF[@]}"; do
-        # Only sync if not already synced above
-        local already_synced=false
+        local found=false
         for t in "${all_tables_to_sync[@]}"; do
-            if [ "$t" == "$table" ]; then
-                already_synced=true
-                break
-            fi
+            [ "$t" == "$table" ] && found=true && break
         done
-        if ! $already_synced; then
-            sync_table_to_remote "$table"
+        if ! $found; then
+            all_tables_to_sync+=("$table")
+            tables_need_data+=("$table")
         fi
     done
     
-    # Step 2: Restore foreign keys from local schema
-    restore_remote_foreign_keys_from_local
+    if [ ${#all_tables_to_sync[@]} -eq 0 ]; then
+        log "${GREEN}✅ No tables to sync${NC}"
+        return
+    fi
+    
+    log "   Tables to sync: ${all_tables_to_sync[*]}"
+    
+    # Export schema files locally
+    for table in "${tables_need_schema[@]}"; do
+        log "   Exporting schema: $table"
+        echo "SET FOREIGN_KEY_CHECKS=0;" > "$SYNC_DIR/${table}_schema.sql"
+        mysqldump -h "$host" -P "$LOCAL_DB_PORT" -u "$LOCAL_DB_USER" -p"$LOCAL_DB_PASSWORD" \
+            --no-data "$LOCAL_DB_NAME" "$table" >> "$SYNC_DIR/${table}_schema.sql" 2>/dev/null
+        echo "SET FOREIGN_KEY_CHECKS=1;" >> "$SYNC_DIR/${table}_schema.sql"
+    done
+    
+    # Export data files locally
+    for table in "${tables_need_data[@]}"; do
+        log "   Exporting data: $table"
+        echo "SET FOREIGN_KEY_CHECKS=0;" > "$SYNC_DIR/${table}_data.sql"
+        echo "SET NAMES utf8mb4;" >> "$SYNC_DIR/${table}_data.sql"
+        echo "DELETE FROM \`$table\`;" >> "$SYNC_DIR/${table}_data.sql"
+        mysqldump -h "$host" -P "$LOCAL_DB_PORT" -u "$LOCAL_DB_USER" -p"$LOCAL_DB_PASSWORD" \
+            --no-create-info \
+            --single-transaction \
+            --quick \
+            --default-character-set=utf8mb4 \
+            --hex-blob \
+            --skip-triggers \
+            "$LOCAL_DB_NAME" "$table" >> "$SYNC_DIR/${table}_data.sql" 2>/dev/null
+        echo "SET FOREIGN_KEY_CHECKS=1;" >> "$SYNC_DIR/${table}_data.sql"
+    done
+    
+    # Get local foreign keys for restoration
+    log "   Collecting foreign key definitions..."
+    local fk_list=$(get_all_foreign_keys "true")
+    echo "SET FOREIGN_KEY_CHECKS=0;" > "$SYNC_DIR/restore_fks.sql"
+    
+    while IFS=$'\t' read -r constraint_name table_name column_name ref_table ref_column delete_rule update_rule; do
+        [ -z "$constraint_name" ] && continue
+        delete_rule=${delete_rule:-CASCADE}
+        update_rule=${update_rule:-CASCADE}
+        # Drop if exists, then add
+        echo "ALTER TABLE \`$table_name\` DROP FOREIGN KEY IF EXISTS \`$constraint_name\`;" >> "$SYNC_DIR/restore_fks.sql"
+        echo "ALTER TABLE \`$table_name\` ADD CONSTRAINT \`$constraint_name\` FOREIGN KEY (\`$column_name\`) REFERENCES \`$ref_table\`(\`$ref_column\`) ON DELETE $delete_rule ON UPDATE $update_rule;" >> "$SYNC_DIR/restore_fks.sql"
+    done <<< "$fk_list"
+    
+    echo "SET FOREIGN_KEY_CHECKS=1;" >> "$SYNC_DIR/restore_fks.sql"
+    
+    # Create master execution script
+    log "   Creating master execution script..."
+    cat > "$SYNC_DIR/execute_sync.sh" << 'EXECUTE_SCRIPT'
+#!/bin/bash
+# Don't use set -e, handle errors manually
+SYNC_DIR="/tmp/warroom_sync"
+DB_HOST="$1"
+DB_PORT="$2"
+DB_USER="$3"
+DB_PASS="$4"
+DB_NAME="$5"
+
+# Build mysql command without quotes around password (let shell handle it)
+mysql_exec() {
+    mysql -h "$DB_HOST" -P "$DB_PORT" -u "$DB_USER" -p"$DB_PASS" "$DB_NAME" "$@"
+}
+
+echo "🔓 Dropping all foreign keys..."
+# Get and drop all FKs
+mysql_exec -N -e "SELECT CONCAT('ALTER TABLE \`', TABLE_NAME, '\` DROP FOREIGN KEY \`', CONSTRAINT_NAME, '\`;') FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE WHERE TABLE_SCHEMA='$DB_NAME' AND REFERENCED_TABLE_NAME IS NOT NULL;" 2>/dev/null | while read stmt; do
+    mysql_exec -e "SET FOREIGN_KEY_CHECKS=0; $stmt SET FOREIGN_KEY_CHECKS=1;" 2>/dev/null || true
+done
+
+echo "📋 Executing schema files..."
+for schema_file in $SYNC_DIR/*_schema.sql; do
+    [ -f "$schema_file" ] || continue
+    table=$(basename "$schema_file" _schema.sql)
+    echo "   Schema: $table"
+    # Drop table thoroughly - handle orphaned InnoDB tablespace
+    mysql_exec -e "SET FOREIGN_KEY_CHECKS=0; DROP TABLE IF EXISTS \`$table\`;" 2>/dev/null || true
+    # Brief pause to let InnoDB clean up
+    sleep 0.5
+    if ! mysql_exec < "$schema_file" 2>&1; then
+        echo "   ⚠️ First attempt failed, trying to recover..."
+        # Try to discard any orphaned tablespace
+        mysql_exec -e "SET FOREIGN_KEY_CHECKS=0; CREATE TABLE IF NOT EXISTS \`$table\` (id INT) ENGINE=InnoDB;" 2>/dev/null || true
+        mysql_exec -e "ALTER TABLE \`$table\` DISCARD TABLESPACE;" 2>/dev/null || true
+        mysql_exec -e "DROP TABLE IF EXISTS \`$table\`;" 2>/dev/null || true
+        sleep 0.5
+        if ! mysql_exec < "$schema_file" 2>&1; then
+            echo "   ❌ Failed to apply schema for $table"
+            echo "   Debug: File content preview:"
+            head -20 "$schema_file"
+            exit 1
+        fi
+    fi
+done
+
+echo "📊 Executing data files..."
+for data_file in $SYNC_DIR/*_data.sql; do
+    [ -f "$data_file" ] || continue
+    table=$(basename "$data_file" _data.sql)
+    echo "   Data: $table"
+    if ! mysql_exec < "$data_file" 2>&1; then
+        echo "   ❌ Failed to apply data for $table"
+        exit 1
+    fi
+done
+
+echo "🔐 Restoring foreign keys..."
+if [ -f "$SYNC_DIR/restore_fks.sql" ]; then
+    mysql_exec < "$SYNC_DIR/restore_fks.sql" 2>/dev/null || echo "   ⚠️ Some FK constraints may have failed"
+fi
+
+echo "🧹 Cleaning up..."
+rm -rf "$SYNC_DIR"
+
+echo "✅ Sync complete!"
+EXECUTE_SCRIPT
+    chmod +x "$SYNC_DIR/execute_sync.sh"
+    
+    # Create tarball
+    log "   Creating sync bundle..."
+    tar -czf "$TEMP_DIR/sync_bundle.tar.gz" -C "$TEMP_DIR" sync_bundle
+    
+    # ========================================
+    # PHASE 2: Single SSH session to remote
+    # ========================================
+    log "${CYAN}🚀 Phase 2: Uploading and executing on remote...${NC}"
+    
+    # Upload tarball via SCP (uses control master)
+    log "   Uploading sync bundle..."
+    if ! remote_scp "$TEMP_DIR/sync_bundle.tar.gz" "/tmp/sync_bundle.tar.gz"; then
+        log "${RED}❌ Failed to upload sync bundle. Check SSH connection.${NC}"
+        return 1
+    fi
+    
+    # Execute everything in ONE SSH session (uses control master)
+    log "   Executing sync on remote..."
+    if ! remote_ssh "cd /tmp && rm -rf warroom_sync && mkdir -p warroom_sync && tar -xzf sync_bundle.tar.gz -C /tmp && mv /tmp/sync_bundle /tmp/warroom_sync_tmp && rm -rf /tmp/warroom_sync && mv /tmp/warroom_sync_tmp /tmp/warroom_sync && rm -f sync_bundle.tar.gz && bash /tmp/warroom_sync/execute_sync.sh '$REMOTE_DB_HOST' '$REMOTE_DB_PORT' '$REMOTE_DB_USER' '$REMOTE_DB_PASSWORD' '$REMOTE_DB_NAME'"; then
+        log "${RED}❌ Failed to execute sync on remote. Check SSH connection.${NC}"
+        return 1
+    fi
     
     log "${GREEN}✅ Sync LOCAL → REMOTE complete!${NC}"
 }
 
 sync_remote_to_local() {
     log ""
-    log "${BLUE}📥 Syncing REMOTE → LOCAL...${NC}"
+    log "${BLUE}📥 Syncing REMOTE → LOCAL (Optimized Single SSH)...${NC}"
     
-    # Step 1: Drop all foreign keys on local to avoid constraint issues
-    drop_all_local_foreign_keys
+    local host="$LOCAL_DB_HOST"
+    if [[ "$LOCAL_DB_HOST" == "host.docker.internal" ]]; then
+        host="127.0.0.1"
+    fi
     
-    # Collect all tables that need schema/data sync
+    # Collect all tables that need sync
     local -a all_tables_to_sync=()
+    local -a tables_need_schema=()
+    local -a tables_need_data=()
     
-    # Add tables only in remote
+    # Tables only in remote (need schema + data)
     for table in "${G_TABLES_ONLY_REMOTE[@]}"; do
         all_tables_to_sync+=("$table")
+        tables_need_schema+=("$table")
+        tables_need_data+=("$table")
     done
     
-    # Add tables with schema differences
+    # Tables with schema differences (need schema + data)
     for table in "${G_TABLES_SCHEMA_DIFF[@]}"; do
-        # Check if not already in list
         local found=false
         for t in "${all_tables_to_sync[@]}"; do
-            if [ "$t" == "$table" ]; then
-                found=true
-                break
-            fi
+            [ "$t" == "$table" ] && found=true && break
         done
         if ! $found; then
             all_tables_to_sync+=("$table")
+            tables_need_schema+=("$table")
+            tables_need_data+=("$table")
         fi
     done
     
-    # Sync schema changes (no need for dependency order now - FKs are dropped)
-    if [ ${#all_tables_to_sync[@]} -gt 0 ]; then
-        log "${CYAN}Tables to sync schema:${NC}"
-        for table in "${all_tables_to_sync[@]}"; do
-            log "   → $table"
+    # Tables with more remote data (data only)
+    for entry in "${G_TABLES_REMOTE_MORE[@]}"; do
+        table=$(echo "$entry" | cut -d: -f1)
+        local found=false
+        for t in "${all_tables_to_sync[@]}"; do
+            [ "$t" == "$table" ] && found=true && break
         done
-        log ""
-        
-        for table in "${all_tables_to_sync[@]}"; do
-            # Check if it's a new table (only in remote)
-            local is_new=false
-            for t in "${G_TABLES_ONLY_REMOTE[@]}"; do
-                if [ "$t" == "$table" ]; then
-                    is_new=true
-                    break
-                fi
-            done
-            
-            if $is_new; then
-                log "${YELLOW}Creating table '$table' locally...${NC}"
-                sync_schema_to_local "$table"
-                sync_table_to_local "$table"
-            else
-                log "${YELLOW}Updating schema for '$table' locally...${NC}"
-                sync_schema_to_local "$table"
-                sync_table_to_local "$table"
-            fi
+        if ! $found; then
+            all_tables_to_sync+=("$table")
+            tables_need_data+=("$table")
+        fi
+    done
+    
+    # Tables with different data (data only)
+    for table in "${G_TABLES_DATA_DIFF[@]}"; do
+        local found=false
+        for t in "${all_tables_to_sync[@]}"; do
+            [ "$t" == "$table" ] && found=true && break
+        done
+        if ! $found; then
+            all_tables_to_sync+=("$table")
+            tables_need_data+=("$table")
+        fi
+    done
+    
+    if [ ${#all_tables_to_sync[@]} -eq 0 ]; then
+        log "${GREEN}✅ No tables to sync${NC}"
+        return
+    fi
+    
+    log "   Tables to sync: ${all_tables_to_sync[*]}"
+    
+    # ========================================
+    # PHASE 1: Single SSH to collect remote data
+    # ========================================
+    log "${CYAN}📦 Phase 1: Collecting remote data (Single SSH)...${NC}"
+    
+    local SYNC_DIR="$TEMP_DIR/sync_bundle"
+    mkdir -p "$SYNC_DIR"
+    
+    # Build the remote export script
+    local tables_schema_list=$(printf "'%s' " "${tables_need_schema[@]}")
+    local tables_data_list=$(printf "'%s' " "${tables_need_data[@]}")
+    
+    # Execute single SSH to export all data from remote
+    log "   Exporting from remote..."
+    sshpass -p "$REMOTE_PASSWORD" ssh -p "$REMOTE_PORT" \
+        -o StrictHostKeyChecking=no \
+        -o UserKnownHostsFile=/dev/null \
+        -o PreferredAuthentications=password \
+        -o PubkeyAuthentication=no \
+        -o LogLevel=ERROR \
+        -o ServerAliveInterval=60 \
+        "$REMOTE_USER@$REMOTE_HOST" \
+        "DB_HOST='$REMOTE_DB_HOST' DB_PORT='$REMOTE_DB_PORT' DB_USER='$REMOTE_DB_USER' DB_PASS='$REMOTE_DB_PASSWORD' DB_NAME='$REMOTE_DB_NAME' bash -s" << REMOTE_EXPORT_SCRIPT
+#!/bin/bash
+SYNC_DIR="/tmp/warroom_sync_export"
+rm -rf "\$SYNC_DIR"
+mkdir -p "\$SYNC_DIR"
+
+# Export schemas
+for table in $tables_schema_list; do
+    [ -z "\$table" ] && continue
+    echo "   Schema: \$table"
+    echo "SET FOREIGN_KEY_CHECKS=0;" > "\$SYNC_DIR/\${table}_schema.sql"
+    mysqldump -h "\$DB_HOST" -P "\$DB_PORT" -u "\$DB_USER" -p"\$DB_PASS" --no-data "\$DB_NAME" "\$table" >> "\$SYNC_DIR/\${table}_schema.sql" 2>/dev/null
+    echo "SET FOREIGN_KEY_CHECKS=1;" >> "\$SYNC_DIR/\${table}_schema.sql"
+done
+
+# Export data
+for table in $tables_data_list; do
+    [ -z "\$table" ] && continue
+    echo "   Data: \$table"
+    echo "SET FOREIGN_KEY_CHECKS=0;" > "\$SYNC_DIR/\${table}_data.sql"
+    echo "SET NAMES utf8mb4;" >> "\$SYNC_DIR/\${table}_data.sql"
+    echo "DELETE FROM \\\`\$table\\\`;" >> "\$SYNC_DIR/\${table}_data.sql"
+    mysqldump -h "\$DB_HOST" -P "\$DB_PORT" -u "\$DB_USER" -p"\$DB_PASS" \
+        --no-create-info --single-transaction --quick --default-character-set=utf8mb4 --hex-blob --skip-triggers \
+        "\$DB_NAME" "\$table" >> "\$SYNC_DIR/\${table}_data.sql" 2>/dev/null
+    echo "SET FOREIGN_KEY_CHECKS=1;" >> "\$SYNC_DIR/\${table}_data.sql"
+done
+
+# Export FK definitions
+echo "SET FOREIGN_KEY_CHECKS=0;" > "\$SYNC_DIR/restore_fks.sql"
+mysql -h "\$DB_HOST" -P "\$DB_PORT" -u "\$DB_USER" -p"\$DB_PASS" "\$DB_NAME" -N -e "
+SELECT CONCAT(
+    'ALTER TABLE \\\`', k.TABLE_NAME, '\\\` DROP FOREIGN KEY IF EXISTS \\\`', k.CONSTRAINT_NAME, '\\\`;',
+    'ALTER TABLE \\\`', k.TABLE_NAME, '\\\` ADD CONSTRAINT \\\`', k.CONSTRAINT_NAME, 
+    '\\\` FOREIGN KEY (\\\`', k.COLUMN_NAME, '\\\`) REFERENCES \\\`', k.REFERENCED_TABLE_NAME, 
+    '\\\`(\\\`', k.REFERENCED_COLUMN_NAME, '\\\`) ON DELETE ', COALESCE(r.DELETE_RULE, 'CASCADE'),
+    ' ON UPDATE ', COALESCE(r.UPDATE_RULE, 'CASCADE'), ';'
+)
+FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE k
+LEFT JOIN INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS r
+    ON k.CONSTRAINT_NAME = r.CONSTRAINT_NAME AND k.TABLE_SCHEMA = r.CONSTRAINT_SCHEMA
+WHERE k.TABLE_SCHEMA='\$DB_NAME' AND k.REFERENCED_TABLE_NAME IS NOT NULL;
+" 2>/dev/null >> "\$SYNC_DIR/restore_fks.sql"
+echo "SET FOREIGN_KEY_CHECKS=1;" >> "\$SYNC_DIR/restore_fks.sql"
+
+# Create tarball
+cd /tmp && tar -czf warroom_sync_export.tar.gz -C /tmp warroom_sync_export
+echo "EXPORT_DONE"
+REMOTE_EXPORT_SCRIPT
+    
+    # Download the tarball
+    log "   Downloading sync bundle..."
+    sshpass -p "$REMOTE_PASSWORD" scp -P "$REMOTE_PORT" \
+        -o StrictHostKeyChecking=no \
+        -o UserKnownHostsFile=/dev/null \
+        -o PreferredAuthentications=password \
+        -o PubkeyAuthentication=no \
+        -o LogLevel=ERROR \
+        "$REMOTE_USER@$REMOTE_HOST:/tmp/warroom_sync_export.tar.gz" \
+        "$TEMP_DIR/sync_bundle.tar.gz"
+    
+    # Cleanup remote
+    sshpass -p "$REMOTE_PASSWORD" ssh -p "$REMOTE_PORT" \
+        -o StrictHostKeyChecking=no \
+        -o UserKnownHostsFile=/dev/null \
+        -o PreferredAuthentications=password \
+        -o PubkeyAuthentication=no \
+        -o LogLevel=ERROR \
+        "$REMOTE_USER@$REMOTE_HOST" "rm -rf /tmp/warroom_sync_export /tmp/warroom_sync_export.tar.gz"
+    
+    # ========================================
+    # PHASE 2: Apply to local (NO SSH)
+    # ========================================
+    log "${CYAN}🔧 Phase 2: Applying to local database...${NC}"
+    
+    # Extract tarball
+    tar -xzf "$TEMP_DIR/sync_bundle.tar.gz" -C "$TEMP_DIR"
+    SYNC_DIR="$TEMP_DIR/warroom_sync_export"
+    
+    # Drop local FKs first
+    log "   Dropping local foreign keys..."
+    local fk_drop_stmts=$(mysql -h "$host" -P "$LOCAL_DB_PORT" -u "$LOCAL_DB_USER" -p"$LOCAL_DB_PASSWORD" "$LOCAL_DB_NAME" -N -e "
+        SELECT CONCAT('ALTER TABLE \`', TABLE_NAME, '\` DROP FOREIGN KEY \`', CONSTRAINT_NAME, '\`;')
+        FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE 
+        WHERE TABLE_SCHEMA='$LOCAL_DB_NAME' AND REFERENCED_TABLE_NAME IS NOT NULL;" 2>/dev/null)
+    
+    if [ -n "$fk_drop_stmts" ]; then
+        echo "$fk_drop_stmts" | while read stmt; do
+            mysql -h "$host" -P "$LOCAL_DB_PORT" -u "$LOCAL_DB_USER" -p"$LOCAL_DB_PASSWORD" "$LOCAL_DB_NAME" \
+                -e "SET FOREIGN_KEY_CHECKS=0; $stmt SET FOREIGN_KEY_CHECKS=1;" 2>/dev/null || true
         done
     fi
     
-    # Sync data differences for tables with matching schemas
-    for entry in "${G_TABLES_REMOTE_MORE[@]}"; do
-        table=$(echo "$entry" | cut -d: -f1)
-        # Only sync if not already synced above
-        local already_synced=false
-        for t in "${all_tables_to_sync[@]}"; do
-            if [ "$t" == "$table" ]; then
-                already_synced=true
-                break
-            fi
-        done
-        if ! $already_synced; then
-            sync_table_to_local "$table"
-        fi
+    # Apply schemas
+    for schema_file in "$SYNC_DIR"/*_schema.sql; do
+        [ -f "$schema_file" ] || continue
+        table=$(basename "$schema_file" _schema.sql)
+        log "   Schema: $table"
+        mysql -h "$host" -P "$LOCAL_DB_PORT" -u "$LOCAL_DB_USER" -p"$LOCAL_DB_PASSWORD" "$LOCAL_DB_NAME" \
+            -e "SET FOREIGN_KEY_CHECKS=0; DROP TABLE IF EXISTS \`$table\`; SET FOREIGN_KEY_CHECKS=1;" 2>/dev/null
+        mysql -h "$host" -P "$LOCAL_DB_PORT" -u "$LOCAL_DB_USER" -p"$LOCAL_DB_PASSWORD" "$LOCAL_DB_NAME" < "$schema_file" 2>/dev/null
     done
     
-    for table in "${G_TABLES_DATA_DIFF[@]}"; do
-        # Only sync if not already synced above
-        local already_synced=false
-        for t in "${all_tables_to_sync[@]}"; do
-            if [ "$t" == "$table" ]; then
-                already_synced=true
-                break
-            fi
-        done
-        if ! $already_synced; then
-            sync_table_to_local "$table"
-        fi
+    # Apply data
+    for data_file in "$SYNC_DIR"/*_data.sql; do
+        [ -f "$data_file" ] || continue
+        table=$(basename "$data_file" _data.sql)
+        log "   Data: $table"
+        mysql -h "$host" -P "$LOCAL_DB_PORT" -u "$LOCAL_DB_USER" -p"$LOCAL_DB_PASSWORD" "$LOCAL_DB_NAME" < "$data_file" 2>/dev/null
     done
     
-    # Step 2: Restore foreign keys from remote schema
-    restore_local_foreign_keys_from_remote
+    # Restore FKs
+    log "   Restoring foreign keys..."
+    if [ -f "$SYNC_DIR/restore_fks.sql" ]; then
+        mysql -h "$host" -P "$LOCAL_DB_PORT" -u "$LOCAL_DB_USER" -p"$LOCAL_DB_PASSWORD" "$LOCAL_DB_NAME" < "$SYNC_DIR/restore_fks.sql" 2>/dev/null || log "   ⚠️ Some FK constraints may have failed"
+    fi
     
     log "${GREEN}✅ Sync REMOTE → LOCAL complete!${NC}"
 }
@@ -1344,6 +1675,14 @@ main() {
         exit 1
     fi
     echo -e "${GREEN}✅ Local database connected${NC}"
+    
+    # Establish persistent SSH connection (Control Master)
+    echo ""
+    if ! start_ssh_control_master; then
+        echo -e "${RED}❌ Cannot establish SSH connection to remote server${NC}"
+        echo -e "${YELLOW}   SSH: $REMOTE_USER@$REMOTE_HOST:$REMOTE_PORT${NC}"
+        exit 1
+    fi
     
     echo -e "${CYAN}Testing remote database connection...${NC}"
     if ! remote_mysql_query "SELECT 1;" > /dev/null 2>&1; then

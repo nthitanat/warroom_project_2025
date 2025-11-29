@@ -4,6 +4,7 @@ const useCharityDetail = () => {
   const [stateCharityDetail, setStateCharityDetail] = useState({
     charityData: [],
     slideItems: [],
+    charityItems: [],
     loading: true,
     error: null,
     modalOpen: false,

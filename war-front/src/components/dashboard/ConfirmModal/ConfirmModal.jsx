@@ -6,8 +6,8 @@ export default function ConfirmModal({
   handleClose,
   title,
   message,
-  confirmText = 'Confirm',
-  cancelText = 'Cancel',
+  confirmText = 'ยืนยัน',
+  cancelText = 'ยกเลิก',
   onConfirm,
   saving,
   variant = 'danger', // 'danger' | 'warning' | 'info'
@@ -44,7 +44,7 @@ export default function ConfirmModal({
             {saving ? (
               <>
                 <span className="material-icons">hourglass_empty</span>
-                <span>Processing...</span>
+                <span>กำลังดำเนินการ...</span>
               </>
             ) : (
               confirmText

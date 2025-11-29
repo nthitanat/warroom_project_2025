@@ -1,0 +1,419 @@
+@import '../../../styles/main.scss';
+
+.Overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(10, 14, 39, 0.9);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  @include flex-center;
+  z-index: $z-index-modal;
+  padding: $spacing-lg;
+}
+
+.Modal {
+  @include glass-panel;
+  position: relative;
+  width: 100%;
+  max-width: 900px;
+  max-height: 90vh;
+  overflow-y: auto;
+  animation: scaleIn 0.25s ease-out;
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+.ModalHeader {
+  @include flex-between;
+  padding-bottom: $spacing-lg;
+  border-bottom: 1px solid var(--border-light);
+  margin-bottom: $spacing-lg;
+}
+
+.ModalTitle {
+  @include flex-center;
+  gap: $spacing-sm;
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  color: var(--text-primary);
+  margin: 0;
+  
+  .material-icons {
+    color: var(--charity-hope);
+  }
+}
+
+.CloseButton {
+  @include button-reset;
+  @include flex-center;
+  width: 36px;
+  height: 36px;
+  border-radius: $border-radius-md;
+  color: var(--text-secondary);
+  background: transparent;
+  transition: all $transition-base;
+  
+  &:hover {
+    color: var(--text-primary);
+    background: var(--background-glass-hover);
+  }
+}
+
+.Content {
+  @include flex-column;
+  gap: $spacing-xl;
+}
+
+.FormSection,
+.ItemsSection {
+  @include flex-column;
+  gap: $spacing-md;
+}
+
+.SectionTitle {
+  @include flex-center;
+  justify-content: flex-start;
+  gap: $spacing-sm;
+  font-size: $font-size-lg;
+  font-weight: $font-weight-semibold;
+  color: var(--text-primary);
+  margin: 0;
+  
+  .material-icons {
+    color: var(--primary-500);
+    font-size: 22px;
+  }
+}
+
+.Form {
+  @include flex-column;
+  gap: $spacing-md;
+  padding: $spacing-lg;
+  background: var(--dashboard-card-bg);
+  border-radius: $border-radius-md;
+  border: 1px solid var(--border-light);
+}
+
+.FormRow {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: $spacing-md;
+  
+  @include media-down($breakpoint-sm) {
+    grid-template-columns: 1fr;
+  }
+}
+
+.FormGroup {
+  @include flex-column;
+  gap: $spacing-xs;
+}
+
+.Label {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: var(--text-secondary);
+}
+
+.Required {
+  color: var(--error);
+}
+
+.Input,
+.Select {
+  @include glass-input;
+  width: 100%;
+}
+
+.Select {
+  cursor: pointer;
+}
+
+.InputError {
+  border-color: var(--error);
+}
+
+.FieldError {
+  font-size: $font-size-xs;
+  color: var(--error);
+}
+
+.FormActions {
+  @include flex-center;
+  justify-content: flex-end;
+  gap: $spacing-md;
+  padding-top: $spacing-md;
+}
+
+.CancelButton {
+  @include button-reset;
+  @include glass-button;
+  padding: $spacing-sm $spacing-lg;
+}
+
+.SubmitButton {
+  @include button-reset;
+  @include flex-center;
+  gap: $spacing-sm;
+  padding: $spacing-sm $spacing-lg;
+  font-weight: $font-weight-semibold;
+  color: var(--text-primary);
+  background: var(--action-add);
+  border-radius: $border-radius-md;
+  transition: all $transition-base;
+  
+  &:hover {
+    background: var(--action-add-hover);
+    transform: translateY(-2px);
+  }
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+  
+  .material-icons {
+    font-size: 20px;
+  }
+}
+
+// Items Grid
+.ItemsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: $spacing-md;
+}
+
+.ItemCard {
+  @include glass-card;
+  @include flex-column;
+  gap: $spacing-md;
+}
+
+.ItemHeader {
+  @include flex-between;
+  align-items: flex-start;
+  gap: $spacing-sm;
+}
+
+.ItemName {
+  font-size: $font-size-base;
+  font-weight: $font-weight-semibold;
+  color: var(--text-primary);
+  margin: 0;
+  flex: 1;
+  @include line-clamp(2);
+}
+
+.StatusBadge {
+  @include flex-center;
+  gap: $spacing-xs;
+  padding: $spacing-xs $spacing-sm;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  border-radius: $border-radius-full;
+  white-space: nowrap;
+  
+  .material-icons {
+    font-size: 14px;
+  }
+  
+  &.pending {
+    color: var(--status-paused);
+    background: var(--status-paused-bg);
+  }
+  
+  &.in_progress {
+    color: var(--info);
+    background: rgba(33, 150, 243, 0.15);
+  }
+  
+  &.completed {
+    color: var(--status-completed);
+    background: var(--status-completed-bg);
+  }
+}
+
+.ItemProgress {
+  @include flex-column;
+  gap: $spacing-xs;
+}
+
+.ProgressInfo {
+  @include flex-between;
+  font-size: $font-size-sm;
+  color: var(--text-secondary);
+}
+
+.ProgressBar {
+  height: 6px;
+  background: var(--background-glass);
+  border-radius: $border-radius-full;
+  overflow: hidden;
+}
+
+.ProgressFill {
+  height: 100%;
+  border-radius: $border-radius-full;
+  transition: width $transition-base;
+  
+  &.pending {
+    background: var(--status-paused);
+  }
+  
+  &.in_progress {
+    background: var(--info);
+  }
+  
+  &.completed {
+    background: var(--status-completed);
+  }
+}
+
+.ItemActions {
+  @include flex-center;
+  justify-content: flex-end;
+  gap: $spacing-xs;
+  padding-top: $spacing-sm;
+  border-top: 1px solid var(--border-light);
+}
+
+.ItemActionButton {
+  @include button-reset;
+  @include flex-center;
+  width: 32px;
+  height: 32px;
+  border-radius: $border-radius-sm;
+  transition: all $transition-base;
+  
+  .material-icons {
+    font-size: 18px;
+  }
+  
+  &.edit {
+    color: var(--action-edit);
+    background: rgba(66, 165, 245, 0.1);
+    
+    &:hover {
+      background: rgba(66, 165, 245, 0.2);
+    }
+  }
+  
+  &.delete {
+    color: var(--action-delete);
+    background: rgba(239, 83, 80, 0.1);
+    
+    &:hover {
+      background: rgba(239, 83, 80, 0.2);
+    }
+  }
+}
+
+// Empty & Loading States
+.EmptyState,
+.LoadingState {
+  @include flex-center;
+  @include flex-column;
+  gap: $spacing-md;
+  padding: $spacing-2xl;
+  text-align: center;
+  background: var(--dashboard-card-bg);
+  border-radius: $border-radius-md;
+  border: 1px dashed var(--border-light);
+  
+  .material-icons {
+    font-size: 48px;
+    color: var(--text-disabled);
+  }
+  
+  p {
+    color: var(--text-secondary);
+    margin: 0;
+  }
+}
+
+.LoadingState {
+  .material-icons {
+    animation: spin 1s linear infinite;
+  }
+}
+
+@keyframes spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// Delete Confirmation
+.DeleteOverlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  @include flex-center;
+  background: rgba(10, 14, 39, 0.8);
+  z-index: 10;
+}
+
+.DeleteConfirm {
+  @include flex-center;
+  @include flex-column;
+  gap: $spacing-md;
+  padding: $spacing-xl;
+  background: var(--background-paper);
+  border-radius: $border-radius-lg;
+  border: 1px solid var(--border-light);
+  text-align: center;
+  
+  .material-icons {
+    font-size: 48px;
+    color: var(--warning);
+  }
+  
+  p {
+    color: var(--text-primary);
+    margin: 0;
+    font-size: $font-size-lg;
+  }
+}
+
+.DeleteActions {
+  @include flex-center;
+  gap: $spacing-md;
+}
+
+.DeleteButton {
+  @include button-reset;
+  padding: $spacing-sm $spacing-xl;
+  font-weight: $font-weight-semibold;
+  color: var(--text-primary);
+  background: var(--error);
+  border-radius: $border-radius-md;
+  transition: all $transition-base;
+  
+  &:hover {
+    background: var(--action-delete-hover);
+  }
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+  }
+}

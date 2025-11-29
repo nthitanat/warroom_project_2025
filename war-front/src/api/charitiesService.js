@@ -53,3 +53,33 @@ export const updateCharitySlide = (slideId, data) =>
 // Delete charity slide (admin only)
 export const deleteCharitySlide = (slideId) => 
   axiosInstance.delete(`/charities/slides/${slideId}`);
+
+// ===== Charity Items API =====
+
+// Get all charity items (optionally filter by charity_id)
+export const getCharityItems = (params) => 
+  axiosInstance.get('/charity-items', { params });
+
+// Get items for a specific charity
+export const getCharityItemsByCharityId = (charityId) => 
+  axiosInstance.get(`/charity-items/charity/${charityId}`);
+
+// Get charity item by ID
+export const getCharityItemById = (itemId) => 
+  axiosInstance.get(`/charity-items/${itemId}`);
+
+// Create new charity item (admin only)
+export const createCharityItem = (charityId, data) => 
+  axiosInstance.post(`/charity-items/charity/${charityId}`, data);
+
+// Update charity item (admin only)
+export const updateCharityItem = (itemId, data) => 
+  axiosInstance.put(`/charity-items/${itemId}`, data);
+
+// Update charity item quantity (admin only)
+export const updateCharityItemQuantity = (itemId, amount) => 
+  axiosInstance.patch(`/charity-items/${itemId}/quantity`, { amount });
+
+// Delete charity item (admin only)
+export const deleteCharityItem = (itemId) => 
+  axiosInstance.delete(`/charity-items/${itemId}`);

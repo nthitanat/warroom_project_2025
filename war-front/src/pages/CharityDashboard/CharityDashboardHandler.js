@@ -8,6 +8,8 @@ import {
   createCharitySlide,
   updateCharitySlide,
   deleteCharitySlide,
+  createCharityItem,
+  updateCharityItem,
 } from '../../api/charitiesService';
 
 const CharityDashboardHandler = (stateCharityDashboard, setCharityDashboard) => {
@@ -172,6 +174,39 @@ const CharityDashboardHandler = (stateCharityDashboard, setCharityDashboard) => 
     }
   };
 
+  // ===== Item Handlers =====
+  const handleOpenItemModal = (charity) => {
+    setCharityDashboard({
+      selectedCharity: charity,
+      itemModalOpen: true,
+    });
+  };
+
+  const handleCloseItemModal = () => {
+    setCharityDashboard({
+      itemModalOpen: false,
+    });
+  };
+
+  const handleSaveItem = async (itemData, editingItem = null) => {
+    try {
+      setCharityDashboard('saving', true);
+      
+      if (editingItem) {
+        await updateCharityItem(editingItem.id, itemData);
+      } else {
+        await createCharityItem(stateCharityDashboard.selectedCharity.id, itemData);
+      }
+      
+      return { success: true };
+    } catch (error) {
+      console.error('Error saving item:', error);
+      return { success: false, error: error.response?.data?.message || 'Failed to save item' };
+    } finally {
+      setCharityDashboard('saving', false);
+    }
+  };
+
   // ===== Filter Handlers =====
   const handleSearchChange = (query) => {
     setCharityDashboard('searchQuery', query);
@@ -223,6 +258,9 @@ const CharityDashboardHandler = (stateCharityDashboard, setCharityDashboard) => 
     handleOpenDeleteSlideModal,
     handleCloseDeleteSlideModal,
     handleDeleteSlide,
+    handleOpenItemModal,
+    handleCloseItemModal,
+    handleSaveItem,
     handleSearchChange,
     handleStatusFilterChange,
     handleNavigate,

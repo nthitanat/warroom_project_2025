@@ -127,8 +127,8 @@
   @include flex-between;
   align-items: center;
   max-width: 90%;
-  margin: 0 auto $spacing-2xl;
-  padding-bottom: $spacing-xl;
+  margin: 0 auto $spacing-lg;
+  padding-bottom: $spacing-md;
   border-bottom: 2px solid var(--border-light);
   position: relative;
   z-index: 1;
@@ -136,7 +136,7 @@
   
   @include media-down($breakpoint-md) {
     flex-direction: column;
-    gap: $spacing-lg;
+    gap: $spacing-md;
     align-items: flex-start;
   }
 }
@@ -203,19 +203,19 @@
 
 // Title Section
 .TitleSection {
-  margin-bottom: $spacing-2xl;
+  margin-bottom: $spacing-lg;
   @include animate-fade-in(0.7s, 0.2s);
 }
 
 .PageTitle {
-  font-size: $font-size-4xl;
+  font-size: $font-size-3xl;
   font-weight: $font-weight-black;
   color: var(--text-primary);
-  margin: 0 0 $spacing-lg;
+  margin: 0 0 $spacing-md;
   line-height: 1.2;
   
   @include media-down($breakpoint-md) {
-    font-size: $font-size-3xl;
+    font-size: $font-size-2xl;
   }
 }
 
@@ -255,19 +255,19 @@
 // Content Grid
 .ContentGrid {
   display: grid;
-  grid-template-columns: 1fr 400px;
-  gap: $spacing-2xl;
+  grid-template-columns: 1fr 380px;
+  gap: $spacing-xl;
   
   @include media-down($breakpoint-lg) {
     grid-template-columns: 1fr;
-    gap: $spacing-xl;
+    gap: $spacing-lg;
   }
 }
 
 // Main Column
 .MainColumn {
   @include flex-column;
-  gap: $spacing-xl;
+  gap: $spacing-lg;
   @include animate-slide-up(0.8s, 0.3s);
 }
 
@@ -275,23 +275,32 @@
   @include glass-card;
   padding: 0;
   overflow: hidden;
+  max-height: 450px;
+  
+  @include media-down($breakpoint-md) {
+    max-height: 350px;
+  }
+  
+  @include media-down($breakpoint-sm) {
+    max-height: 280px;
+  }
 }
 
 .EmptySlides {
   @include flex-center;
   @include flex-column;
   gap: $spacing-md;
-  padding: $spacing-3xl;
-  min-height: 400px;
+  padding: $spacing-2xl;
+  min-height: 280px;
   
   .material-icons {
-    font-size: 64px;
+    font-size: 48px;
     color: var(--text-secondary);
     opacity: 0.5;
   }
   
   p {
-    font-size: $font-size-lg;
+    font-size: $font-size-base;
     color: var(--text-secondary);
     margin: 0;
   }
@@ -299,24 +308,27 @@
 
 .DescriptionCard {
   @include glass-card;
-  padding: $spacing-xl;
+  padding: $spacing-lg;
   @include flex-column;
-  gap: $spacing-lg;
+  gap: $spacing-md;
+  max-height: 350px;
+  overflow: hidden;
 }
 
 .DescriptionHeader {
   @include flex-center;
-  gap: $spacing-md;
-  padding-bottom: $spacing-md;
+  gap: $spacing-sm;
+  padding-bottom: $spacing-sm;
   border-bottom: 2px solid var(--border-light);
+  flex-shrink: 0;
   
   .material-icons {
-    font-size: 28px;
+    font-size: 24px;
     color: var(--charity-heart);
   }
   
   h2 {
-    font-size: $font-size-2xl;
+    font-size: $font-size-xl;
     font-weight: $font-weight-bold;
     color: var(--text-primary);
     margin: 0;
@@ -324,9 +336,31 @@
 }
 
 .DescriptionContent {
+  overflow-y: auto;
+  flex: 1;
+  padding-right: $spacing-sm;
+  
+  &::-webkit-scrollbar {
+    width: 6px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: var(--background-glass);
+    border-radius: $border-radius-full;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: var(--border-medium);
+    border-radius: $border-radius-full;
+    
+    &:hover {
+      background: var(--charity-heart);
+    }
+  }
+  
   p {
-    font-size: $font-size-lg;
-    line-height: 1.8;
+    font-size: $font-size-base;
+    line-height: 1.7;
     color: var(--text-secondary);
     margin: 0;
     white-space: pre-wrap;
@@ -335,6 +369,8 @@
 
 // Sidebar Column
 .SidebarColumn {
+  @include flex-column;
+  gap: $spacing-lg;
   position: sticky;
   top: $spacing-xl;
   height: fit-content;
@@ -348,7 +384,8 @@
 .ActionCard {
   @include glass-panel;
   @include flex-column;
-  gap: $spacing-xl;
+  gap: $spacing-lg;
+  padding: $spacing-lg;
   position: relative;
   overflow: hidden;
   
@@ -365,16 +402,16 @@
 
 .ActionHeader {
   @include flex-center;
-  gap: $spacing-md;
+  gap: $spacing-sm;
   
   .material-icons {
-    font-size: 32px;
+    font-size: 28px;
     color: var(--charity-heart);
     @include animate-pulse(3s);
   }
   
   h3 {
-    font-size: $font-size-2xl;
+    font-size: $font-size-xl;
     font-weight: $font-weight-bold;
     color: var(--text-primary);
     margin: 0;
@@ -383,16 +420,16 @@
 
 .ImpactSection {
   @include flex-column;
-  gap: $spacing-lg;
-  padding: $spacing-lg;
+  gap: $spacing-md;
+  padding: $spacing-md;
   background: var(--background-glass);
   border-radius: $border-radius-lg;
   border: 1px solid var(--border-light);
 }
 
 .ImpactText {
-  font-size: $font-size-base;
-  line-height: 1.6;
+  font-size: $font-size-sm;
+  line-height: 1.5;
   color: var(--text-secondary);
   margin: 0;
 }
@@ -405,15 +442,15 @@
 
 .StatBox {
   @include flex-center;
-  gap: $spacing-sm;
-  padding: $spacing-md;
+  gap: $spacing-xs;
+  padding: $spacing-sm;
   background: var(--background-glass-hover);
   border-radius: $border-radius-md;
   border: 1px solid var(--border-light);
   transition: all $transition-base;
   
   .material-icons {
-    font-size: 28px;
+    font-size: 24px;
     color: var(--charity-hope);
   }
   
@@ -446,9 +483,9 @@
 .DonateButton {
   @include button-reset;
   @include flex-center;
-  gap: $spacing-md;
-  padding: $spacing-lg $spacing-2xl;
-  font-size: $font-size-lg;
+  gap: $spacing-sm;
+  padding: $spacing-md $spacing-xl;
+  font-size: $font-size-base;
   font-weight: $font-weight-bold;
   color: var(--text-primary);
   background: linear-gradient(135deg, var(--charity-heart), var(--charity-hope));
@@ -472,7 +509,7 @@
   }
   
   .material-icons {
-    font-size: 28px;
+    font-size: 22px;
     z-index: 1;
   }
   
@@ -481,8 +518,8 @@
   }
   
   &:hover {
-    box-shadow: 0 8px 32px rgba(255, 64, 129, 0.4);
-    transform: translateY(-4px);
+    box-shadow: 0 6px 24px rgba(255, 64, 129, 0.4);
+    transform: translateY(-3px);
     
     &::before {
       width: 300px;

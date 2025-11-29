@@ -8,7 +8,7 @@ export default function DonateModal({ open, handleClose }) {
     <div className={styles.Overlay} onClick={handleClose}>
       <div className={styles.Modal} onClick={(e) => e.stopPropagation()}>
         <button onClick={handleClose} className={styles.CloseButton}>
-          Close
+          ปิด
         </button>
         
         <h2 className={styles.Title}>

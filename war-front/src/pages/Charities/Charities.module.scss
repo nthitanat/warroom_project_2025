@@ -95,11 +95,11 @@
 .FeaturedCard {
   @include glass-card;
   display: grid;
-  grid-template-columns: 1.2fr 1fr;
+  grid-template-columns: 1fr 1.1fr;
   gap: 0;
   padding: 0;
   overflow: hidden;
-  min-height: 450px;
+  min-height: 380px;
   position: relative;
 
   &::before {
@@ -108,14 +108,14 @@
     top: 0;
     left: 0;
     right: 0;
-    height: 5px;
+    height: 4px;
     background: linear-gradient(90deg, var(--charity-heart), var(--charity-hope));
     z-index: 2;
   }
 
   &:hover {
     .FeaturedImage {
-      transform: scale(1.1);
+      transform: scale(1.05);
     }
   }
 
@@ -128,15 +128,15 @@
 .FeaturedImageWrapper {
   position: relative;
   width: 100%;
-  height: 450px;
+  height: 380px;
   overflow: hidden;
 
   @include media-down($breakpoint-md) {
-    height: 350px;
+    height: 280px;
   }
 
   @include media-down($breakpoint-sm) {
-    height: 300px;
+    height: 220px;
   }
 }
 
@@ -150,22 +150,22 @@
 
 .FeaturedBadge {
   position: absolute;
-  top: $spacing-xl;
-  left: $spacing-xl;
+  top: $spacing-lg;
+  left: $spacing-lg;
   @include flex-center;
   gap: $spacing-sm;
-  padding: $spacing-md $spacing-xl;
+  padding: $spacing-sm $spacing-lg;
   background: linear-gradient(135deg, var(--charity-heart), var(--charity-hope));
   border-radius: $border-radius-full;
   color: var(--text-primary);
-  font-size: $font-size-base;
+  font-size: $font-size-sm;
   font-weight: $font-weight-bold;
-  box-shadow: var(--shadow-xl);
+  box-shadow: var(--shadow-lg);
   z-index: 2;
   @include animate-pulse(4s);
   
   .material-icons {
-    font-size: 22px;
+    font-size: 18px;
   }
 }
 
@@ -182,12 +182,12 @@
 .FeaturedContent {
   @include flex-column;
   gap: $spacing-xl;
-  padding: $spacing-3xl $spacing-2xl;
+  padding: $spacing-2xl;
   justify-content: space-between;
   background: var(--background-paper);
 
   @include media-down($breakpoint-md) {
-    padding: $spacing-2xl $spacing-xl;
+    padding: $spacing-xl;
     gap: $spacing-lg;
   }
 }
@@ -198,27 +198,27 @@
 }
 
 .FeaturedTitle {
-  font-size: $font-size-3xl;
-  font-weight: $font-weight-black;
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-bold;
   color: var(--text-primary);
   margin: 0;
   line-height: 1.2;
   @include line-clamp(2);
 
   @include media-down($breakpoint-md) {
-    font-size: $font-size-2xl;
+    font-size: $font-size-xl;
   }
 }
 
 .FeaturedDescription {
-  font-size: $font-size-lg;
+  font-size: $font-size-base;
   color: var(--text-secondary);
   margin: 0;
-  line-height: 1.7;
+  line-height: 1.6;
   @include line-clamp(3);
 
   @include media-down($breakpoint-md) {
-    font-size: $font-size-base;
+    font-size: $font-size-sm;
   }
 }
 
@@ -243,7 +243,7 @@
   flex: 1;
 
   .material-icons {
-    font-size: 32px;
+    font-size: 28px;
     color: var(--charity-heart);
   }
 }
@@ -254,22 +254,22 @@
 }
 
 .StatValue {
-  font-size: $font-size-2xl;
+  font-size: $font-size-base;
   font-weight: $font-weight-bold;
   color: var(--text-primary);
 }
 
 .StatLabel {
-  font-size: $font-size-sm;
+  font-size: $font-size-xs;
   font-weight: $font-weight-medium;
   color: var(--text-secondary);
   text-transform: uppercase;
-  letter-spacing: 0.5px;
+  letter-spacing: 0.3px;
 }
 
 .StatDivider {
   width: 1px;
-  height: 40px;
+  height: 36px;
   background: var(--border-light);
 
   @include media-down($breakpoint-sm) {
@@ -286,12 +286,193 @@
   }
 }
 
+// Mini Items Widget - Compact horizontal layout
+.MiniItemsWidget {
+  @include flex-column;
+  gap: $spacing-md;
+  padding: $spacing-lg;
+  background: var(--background-glass);
+  border-radius: $border-radius-lg;
+  border: 1px solid var(--border-light);
+}
+
+.MiniItemsHeader {
+  @include flex-center;
+  gap: $spacing-sm;
+  
+  .material-icons {
+    font-size: 20px;
+    color: var(--charity-hope);
+  }
+}
+
+.MiniItemsTitle {
+  font-size: $font-size-base;
+  font-weight: $font-weight-bold;
+  color: var(--text-primary);
+  flex: 1;
+}
+
+.MiniItemsCount {
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  color: var(--text-secondary);
+  padding: $spacing-xs $spacing-sm;
+  background: var(--background-glass-hover);
+  border-radius: $border-radius-full;
+}
+
+.MiniItemsLoading {
+  @include flex-center;
+  gap: $spacing-sm;
+  padding: $spacing-md;
+  color: var(--text-secondary);
+  font-size: $font-size-sm;
+  
+  .material-icons {
+    font-size: 18px;
+    @include animate-pulse(1.5s);
+  }
+}
+
+.MiniItemsList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: $spacing-md;
+}
+
+.MiniItem {
+  display: flex;
+  align-items: center;
+  gap: $spacing-md;
+  padding: $spacing-md;
+  background: var(--background-paper);
+  border-radius: $border-radius-md;
+  border: 1px solid var(--border-light);
+  transition: all $transition-fast;
+  flex: 1;
+  min-width: 140px;
+  max-width: calc(50% - $spacing-sm);
+  
+  &:hover {
+    border-color: var(--charity-hope);
+    transform: translateY(-2px);
+  }
+}
+
+.MiniItemComplete {
+  background: linear-gradient(135deg, rgba(76, 175, 80, 0.1), rgba(76, 175, 80, 0.05));
+  border-color: var(--success);
+  
+  .MiniItemIcon {
+    background: linear-gradient(135deg, var(--success), #66bb6a);
+  }
+  
+  .MiniProgressFill {
+    background: linear-gradient(90deg, var(--success), #66bb6a);
+  }
+}
+
+.MiniItemIcon {
+  @include flex-center;
+  width: 32px;
+  height: 32px;
+  border-radius: $border-radius-md;
+  background: linear-gradient(135deg, var(--charity-heart), var(--charity-hope));
+  flex-shrink: 0;
+  
+  .material-icons {
+    font-size: 16px;
+    color: white;
+  }
+}
+
+.MiniItemInfo {
+  flex: 1;
+  min-width: 0;
+  @include flex-column;
+  gap: $spacing-xs;
+}
+
+.MiniItemName {
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: var(--text-primary);
+  @include truncate;
+}
+
+.MiniItemProgress {
+  display: flex;
+  align-items: center;
+  gap: $spacing-sm;
+}
+
+.MiniProgressBar {
+  flex: 1;
+  height: 5px;
+  background: var(--background-glass);
+  border-radius: $border-radius-full;
+  overflow: hidden;
+}
+
+.MiniProgressFill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--charity-heart), var(--charity-hope));
+  border-radius: $border-radius-full;
+  transition: width $transition-slow;
+}
+
+.MiniProgressText {
+  font-size: $font-size-xs;
+  font-weight: $font-weight-medium;
+  color: var(--text-secondary);
+  flex-shrink: 0;
+}
+
+.MiniItemCheck {
+  font-size: 16px;
+  color: var(--success);
+  flex-shrink: 0;
+}
+
+.MiniItemsMore {
+  @include flex-center;
+  padding: $spacing-md;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  color: var(--charity-hope);
+  background: var(--background-glass-hover);
+  border-radius: $border-radius-md;
+  cursor: pointer;
+  transition: all $transition-fast;
+  flex: 1;
+  min-width: 140px;
+  max-width: calc(50% - $spacing-sm);
+  
+  &:hover {
+    background: var(--background-glass-active);
+  }
+}
+
+.MiniItemsEmpty {
+  @include flex-center;
+  gap: $spacing-md;
+  padding: $spacing-lg;
+  color: var(--text-secondary);
+  font-size: $font-size-base;
+  
+  .material-icons {
+    font-size: 24px;
+    opacity: 0.5;
+  }
+}
+
 .FeaturedDonateButton {
   @include button-reset;
   @include flex-center;
-  gap: $spacing-md;
-  padding: $spacing-lg $spacing-2xl;
-  font-size: $font-size-lg;
+  gap: $spacing-sm;
+  padding: $spacing-md $spacing-xl;
+  font-size: $font-size-base;
   font-weight: $font-weight-bold;
   color: var(--text-primary);
   background: linear-gradient(135deg, var(--charity-heart), var(--charity-hope));
@@ -316,7 +497,7 @@
   }
 
   .material-icons {
-    font-size: 28px;
+    font-size: 22px;
     z-index: 1;
   }
 
@@ -325,12 +506,12 @@
   }
 
   &:hover {
-    box-shadow: 0 8px 32px rgba(255, 64, 129, 0.4);
+    box-shadow: 0 6px 24px rgba(255, 64, 129, 0.4);
     transform: translateY(-2px);
     
     &::before {
-      width: 300px;
-      height: 300px;
+      width: 250px;
+      height: 250px;
     }
   }
 
@@ -343,7 +524,7 @@
   @include button-reset;
   @include flex-center;
   gap: $spacing-sm;
-  padding: $spacing-lg $spacing-xl;
+  padding: $spacing-md $spacing-lg;
   font-size: $font-size-base;
   font-weight: $font-weight-semibold;
   color: var(--text-primary);
@@ -353,7 +534,7 @@
   transition: all $transition-base;
 
   .material-icons {
-    font-size: 24px;
+    font-size: 20px;
   }
 
   &:hover {
@@ -564,8 +745,27 @@
   color: var(--text-secondary);
   margin: 0;
   line-height: 1.6;
-  @include line-clamp(3);
-  min-height: calc($font-size-base * 1.6 * 3);
+  max-height: 80px;
+  overflow-y: auto;
+  padding-right: $spacing-xs;
+  
+  &::-webkit-scrollbar {
+    width: 4px;
+  }
+  
+  &::-webkit-scrollbar-track {
+    background: var(--background-glass);
+    border-radius: $border-radius-full;
+  }
+  
+  &::-webkit-scrollbar-thumb {
+    background: var(--border-medium);
+    border-radius: $border-radius-full;
+    
+    &:hover {
+      background: var(--charity-heart);
+    }
+  }
 }
 
 .CardProgress {

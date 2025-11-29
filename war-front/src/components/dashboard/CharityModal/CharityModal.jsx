@@ -51,9 +51,9 @@ export default function CharityModal({
 
   const validate = () => {
     const newErrors = {};
-    if (!formData.title.trim()) newErrors.title = 'Title is required';
-    if (!formData.expected_fund) newErrors.expected_fund = 'Expected fund is required';
-    if (formData.expected_fund && isNaN(formData.expected_fund)) newErrors.expected_fund = 'Must be a number';
+    if (!formData.title.trim()) newErrors.title = 'กรุณากรอกชื่อ';
+    if (!formData.expected_fund) newErrors.expected_fund = 'กรุณากรอกเงินทุนที่คาดหวัง';
+    if (formData.expected_fund && isNaN(formData.expected_fund)) newErrors.expected_fund = 'ต้องเป็นตัวเลข';
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
@@ -85,7 +85,7 @@ export default function CharityModal({
             <span className="material-icons">
               {isEditing ? 'edit' : 'add_circle'}
             </span>
-            {isEditing ? 'Edit Charity' : 'Add New Charity'}
+            {isEditing ? 'แก้ไขการกุศล' : 'เพิ่มการกุศลใหม่'}
           </h2>
           <button onClick={handleClose} className={styles.CloseButton}>
             <span className="material-icons">close</span>
@@ -102,26 +102,26 @@ export default function CharityModal({
 
           <div className={styles.FormGroup}>
             <label className={styles.Label}>
-              Title <span className={styles.Required}>*</span>
+              ชื่อ <span className={styles.Required}>*</span>
             </label>
             <input
               type="text"
               name="title"
               value={formData.title}
               onChange={handleChange}
-              placeholder="Enter charity title"
+              placeholder="กรอกชื่อการกุศล"
               className={`${styles.Input} ${errors.title ? styles.InputError : ''}`}
             />
             {errors.title && <span className={styles.FieldError}>{errors.title}</span>}
           </div>
 
           <div className={styles.FormGroup}>
-            <label className={styles.Label}>Description</label>
+            <label className={styles.Label}>รายละเอียด</label>
             <textarea
               name="description"
               value={formData.description}
               onChange={handleChange}
-              placeholder="Enter charity description"
+              placeholder="กรอกรายละเอียดการกุศล"
               rows={4}
               className={styles.Textarea}
             />
@@ -130,7 +130,7 @@ export default function CharityModal({
           <div className={styles.FormRow}>
             <div className={styles.FormGroup}>
               <label className={styles.Label}>
-                Expected Fund (THB) <span className={styles.Required}>*</span>
+                เงินทุนที่คาดหวัง (บาท) <span className={styles.Required}>*</span>
               </label>
               <input
                 type="number"
@@ -146,7 +146,7 @@ export default function CharityModal({
             </div>
 
             <div className={styles.FormGroup}>
-              <label className={styles.Label}>Current Fund (THB)</label>
+              <label className={styles.Label}>เงินทุนปัจจุบัน (บาท)</label>
               <input
                 type="number"
                 name="current_fund"
@@ -161,33 +161,33 @@ export default function CharityModal({
           </div>
 
           <div className={styles.FormGroup}>
-            <label className={styles.Label}>Status</label>
+            <label className={styles.Label}>สถานะ</label>
             <select
               name="status"
               value={formData.status}
               onChange={handleChange}
               className={styles.Select}
             >
-              <option value="active">Active</option>
-              <option value="paused">Paused</option>
-              <option value="completed">Completed</option>
+              <option value="active">กำลังดำเนินการ</option>
+              <option value="paused">หยุดชั่วคราว</option>
+              <option value="completed">เสร็จสิ้นแล้ว</option>
             </select>
           </div>
 
           <div className={styles.ModalActions}>
             <button type="button" onClick={handleClose} className={styles.CancelButton}>
-              Cancel
+              ยกเลิก
             </button>
             <button type="submit" disabled={saving} className={styles.SubmitButton}>
               {saving ? (
                 <>
                   <span className="material-icons">hourglass_empty</span>
-                  <span>Saving...</span>
+                  <span>กำลังบันทึก...</span>
                 </>
               ) : (
                 <>
                   <span className="material-icons">{isEditing ? 'save' : 'add'}</span>
-                  <span>{isEditing ? 'Save Changes' : 'Create Charity'}</span>
+                  <span>{isEditing ? 'บันทึกการเปลี่ยนแปลง' : 'สร้างการกุศล'}</span>
                 </>
               )}
             </button>

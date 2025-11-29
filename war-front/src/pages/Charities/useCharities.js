@@ -3,6 +3,8 @@ import { useState } from 'react';
 const useCharities = () => {
   const [stateCharities, setState] = useState({
     charitiesItems: [],
+    featuredItems: [],
+    featuredItemsLoading: false,
     loading: true,
     error: null,
     modalOpen: false,

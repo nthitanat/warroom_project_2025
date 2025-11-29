@@ -440,6 +440,16 @@
     }
   }
   
+  &.items {
+    color: var(--charity-hope);
+    background: rgba(0, 229, 255, 0.1);
+    
+    &:hover {
+      background: rgba(0, 229, 255, 0.2);
+      color: var(--charity-hope);
+    }
+  }
+  
   &.delete {
     color: var(--action-delete);
     background: rgba(239, 83, 80, 0.1);

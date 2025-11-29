@@ -2,10 +2,25 @@ import React, { useEffect, useState } from 'react';
 import useCharities from './useCharities';
 import CharitiesHandler from './CharitiesHandler';
 import { getCharityThumbnail } from '../../api/charitiesService';
-import Slide from '../../components/charities/Slide/Slide';
 import DonateModal from '../../components/charities/DonateModal/DonateModal';
 import { LoadingIndicator } from '../../components/common';
 import styles from './Charities.module.scss';
+
+// Helper function to get item icon based on category/name
+const getItemIcon = (item) => {
+  const name = (item.name || '').toLowerCase();
+  const category = (item.category || '').toLowerCase();
+  
+  if (name.includes('น้ำ') || name.includes('water') || category.includes('water')) return 'water_drop';
+  if (name.includes('อาหาร') || name.includes('food') || category.includes('food')) return 'restaurant';
+  if (name.includes('ยา') || name.includes('medicine') || category.includes('medical')) return 'medication';
+  if (name.includes('เสื้อผ้า') || name.includes('cloth') || category.includes('clothing')) return 'checkroom';
+  if (name.includes('ผ้าห่ม') || name.includes('blanket')) return 'bed';
+  if (name.includes('เต็นท์') || name.includes('tent') || category.includes('shelter')) return 'holiday_village';
+  if (name.includes('ของใช้') || name.includes('supply') || category.includes('supplies')) return 'inventory_2';
+  if (name.includes('เงิน') || name.includes('money') || category.includes('money')) return 'payments';
+  return 'category';
+};
 
 export default function Charities() {
   const { stateCharities, setCharities } = useCharities();
@@ -16,6 +31,15 @@ export default function Charities() {
     handlers.fetchCharitiesData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  // Fetch items for featured charity
+  useEffect(() => {
+    if (stateCharities.charitiesItems && stateCharities.charitiesItems.length > 0) {
+      const featuredCharity = stateCharities.charitiesItems[0];
+      handlers.fetchFeaturedItems(featuredCharity.id);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [stateCharities.charitiesItems]);
 
   useEffect(() => {
     // Fetch thumbnails from API for each charity
@@ -57,7 +81,7 @@ export default function Charities() {
       <div className={styles.Container}>
         <div className={styles.Loading}>
           <span className="material-icons">hourglass_empty</span>
-          <p>Loading charities...</p>
+          <p>กำลังโหลดข้อมูลการกุศล...</p>
         </div>
       </div>
     );
@@ -81,7 +105,7 @@ export default function Charities() {
         <div className={styles.FeaturedSection}>
           <div className={styles.FeaturedLabel}>
             <span className="material-icons">campaign</span>
-            <span>Featured Campaign</span>
+            <span>แคมเปญแนะนำ</span>
           </div>
           
           <div className={styles.FeaturedCard}>
@@ -99,7 +123,7 @@ export default function Charities() {
               )}
               <div className={styles.FeaturedBadge}>
                 <span className="material-icons">volunteer_activism</span>
-                <span>Help Now</span>
+                <span>ช่วยเหลือตอนนี้</span>
               </div>
               <div className={styles.FeaturedOverlay}></div>
             </div>
@@ -114,44 +138,106 @@ export default function Charities() {
                 <div className={styles.StatItem}>
                   <span className="material-icons">favorite</span>
                   <div className={styles.StatInfo}>
-                    <span className={styles.StatValue}>Active</span>
-                    <span className={styles.StatLabel}>Campaign</span>
+                    <span className={styles.StatValue}>กำลังดำเนินการ</span>
+                    <span className={styles.StatLabel}>แคมเปญ</span>
                   </div>
                 </div>
                 <div className={styles.StatDivider}></div>
                 <div className={styles.StatItem}>
                   <span className="material-icons">verified</span>
                   <div className={styles.StatInfo}>
-                    <span className={styles.StatValue}>Verified</span>
-                    <span className={styles.StatLabel}>Organization</span>
+                    <span className={styles.StatValue}>ได้รับการยืนยัน</span>
+                    <span className={styles.StatLabel}>องค์กร</span>
                   </div>
                 </div>
                 <div className={styles.StatDivider}></div>
                 <div className={styles.StatItem}>
                   <span className="material-icons">support</span>
                   <div className={styles.StatInfo}>
-                    <span className={styles.StatValue}>Urgent</span>
-                    <span className={styles.StatLabel}>Need</span>
+                    <span className={styles.StatValue}>เร่งด่วน</span>
+                    <span className={styles.StatLabel}>ต้องการความช่วยเหลือ</span>
                   </div>
                 </div>
+              </div>
+
+              {/* Mini Items Widget */}
+              <div className={styles.MiniItemsWidget}>
+                <div className={styles.MiniItemsHeader}>
+                  <span className="material-icons">inventory_2</span>
+                  <span className={styles.MiniItemsTitle}>สิ่งของที่ต้องการ</span>
+                  {stateCharities.featuredItems.length > 0 && (
+                    <span className={styles.MiniItemsCount}>{stateCharities.featuredItems.length} รายการ</span>
+                  )}
+                </div>
+                
+                {stateCharities.featuredItemsLoading ? (
+                  <div className={styles.MiniItemsLoading}>
+                    <span className="material-icons">hourglass_empty</span>
+                    <span>กำลังโหลด...</span>
+                  </div>
+                ) : stateCharities.featuredItems.length > 0 ? (
+                  <div className={styles.MiniItemsList}>
+                    {stateCharities.featuredItems.slice(0, 4).map((item, index) => {
+                      const progress = item.target_quantity > 0 
+                        ? Math.min((item.current_quantity / item.target_quantity) * 100, 100) 
+                        : 0;
+                      const isComplete = progress >= 100;
+                      
+                      return (
+                        <div key={item.id || index} className={`${styles.MiniItem} ${isComplete ? styles.MiniItemComplete : ''}`}>
+                          <div className={styles.MiniItemIcon}>
+                            <span className="material-icons">{getItemIcon(item)}</span>
+                          </div>
+                          <div className={styles.MiniItemInfo}>
+                            <span className={styles.MiniItemName}>{item.name}</span>
+                            <div className={styles.MiniItemProgress}>
+                              <div className={styles.MiniProgressBar}>
+                                <div 
+                                  className={styles.MiniProgressFill} 
+                                  style={{ width: `${progress}%` }}
+                                ></div>
+                              </div>
+                              <span className={styles.MiniProgressText}>
+                                {item.current_quantity}/{item.target_quantity}
+                              </span>
+                            </div>
+                          </div>
+                          {isComplete && (
+                            <span className={`material-icons ${styles.MiniItemCheck}`}>check_circle</span>
+                          )}
+                        </div>
+                      );
+                    })}
+                    {stateCharities.featuredItems.length > 4 && (
+                      <div className={styles.MiniItemsMore}>
+                        <span>+{stateCharities.featuredItems.length - 4} รายการเพิ่มเติม</span>
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  <div className={styles.MiniItemsEmpty}>
+                    <span className="material-icons">inbox</span>
+                    <span>ยังไม่มีรายการสิ่งของ</span>
+                  </div>
+                )}
               </div>
               
               <div className={styles.FeaturedActions}>
                 <button
                   onClick={handlers.handleOpenModal}
                   className={styles.FeaturedDonateButton}
-                  aria-label="Donate to featured charity"
+                  aria-label="บริจาคให้แคมเปญแนะนำ"
                 >
                   <span className="material-icons">volunteer_activism</span>
-                  <span>Donate Now</span>
+                  <span>บริจาคตอนนี้</span>
                 </button>
                 <button
                   onClick={() => handlers.handleRedirectToCharity(latestCharity.id)}
                   className={styles.FeaturedDetailsButton}
-                  aria-label="View charity details"
+                  aria-label="ดูรายละเอียดการกุศล"
                 >
                   <span className="material-icons">info</span>
-                  <span>Learn More</span>
+                  <span>ดูรายละเอียด</span>
                 </button>
               </div>
             </div>
@@ -164,9 +250,9 @@ export default function Charities() {
         <div className={styles.SectionHeader}>
           <h2 className={styles.SectionTitle}>
             <span className="material-icons">volunteer_activism</span>
-            <span>All Campaigns</span>
+            <span>แคมเปญทั้งหมด</span>
           </h2>
-          <p className={styles.SectionSubtitle}>Make a difference in the lives of those affected by disasters</p>
+          <p className={styles.SectionSubtitle}>ร่วมสร้างความแตกต่างให้กับชีวิตของผู้ประสบภัย</p>
         </div>
         
         <div className={styles.Grid}>
@@ -201,7 +287,7 @@ export default function Charities() {
                   <h4 className={styles.CardTitle}>{charity.title}</h4>
                   <div className={styles.CardBadge}>
                     <span className="material-icons">verified</span>
-                    <span>Verified</span>
+                    <span>ได้รับการยืนยัน</span>
                   </div>
                 </div>
                 
@@ -214,9 +300,9 @@ export default function Charities() {
                   <div className={styles.ProgressInfo}>
                     <span className={styles.ProgressText}>
                       <span className="material-icons">favorite</span>
-                      <span>In progress</span>
+                      <span>กำลังดำเนินการ</span>
                     </span>
-                    <span className={styles.ProgressDonors}>Accepting donations</span>
+                    <span className={styles.ProgressDonors}>รับบริจาคอยู่</span>
                   </div>
                 </div>
                 
@@ -224,15 +310,15 @@ export default function Charities() {
                   <button
                     onClick={handlers.handleOpenModal}
                     className={styles.DonateButton}
-                    aria-label="Donate to charity"
+                    aria-label="บริจาคให้การกุศล"
                   >
                     <span className="material-icons">volunteer_activism</span>
-                    <span>Donate</span>
+                    <span>บริจาค</span>
                   </button>
                   <button
                     onClick={() => handlers.handleRedirectToCharity(charity.id)}
                     className={styles.ViewButton}
-                    aria-label="View charity details"
+                    aria-label="ดูรายละเอียดการกุศล"
                   >
                     <span className="material-icons">arrow_forward</span>
                   </button>
