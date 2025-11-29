@@ -141,22 +141,33 @@ export default function CharityItemCard({ items }) {
                   </div>
                 </div>
 
-                {/* Progress Bar */}
-                <div className={styles.ProgressWrapper}>
-                  <div className={styles.ProgressBar}>
-                    <div 
-                      className={`${styles.ProgressFill} ${styles[item.status]}`}
-                      style={{ width: `${progress}%` }}
-                    >
-                      {progress > 20 && (
-                        <span className={styles.ProgressGlow}></span>
-                      )}
+                {/* Circular Progress */}
+                <div className={styles.CircularProgressWrapper}>
+                  <div className={`${styles.CircularProgress} ${styles[item.status]}`}>
+                    <svg className={styles.CircularSvg} viewBox="0 0 100 100">
+                      <circle
+                        className={styles.CircularBackground}
+                        cx="50"
+                        cy="50"
+                        r="42"
+                      />
+                      <circle
+                        className={`${styles.CircularFill} ${styles[item.status]}`}
+                        cx="50"
+                        cy="50"
+                        r="42"
+                        style={{
+                          strokeDasharray: `${progress * 2.64} 264`,
+                        }}
+                      />
+                    </svg>
+                    <div className={styles.CircularCenter}>
+                      <span className={`${styles.CircularPercent} ${styles[item.status]}`}>
+                        {progress}%
+                      </span>
                     </div>
                   </div>
-                  <div className={styles.ProgressLabel}>
-                    <span className={`${styles.ProgressPercent} ${styles[item.status]}`}>
-                      {progress}%
-                    </span>
+                  <div className={styles.CircularInfo}>
                     <span className={`${styles.StatusLabel} ${styles[item.status]}`}>
                       <span className="material-icons">{statusConfig.icon}</span>
                       {statusConfig.label}

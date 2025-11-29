@@ -14,6 +14,8 @@
   border-bottom: 1px solid var(--border-light);
   box-shadow: var(--shadow-md);
   padding: $spacing-sm 0;
+  position: relative;
+  z-index: 10;
 }
 
 .NavContent {
@@ -137,6 +139,7 @@
 // User Menu & Avatar
 .UserMenu {
   position: relative;
+  z-index: $z-index-dropdown + 1;
 }
 
 .AvatarButton {
@@ -500,6 +503,7 @@
   border-bottom-right-radius: $border-radius-lg;
   overflow: hidden;
   position: relative;
+  z-index: 1;
   
   &::before {
     content: '';

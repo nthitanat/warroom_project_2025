@@ -26,6 +26,7 @@ export default function Charities() {
   const { stateCharities, setCharities } = useCharities();
   const handlers = CharitiesHandler(stateCharities, setCharities);
   const [thumbnailUrls, setThumbnailUrls] = useState({});
+  const [thumbnailTypes, setThumbnailTypes] = useState({}); // Track if thumbnail is image or video
 
   useEffect(() => {
     handlers.fetchCharitiesData();
@@ -47,18 +48,29 @@ export default function Charities() {
       if (!stateCharities.charitiesItems || stateCharities.charitiesItems.length === 0) return;
 
       const urls = {};
+      const types = {};
       for (const charity of stateCharities.charitiesItems) {
         try {
           const response = await getCharityThumbnail(charity.id);
-          const imageBlob = new Blob([response.data]);
+          const contentType = response.headers['content-type'] || '';
+          const imageBlob = new Blob([response.data], { type: contentType });
           const imageObjectURL = URL.createObjectURL(imageBlob);
           urls[charity.id] = imageObjectURL;
+          
+          // Determine if it's a video or image based on content type
+          if (contentType.startsWith('video/')) {
+            types[charity.id] = 'video';
+          } else {
+            types[charity.id] = 'image';
+          }
         } catch (error) {
           console.error(`Failed to load thumbnail for charity ${charity.id}:`, error);
           urls[charity.id] = '/images/fallback.jpg';
+          types[charity.id] = 'image';
         }
       }
       setThumbnailUrls(urls);
+      setThumbnailTypes(types);
     };
 
     fetchThumbnails();
@@ -111,15 +123,32 @@ export default function Charities() {
           <div className={styles.FeaturedCard}>
             <div className={styles.FeaturedImageWrapper}>
               {thumbnailUrls[latestCharity.id] && (
-                <img
-                  src={thumbnailUrls[latestCharity.id]}
-                  alt={latestCharity.title}
-                  className={styles.FeaturedImage}
-                  onError={(e) => {
-                    console.error('Thumbnail loading error:', e);
-                    e.target.src = '/images/fallback.jpg';
-                  }}
-                />
+                <>
+                  {thumbnailTypes[latestCharity.id] === 'video' ? (
+                    <video
+                      src={thumbnailUrls[latestCharity.id]}
+                      className={styles.FeaturedImage}
+                      autoPlay
+                      loop
+                      muted
+                      playsInline
+                      onError={(e) => {
+                        console.error('Video loading error:', e);
+                        e.target.style.display = 'none';
+                      }}
+                    />
+                  ) : (
+                    <img
+                      src={thumbnailUrls[latestCharity.id]}
+                      alt={latestCharity.title}
+                      className={styles.FeaturedImage}
+                      onError={(e) => {
+                        console.error('Thumbnail loading error:', e);
+                        e.target.src = '/images/fallback.jpg';
+                      }}
+                    />
+                  )}
+                </>
               )}
               <div className={styles.FeaturedBadge}>
                 <span className="material-icons">volunteer_activism</span>
@@ -178,29 +207,41 @@ export default function Charities() {
                 ) : stateCharities.featuredItems.length > 0 ? (
                   <div className={styles.MiniItemsList}>
                     {stateCharities.featuredItems.slice(0, 4).map((item, index) => {
-                      const progress = item.target_quantity > 0 
-                        ? Math.min((item.current_quantity / item.target_quantity) * 100, 100) 
+                      const progress = item.needed_quantity > 0 
+                        ? Math.min((item.current_quantity / item.needed_quantity) * 100, 100) 
                         : 0;
                       const isComplete = progress >= 100;
+                      const status = isComplete ? 'completed' : (progress > 0 ? 'in_progress' : 'pending');
                       
                       return (
                         <div key={item.id || index} className={`${styles.MiniItem} ${isComplete ? styles.MiniItemComplete : ''}`}>
-                          <div className={styles.MiniItemIcon}>
-                            <span className="material-icons">{getItemIcon(item)}</span>
+                          <div className={`${styles.MiniCircularProgress} ${styles[status]}`}>
+                            <svg className={styles.MiniCircularSvg} viewBox="0 0 100 100">
+                              <circle
+                                className={styles.MiniCircularBackground}
+                                cx="50"
+                                cy="50"
+                                r="42"
+                              />
+                              <circle
+                                className={`${styles.MiniCircularFill} ${styles[status]}`}
+                                cx="50"
+                                cy="50"
+                                r="42"
+                                style={{
+                                  strokeDasharray: `${progress * 2.64} 264`,
+                                }}
+                              />
+                            </svg>
+                            <div className={styles.MiniCircularCenter}>
+                              <span className="material-icons">{getItemIcon(item)}</span>
+                            </div>
                           </div>
                           <div className={styles.MiniItemInfo}>
                             <span className={styles.MiniItemName}>{item.name}</span>
-                            <div className={styles.MiniItemProgress}>
-                              <div className={styles.MiniProgressBar}>
-                                <div 
-                                  className={styles.MiniProgressFill} 
-                                  style={{ width: `${progress}%` }}
-                                ></div>
-                              </div>
-                              <span className={styles.MiniProgressText}>
-                                {item.current_quantity}/{item.target_quantity}
-                              </span>
-                            </div>
+                            <span className={`${styles.MiniProgressText} ${styles[status]}`}>
+                              {Math.round(progress)}%
+                            </span>
                           </div>
                           {isComplete && (
                             <span className={`material-icons ${styles.MiniItemCheck}`}>check_circle</span>
@@ -260,16 +301,34 @@ export default function Charities() {
             <div key={charity.id || index} className={styles.Card}>
               <div className={styles.CardImageWrapper}>
                 {thumbnailUrls[charity.id] && (
-                  <img 
-                    src={thumbnailUrls[charity.id]} 
-                    alt={charity.title}
-                    className={styles.CardImage}
-                    style={{ maxHeight: '200px', height: '200px' }}
-                    onError={(e) => {
-                      console.error('Thumbnail loading error:', e);
-                      e.target.src = '/images/fallback.jpg';
-                    }}
-                  />
+                  <>
+                    {thumbnailTypes[charity.id] === 'video' ? (
+                      <video
+                        src={thumbnailUrls[charity.id]}
+                        className={styles.CardImage}
+                        style={{ maxHeight: '200px', height: '200px' }}
+                        autoPlay
+                        loop
+                        muted
+                        playsInline
+                        onError={(e) => {
+                          console.error('Video loading error:', e);
+                          e.target.style.display = 'none';
+                        }}
+                      />
+                    ) : (
+                      <img 
+                        src={thumbnailUrls[charity.id]} 
+                        alt={charity.title}
+                        className={styles.CardImage}
+                        style={{ maxHeight: '200px', height: '200px' }}
+                        onError={(e) => {
+                          console.error('Thumbnail loading error:', e);
+                          e.target.src = '/images/fallback.jpg';
+                        }}
+                      />
+                    )}
+                  </>
                 )}
                 <div className={styles.CardImageOverlay}>
                   <button

@@ -128,15 +128,18 @@
 .FeaturedImageWrapper {
   position: relative;
   width: 100%;
-  height: 380px;
+  height: 100%;
+  min-height: 380px;
   overflow: hidden;
 
   @include media-down($breakpoint-md) {
     height: 280px;
+    min-height: 280px;
   }
 
   @include media-down($breakpoint-sm) {
     height: 220px;
+    min-height: 220px;
   }
 }
 
@@ -146,6 +149,11 @@
   object-fit: cover;
   display: block;
   transition: transform $transition-slow;
+}
+
+// Video styling for featured section
+video.FeaturedImage {
+  background: #000;
 }
 
 .FeaturedBadge {
@@ -346,9 +354,9 @@
   align-items: center;
   gap: $spacing-md;
   padding: $spacing-md;
-  background: var(--background-paper);
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.02));
   border-radius: $border-radius-md;
-  border: 1px solid var(--border-light);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   transition: all $transition-fast;
   flex: 1;
   min-width: 140px;
@@ -357,33 +365,72 @@
   &:hover {
     border-color: var(--charity-hope);
     transform: translateY(-2px);
+    box-shadow: 0 4px 16px rgba(124, 77, 255, 0.15);
   }
 }
 
 .MiniItemComplete {
-  background: linear-gradient(135deg, rgba(76, 175, 80, 0.1), rgba(76, 175, 80, 0.05));
-  border-color: var(--success);
+  background: linear-gradient(145deg, rgba(102, 187, 106, 0.15), rgba(102, 187, 106, 0.05));
+  border-color: rgba(102, 187, 106, 0.4);
   
-  .MiniItemIcon {
-    background: linear-gradient(135deg, var(--success), #66bb6a);
-  }
-  
-  .MiniProgressFill {
-    background: linear-gradient(90deg, var(--success), #66bb6a);
+  &:hover {
+    box-shadow: 0 4px 16px rgba(102, 187, 106, 0.2);
   }
 }
 
-.MiniItemIcon {
-  @include flex-center;
-  width: 32px;
-  height: 32px;
-  border-radius: $border-radius-md;
-  background: linear-gradient(135deg, var(--charity-heart), var(--charity-hope));
+// Mini Circular Progress
+.MiniCircularProgress {
+  position: relative;
+  width: 52px;
+  height: 52px;
   flex-shrink: 0;
+  @include flex-center;
+}
+
+.MiniCircularSvg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.MiniCircularBackground {
+  fill: none;
+  stroke: var(--background-glass-hover);
+  stroke-width: 7;
+}
+
+.MiniCircularFill {
+  fill: none;
+  stroke-width: 7;
+  stroke-linecap: round;
+  transition: stroke-dasharray 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+  
+  &.pending {
+    stroke: #ffb300;
+    filter: drop-shadow(0 0 4px rgba(255, 179, 0, 0.4));
+  }
+  
+  &.in_progress {
+    stroke: #42a5f5;
+    filter: drop-shadow(0 0 4px rgba(66, 165, 245, 0.4));
+  }
+  
+  &.completed {
+    stroke: #66bb6a;
+    filter: drop-shadow(0 0 4px rgba(102, 187, 106, 0.4));
+  }
+}
+
+.MiniCircularCenter {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  @include flex-center;
   
   .material-icons {
-    font-size: 16px;
-    color: white;
+    font-size: 18px;
+    color: var(--text-secondary);
   }
 }
 
@@ -423,10 +470,22 @@
 }
 
 .MiniProgressText {
-  font-size: $font-size-xs;
-  font-weight: $font-weight-medium;
-  color: var(--text-secondary);
+  font-size: $font-size-base;
+  font-weight: $font-weight-extrabold;
   flex-shrink: 0;
+  text-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
+  
+  &.pending {
+    color: #ffb300;
+  }
+  
+  &.in_progress {
+    color: #42a5f5;
+  }
+  
+  &.completed {
+    color: #66bb6a;
+  }
 }
 
 .MiniItemCheck {
@@ -656,6 +715,11 @@
   .Card:hover & {
     transform: scale(1.1);
   }
+}
+
+// Video styling for card section
+video.CardImage {
+  background: #000;
 }
 
 .CardImageOverlay {

@@ -192,15 +192,17 @@
   display: flex;
   gap: $spacing-md;
   padding: $spacing-lg;
-  background: var(--background-glass);
-  border: 1px solid var(--border-light);
+  background: linear-gradient(145deg, rgba(255, 255, 255, 0.08), rgba(255, 255, 255, 0.02));
+  border: 1px solid rgba(255, 255, 255, 0.12);
   border-radius: $border-radius-xl;
   transition: all $transition-base;
   animation: fadeInUp 0.5s ease-out both;
+  backdrop-filter: blur(12px);
   
   &:hover {
     transform: translateY(-4px);
-    box-shadow: var(--shadow-lg);
+    box-shadow: var(--shadow-lg), 0 0 20px rgba(124, 77, 255, 0.15);
+    border-color: rgba(255, 255, 255, 0.2);
     
     .ItemIcon {
       transform: scale(1.1) rotate(5deg);
@@ -208,16 +210,30 @@
   }
   
   &.pending {
-    border-left: 4px solid var(--status-paused);
+    border-left: 5px solid #ffb300;
+    background: linear-gradient(145deg, rgba(255, 179, 0, 0.12), rgba(255, 255, 255, 0.04));
+    
+    &:hover {
+      box-shadow: var(--shadow-lg), 0 0 25px rgba(255, 179, 0, 0.2);
+    }
   }
   
   &.in_progress {
-    border-left: 4px solid var(--info);
+    border-left: 5px solid #42a5f5;
+    background: linear-gradient(145deg, rgba(66, 165, 245, 0.12), rgba(255, 255, 255, 0.04));
+    
+    &:hover {
+      box-shadow: var(--shadow-lg), 0 0 25px rgba(66, 165, 245, 0.25);
+    }
   }
   
   &.completed {
-    border-left: 4px solid var(--status-completed);
-    background: linear-gradient(135deg, var(--background-glass), rgba(102, 187, 106, 0.05));
+    border-left: 5px solid #66bb6a;
+    background: linear-gradient(145deg, rgba(102, 187, 106, 0.15), rgba(255, 255, 255, 0.04));
+    
+    &:hover {
+      box-shadow: var(--shadow-lg), 0 0 25px rgba(102, 187, 106, 0.25);
+    }
   }
 }
 
@@ -352,75 +368,92 @@
   font-weight: $font-weight-light;
 }
 
-// Progress Section
-.ProgressWrapper {
+// Circular Progress Section
+.CircularProgressWrapper {
   @include flex-column;
-  gap: $spacing-xs;
-}
-
-.ProgressBar {
-  height: 8px;
-  background: var(--background-glass-hover);
-  border-radius: $border-radius-full;
-  overflow: hidden;
-  position: relative;
-}
-
-.ProgressFill {
-  height: 100%;
-  border-radius: $border-radius-full;
-  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
-  position: relative;
-  
-  &.pending {
-    background: linear-gradient(90deg, #ff9800, #ffb74d);
-  }
-  
-  &.in_progress {
-    background: linear-gradient(90deg, #2196f3, #64b5f6);
-  }
-  
-  &.completed {
-    background: linear-gradient(90deg, #4caf50, #81c784);
-  }
-}
-
-.ProgressGlow {
-  position: absolute;
-  right: 0;
-  top: 0;
-  width: 20px;
-  height: 100%;
-  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5));
-  animation: shimmer 1.5s infinite;
-}
-
-@keyframes shimmer {
-  0% { opacity: 0; }
-  50% { opacity: 1; }
-  100% { opacity: 0; }
-}
-
-.ProgressLabel {
-  @include flex-between;
   align-items: center;
+  gap: $spacing-sm;
+  padding: $spacing-sm 0;
 }
 
-.ProgressPercent {
-  font-size: $font-size-sm;
-  font-weight: $font-weight-bold;
+.CircularProgress {
+  position: relative;
+  width: 100px;
+  height: 100px;
+  @include flex-center;
+}
+
+.CircularSvg {
+  width: 100%;
+  height: 100%;
+  transform: rotate(-90deg);
+}
+
+.CircularBackground {
+  fill: none;
+  stroke: var(--background-glass-hover);
+  stroke-width: 10;
+}
+
+.CircularFill {
+  fill: none;
+  stroke-width: 10;
+  stroke-linecap: round;
+  transition: stroke-dasharray 0.8s cubic-bezier(0.4, 0, 0.2, 1);
   
   &.pending {
-    color: var(--status-paused);
+    stroke: #ffb300;
+    filter: drop-shadow(0 0 10px rgba(255, 179, 0, 0.6));
   }
   
   &.in_progress {
-    color: var(--info);
+    stroke: #42a5f5;
+    filter: drop-shadow(0 0 10px rgba(66, 165, 245, 0.6));
+    animation: progressPulse 2s ease-in-out infinite;
   }
   
   &.completed {
-    color: var(--status-completed);
+    stroke: #66bb6a;
+    filter: drop-shadow(0 0 10px rgba(102, 187, 106, 0.6));
   }
+}
+
+@keyframes progressPulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.7; }
+}
+
+.CircularCenter {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  @include flex-center;
+  @include flex-column;
+  gap: 2px;
+}
+
+.CircularPercent {
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-extrabold;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+  
+  &.pending {
+    color: #ffb300;
+  }
+  
+  &.in_progress {
+    color: #42a5f5;
+  }
+  
+  &.completed {
+    color: #66bb6a;
+  }
+}
+
+.CircularInfo {
+  @include flex-center;
+  margin-top: $spacing-xs;
 }
 
 .StatusLabel {
