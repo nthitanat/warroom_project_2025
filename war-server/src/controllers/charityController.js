@@ -232,36 +232,46 @@ exports.getCharityThumbnail = async (req, res) => {
       return res.status(404).json({ message: 'Thumbnail not found' });
     }
 
-    // Read directory to find image files
+    // Read directory to find image or video files
     const files = fs.readdirSync(thumbnailDir);
     const imageExtensions = ['.png', '.jpg', '.jpeg', '.gif', '.webp'];
+    const videoExtensions = ['.mp4', '.webm', '.ogg', '.mov', '.avi'];
+    const mediaExtensions = [...imageExtensions, ...videoExtensions];
     
-    // Look for thumbnail.png first (default), then any image file
-    let imageFile = files.find(file => file === 'thumbnail.png');
-    if (!imageFile) {
-      imageFile = files.find(file => 
-        imageExtensions.some(ext => file.toLowerCase().endsWith(ext))
+    // Look for thumbnail.png first (default), then thumbnail.mp4, then any media file
+    let mediaFile = files.find(file => file === 'thumbnail.png');
+    if (!mediaFile) {
+      mediaFile = files.find(file => file === 'thumbnail.mp4');
+    }
+    if (!mediaFile) {
+      mediaFile = files.find(file => 
+        mediaExtensions.some(ext => file.toLowerCase().endsWith(ext))
       );
     }
 
-    if (!imageFile) {
+    if (!mediaFile) {
       return res.status(404).json({ message: 'No thumbnail found for this charity' });
     }
 
-    const imagePath = path.join(thumbnailDir, imageFile);
+    const mediaPath = path.join(thumbnailDir, mediaFile);
 
     // Set appropriate content type based on file extension
-    const ext = path.extname(imageFile).toLowerCase();
+    const ext = path.extname(mediaFile).toLowerCase();
     const contentTypes = {
       '.png': 'image/png',
       '.jpg': 'image/jpeg',
       '.jpeg': 'image/jpeg',
       '.gif': 'image/gif',
-      '.webp': 'image/webp'
+      '.webp': 'image/webp',
+      '.mp4': 'video/mp4',
+      '.webm': 'video/webm',
+      '.ogg': 'video/ogg',
+      '.mov': 'video/quicktime',
+      '.avi': 'video/x-msvideo'
     };
     
     res.setHeader('Content-Type', contentTypes[ext] || 'image/png');
-    res.sendFile(imagePath);
+    res.sendFile(mediaPath);
   } catch (error) {
     console.error('Get charity thumbnail error:', error);
     res.status(500).json({ message: 'Internal server error' });

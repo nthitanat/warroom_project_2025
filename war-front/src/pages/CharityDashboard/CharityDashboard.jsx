@@ -16,6 +16,7 @@ export default function CharityDashboard() {
   const { stateCharityDashboard, setCharityDashboard } = useCharityDashboard();
   const handlers = CharityDashboardHandler(stateCharityDashboard, setCharityDashboard);
   const [thumbnailUrls, setThumbnailUrls] = useState({});
+  const [thumbnailTypes, setThumbnailTypes] = useState({}); // Track if thumbnail is video or image
 
   // Initial data fetch
   useEffect(() => {
@@ -31,17 +32,28 @@ export default function CharityDashboard() {
       if (!stateCharityDashboard.charities || stateCharityDashboard.charities.length === 0) return;
 
       const urls = {};
+      const types = {};
       for (const charity of stateCharityDashboard.charities) {
         try {
           const response = await getCharityThumbnail(charity.id);
-          const imageBlob = new Blob([response.data]);
+          const contentType = response.headers['content-type'] || '';
+          const imageBlob = new Blob([response.data], { type: contentType });
           const imageObjectURL = URL.createObjectURL(imageBlob);
           urls[charity.id] = imageObjectURL;
+          
+          // Determine if it's a video or image based on content type
+          if (contentType.startsWith('video/')) {
+            types[charity.id] = 'video';
+          } else {
+            types[charity.id] = 'image';
+          }
         } catch (error) {
           urls[charity.id] = null;
+          types[charity.id] = 'image';
         }
       }
       setThumbnailUrls(urls);
+      setThumbnailTypes(types);
     };
 
     fetchThumbnails();
@@ -237,14 +249,29 @@ export default function CharityDashboard() {
                     <td>
                       <div className={styles.CharityInfo}>
                         {thumbnailUrls[charity.id] ? (
-                          <img
-                            src={thumbnailUrls[charity.id]}
-                            alt={charity.title}
-                            className={styles.CharityImage}
-                            onError={(e) => {
-                              e.target.style.display = 'none';
-                            }}
-                          />
+                          thumbnailTypes[charity.id] === 'video' ? (
+                            <video
+                              src={thumbnailUrls[charity.id]}
+                              className={styles.CharityImage}
+                              muted
+                              loop
+                              playsInline
+                              onMouseEnter={(e) => e.target.play()}
+                              onMouseLeave={(e) => e.target.pause()}
+                              onError={(e) => {
+                                e.target.style.display = 'none';
+                              }}
+                            />
+                          ) : (
+                            <img
+                              src={thumbnailUrls[charity.id]}
+                              alt={charity.title}
+                              className={styles.CharityImage}
+                              onError={(e) => {
+                                e.target.style.display = 'none';
+                              }}
+                            />
+                          )
                         ) : (
                           <div className={styles.CharityImagePlaceholder}>
                             <span className="material-icons">image</span>

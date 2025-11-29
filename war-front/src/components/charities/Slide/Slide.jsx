@@ -14,6 +14,7 @@ export default function Slide({ items }) {
   const { stateSlide, setSlide } = useSlide();
   const handlers = SlideHandler(stateSlide, setSlide, items);
   const [imageUrls, setImageUrls] = useState({});
+  const [videoItems, setVideoItems] = useState(new Set()); // Track which items are videos
 
   useEffect(() => {
     // Fetch images from API for each slide
@@ -21,14 +22,23 @@ export default function Slide({ items }) {
       if (!items || items.length === 0) return;
 
       const urls = {};
+      const videos = new Set();
+      
       for (const item of items) {
         // Check if this is the thumbnail slide
         if (item.isThumbnail) {
           try {
             const response = await getCharityThumbnail(item.charity_id);
-            const imageBlob = new Blob([response.data]);
+            // Check content type to determine if it's a video or image
+            const contentType = response.headers['content-type'];
+            const imageBlob = new Blob([response.data], { type: contentType });
             const imageObjectURL = URL.createObjectURL(imageBlob);
             urls[item.id] = imageObjectURL;
+            
+            // Check if it's a video based on content type
+            if (contentType && contentType.startsWith('video/')) {
+              videos.add(item.id);
+            }
           } catch (error) {
             console.error(`Failed to load thumbnail for charity ${item.charity_id}:`, error);
             urls[item.id] = '/images/fallback.jpg';
@@ -37,6 +47,10 @@ export default function Slide({ items }) {
         // Skip if it's an external URL (video)
         else if (item.img && (item.img.startsWith('http://') || item.img.startsWith('https://'))) {
           urls[item.id] = item.img;
+          // Check if it's a video URL
+          if (isVideoUrl(item.img)) {
+            videos.add(item.id);
+          }
         } else {
           try {
             const response = await getCharitySlideImage(item.id);
@@ -50,6 +64,7 @@ export default function Slide({ items }) {
         }
       }
       setImageUrls(urls);
+      setVideoItems(videos);
     };
 
     fetchImages();
@@ -70,7 +85,7 @@ export default function Slide({ items }) {
 
   const currentItem = items[stateSlide.currentIndex];
   const mediaUrl = imageUrls[currentItem.id] || '';
-  const isVideo = isVideoUrl(mediaUrl);
+  const isVideo = videoItems.has(currentItem.id);
 
   return (
     <div className={styles.Container}>
@@ -117,13 +132,28 @@ export default function Slide({ items }) {
           <div className={styles.Loading}>กำลังโหลด...</div>
         ) : isVideo ? (
           <div className={styles.MediaContainer}>
-            <iframe
-              src={mediaUrl}
-              title={currentItem.description || 'Slide video'}
-              allow="autoplay; encrypted-media"
-              allowFullScreen
-              className={styles.Video}
-            />
+            {mediaUrl.startsWith('blob:') ? (
+              // Local video file served via blob URL
+              <video
+                src={mediaUrl}
+                controls
+                className={styles.Video}
+                onError={(e) => {
+                  console.error('Video loading error:', e);
+                }}
+              >
+                Your browser does not support the video tag.
+              </video>
+            ) : (
+              // External video URL (YouTube, Google Drive, etc.)
+              <iframe
+                src={mediaUrl}
+                title={currentItem.description || 'Slide video'}
+                allow="autoplay; encrypted-media"
+                allowFullScreen
+                className={styles.Video}
+              />
+            )}
           </div>
         ) : (
           <img
