@@ -1,0 +1,140 @@
+@import '../../../styles/main.scss';
+
+.Overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(10, 14, 39, 0.9);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  @include flex-center;
+  z-index: $z-index-modal + 10;
+  padding: $spacing-lg;
+}
+
+.Modal {
+  @include glass-panel;
+  @include flex-center;
+  @include flex-column;
+  gap: $spacing-lg;
+  text-align: center;
+  max-width: 400px;
+  width: 100%;
+  animation: scaleIn 0.25s ease-out;
+}
+
+.IconWrapper {
+  width: 72px;
+  height: 72px;
+  @include flex-center;
+  border-radius: $border-radius-full;
+  
+  .material-icons {
+    font-size: 36px;
+  }
+  
+  &.danger {
+    background: rgba(239, 83, 80, 0.15);
+    
+    .material-icons {
+      color: var(--error);
+    }
+  }
+  
+  &.warning {
+    background: rgba(255, 215, 64, 0.15);
+    
+    .material-icons {
+      color: var(--warning);
+    }
+  }
+  
+  &.info {
+    background: rgba(64, 196, 255, 0.15);
+    
+    .material-icons {
+      color: var(--info);
+    }
+  }
+}
+
+.Title {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.Message {
+  font-size: $font-size-base;
+  color: var(--text-secondary);
+  margin: 0;
+  line-height: 1.6;
+}
+
+.Actions {
+  @include flex-center;
+  gap: $spacing-md;
+  width: 100%;
+  padding-top: $spacing-md;
+}
+
+.CancelButton {
+  @include button-reset;
+  @include glass-button;
+  flex: 1;
+  padding: $spacing-md $spacing-lg;
+}
+
+.ConfirmButton {
+  @include button-reset;
+  @include flex-center;
+  gap: $spacing-sm;
+  flex: 1;
+  padding: $spacing-md $spacing-lg;
+  font-weight: $font-weight-semibold;
+  color: var(--text-primary);
+  border-radius: $border-radius-md;
+  transition: all $transition-base;
+  
+  &:hover {
+    transform: translateY(-2px);
+  }
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+  
+  .material-icons {
+    font-size: 20px;
+  }
+  
+  &.danger {
+    background: var(--error);
+    
+    &:hover {
+      background: var(--action-delete-hover);
+    }
+  }
+  
+  &.warning {
+    background: var(--warning);
+    color: var(--text-inverse);
+    
+    &:hover {
+      background: darken(#ffd740, 10%);
+    }
+  }
+  
+  &.info {
+    background: var(--info);
+    
+    &:hover {
+      background: darken(#40c4ff, 10%);
+    }
+  }
+}

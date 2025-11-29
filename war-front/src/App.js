@@ -1,7 +1,7 @@
 import React from 'react';
 import { HashRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
-import PrivateRoute from './components/common/PrivateRoute/PrivateRoute';
+import { PrivateRoute } from './components/common';
 import Navbar from './components/common/Navbar/Navbar';
 
 // Pages
@@ -13,8 +13,10 @@ import Charities from './pages/Charities/Charities';
 import CharityDetail from './pages/CharityDetail/CharityDetail';
 import Lessons from './pages/Lessons/Lessons';
 import WarRoom from './pages/WarRoom/WarRoom';
-import AdminDashboard from './pages/AdminDashboard/AdminDashboard';
 import Unauthorized from './pages/Unauthorized/Unauthorized';
+
+// Admin Pages
+import CharityDashboard from './pages/CharityDashboard/CharityDashboard';
 
 import './App.scss';
 
@@ -36,15 +38,15 @@ function App() {
             <Route path="/charity/:id" element={<CharityDetail />} />
             <Route path="/lessons" element={<Lessons />} />
             <Route path="/warroom" element={<WarRoom />} />
-            
-            {/* Admin Routes */}
-            <Route
-              path="/admin-dashboard"
+          
+            {/* Admin Routes - Requires Admin Role */}
+            <Route 
+              path="/admin/charities" 
               element={
                 <PrivateRoute adminOnly>
-                  <AdminDashboard />
+                  <CharityDashboard />
                 </PrivateRoute>
-              }
+              } 
             />
             
             {/* Catch all */}

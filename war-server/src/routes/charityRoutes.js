@@ -21,4 +21,9 @@ router.post('/', auth, adminAuth, charityController.createCharity);
 router.put('/:id', auth, adminAuth, charityController.updateCharity);
 router.delete('/:id', auth, adminAuth, charityController.deleteCharity);
 
+// Charity Slides Admin routes
+router.post('/:id/slides', auth, adminAuth, charityController.createCharitySlide);
+router.put('/slides/:slideId', auth, adminAuth, charityController.updateCharitySlide);
+router.delete('/slides/:slideId', auth, adminAuth, charityController.deleteCharitySlide);
+
 module.exports = router;

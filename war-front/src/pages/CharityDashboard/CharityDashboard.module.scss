@@ -1,0 +1,615 @@
+@import '../../styles/main.scss';
+
+// Dashboard Container
+.Container {
+  min-height: 100vh;
+  padding: $spacing-xl;
+  background: var(--gradient-primary);
+  
+  @include media-down($breakpoint-md) {
+    padding: $spacing-md;
+  }
+}
+
+// Dashboard Header
+.Header {
+  @include flex-between;
+  flex-wrap: wrap;
+  gap: $spacing-lg;
+  margin-bottom: $spacing-xl;
+  
+  @include media-down($breakpoint-md) {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+.HeaderLeft {
+  @include flex-column;
+  gap: $spacing-xs;
+}
+
+.Title {
+  font-size: $font-size-3xl;
+  font-weight: $font-weight-bold;
+  color: var(--text-primary);
+  margin: 0;
+  
+  @include media-down($breakpoint-md) {
+    font-size: $font-size-2xl;
+  }
+}
+
+.Subtitle {
+  font-size: $font-size-base;
+  color: var(--text-secondary);
+  margin: 0;
+}
+
+.HeaderActions {
+  @include flex-center;
+  gap: $spacing-md;
+  
+  @include media-down($breakpoint-md) {
+    flex-wrap: wrap;
+  }
+}
+
+.AddButton {
+  @include button-reset;
+  @include flex-center;
+  gap: $spacing-sm;
+  padding: $spacing-sm $spacing-lg;
+  font-size: $font-size-base;
+  font-weight: $font-weight-semibold;
+  color: var(--text-primary);
+  background: var(--action-add);
+  border-radius: $border-radius-md;
+  transition: all $transition-base;
+  
+  &:hover {
+    background: var(--action-add-hover);
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-glow);
+  }
+  
+  &:active {
+    transform: translateY(0);
+  }
+  
+  .material-icons {
+    font-size: 20px;
+  }
+}
+
+// Filters Section
+.Filters {
+  @include flex-center;
+  flex-wrap: wrap;
+  gap: $spacing-md;
+  margin-bottom: $spacing-xl;
+  
+  @include media-down($breakpoint-md) {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+.SearchWrapper {
+  position: relative;
+  flex: 1;
+  min-width: 250px;
+  max-width: 400px;
+  
+  @include media-down($breakpoint-md) {
+    max-width: 100%;
+  }
+}
+
+.SearchIcon {
+  position: absolute;
+  left: $spacing-md;
+  top: 50%;
+  transform: translateY(-50%);
+  color: var(--text-disabled);
+  font-size: 20px;
+  pointer-events: none;
+}
+
+.SearchInput {
+  @include glass-input;
+  width: 100%;
+  padding: $spacing-sm $spacing-md $spacing-sm $spacing-3xl;
+}
+
+.FilterSelect {
+  @include glass-input;
+  min-width: 150px;
+  cursor: pointer;
+  
+  @include media-down($breakpoint-md) {
+    width: 100%;
+  }
+}
+
+// Stats Cards
+.StatsGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: $spacing-lg;
+  margin-bottom: $spacing-xl;
+}
+
+.StatCard {
+  @include glass-card;
+  padding: $spacing-lg;
+  @include flex-column;
+  gap: $spacing-sm;
+}
+
+.StatHeader {
+  @include flex-between;
+}
+
+.StatLabel {
+  font-size: $font-size-sm;
+  color: var(--text-secondary);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.StatIcon {
+  width: 40px;
+  height: 40px;
+  @include flex-center;
+  border-radius: $border-radius-md;
+  
+  .material-icons {
+    font-size: 24px;
+  }
+  
+  &.active {
+    background: var(--status-active-bg);
+    color: var(--status-active);
+  }
+  
+  &.paused {
+    background: var(--status-paused-bg);
+    color: var(--status-paused);
+  }
+  
+  &.completed {
+    background: var(--status-completed-bg);
+    color: var(--status-completed);
+  }
+  
+  &.total {
+    background: rgba(var(--primary-500-rgb), 0.15);
+    color: var(--primary-500);
+  }
+}
+
+.StatValue {
+  font-size: $font-size-2xl;
+  font-weight: $font-weight-bold;
+  color: var(--text-primary);
+}
+
+// Table Container
+.TableContainer {
+  @include glass-panel;
+  overflow: hidden;
+}
+
+.TableHeader {
+  @include flex-between;
+  padding: $spacing-lg;
+  border-bottom: 1px solid var(--border-light);
+  
+  @include media-down($breakpoint-md) {
+    flex-direction: column;
+    gap: $spacing-sm;
+    align-items: flex-start;
+  }
+}
+
+.TableTitle {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-semibold;
+  color: var(--text-primary);
+  margin: 0;
+  @include flex-center;
+  gap: $spacing-sm;
+  
+  .material-icons {
+    color: var(--text-accent);
+  }
+}
+
+.TableCount {
+  font-size: $font-size-sm;
+  color: var(--text-secondary);
+}
+
+// Table Wrapper for horizontal scroll
+.TableWrapper {
+  overflow-x: auto;
+}
+
+.Table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 900px;
+}
+
+.Table th {
+  padding: $spacing-md $spacing-lg;
+  text-align: left;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  color: var(--text-secondary);
+  background: var(--dashboard-table-header-bg);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  white-space: nowrap;
+}
+
+.Table td {
+  padding: $spacing-md $spacing-lg;
+  font-size: $font-size-base;
+  color: var(--text-primary);
+  border-bottom: 1px solid var(--border-light);
+  vertical-align: middle;
+}
+
+.Table tbody tr {
+  transition: background $transition-fast;
+  
+  &:hover {
+    background: var(--dashboard-table-row-hover);
+  }
+  
+  &:nth-child(even) {
+    background: var(--dashboard-table-row-alt);
+    
+    &:hover {
+      background: var(--dashboard-table-row-hover);
+    }
+  }
+}
+
+// Table Cell Styles
+.CharityInfo {
+  @include flex-center;
+  gap: $spacing-md;
+  justify-content: flex-start;
+}
+
+.CharityImage {
+  width: 50px;
+  height: 50px;
+  object-fit: cover;
+  border-radius: $border-radius-md;
+  border: 1px solid var(--border-light);
+}
+
+.CharityImagePlaceholder {
+  width: 50px;
+  height: 50px;
+  @include flex-center;
+  background: var(--background-glass);
+  border-radius: $border-radius-md;
+  border: 1px solid var(--border-light);
+  
+  .material-icons {
+    color: var(--text-disabled);
+  }
+}
+
+.CharityTitle {
+  font-weight: $font-weight-medium;
+  color: var(--text-primary);
+  @include truncate;
+  max-width: 200px;
+}
+
+.CharityDescription {
+  font-size: $font-size-sm;
+  color: var(--text-secondary);
+  @include line-clamp(2);
+  max-width: 250px;
+}
+
+.OrderBadge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 40px;
+  padding: $spacing-xs $spacing-sm;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-semibold;
+  color: var(--text-accent);
+  background: rgba(var(--primary-500-rgb), 0.15);
+  border-radius: $border-radius-md;
+}
+
+.StatusBadge {
+  display: inline-flex;
+  align-items: center;
+  gap: $spacing-xs;
+  padding: $spacing-xs $spacing-sm;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  border-radius: $border-radius-full;
+  text-transform: capitalize;
+  
+  &.active {
+    color: var(--status-active);
+    background: var(--status-active-bg);
+  }
+  
+  &.paused {
+    color: var(--status-paused);
+    background: var(--status-paused-bg);
+  }
+  
+  &.completed {
+    color: var(--status-completed);
+    background: var(--status-completed-bg);
+  }
+}
+
+.StatusDot {
+  width: 6px;
+  height: 6px;
+  border-radius: $border-radius-full;
+  background: currentColor;
+}
+
+.FundProgress {
+  @include flex-column;
+  gap: $spacing-xs;
+  min-width: 120px;
+}
+
+.ProgressBar {
+  height: 6px;
+  background: var(--background-glass);
+  border-radius: $border-radius-full;
+  overflow: hidden;
+}
+
+.ProgressFill {
+  height: 100%;
+  background: var(--gradient-accent);
+  border-radius: $border-radius-full;
+  transition: width $transition-base;
+}
+
+.ProgressText {
+  font-size: $font-size-xs;
+  color: var(--text-secondary);
+}
+
+// Action Buttons
+.Actions {
+  @include flex-center;
+  gap: $spacing-sm;
+  justify-content: flex-start;
+}
+
+.ActionButton {
+  @include button-reset;
+  @include flex-center;
+  width: 36px;
+  height: 36px;
+  border-radius: $border-radius-md;
+  transition: all $transition-base;
+  
+  .material-icons {
+    font-size: 20px;
+  }
+  
+  &.view {
+    color: var(--action-view);
+    background: rgba(102, 187, 106, 0.1);
+    
+    &:hover {
+      background: rgba(102, 187, 106, 0.2);
+      color: var(--action-view-hover);
+    }
+  }
+  
+  &.edit {
+    color: var(--action-edit);
+    background: rgba(66, 165, 245, 0.1);
+    
+    &:hover {
+      background: rgba(66, 165, 245, 0.2);
+      color: var(--action-edit-hover);
+    }
+  }
+  
+  &.slides {
+    color: var(--action-add);
+    background: rgba(171, 71, 188, 0.1);
+    
+    &:hover {
+      background: rgba(171, 71, 188, 0.2);
+      color: var(--action-add-hover);
+    }
+  }
+  
+  &.delete {
+    color: var(--action-delete);
+    background: rgba(239, 83, 80, 0.1);
+    
+    &:hover {
+      background: rgba(239, 83, 80, 0.2);
+      color: var(--action-delete-hover);
+    }
+  }
+}
+
+// Empty State
+.EmptyState {
+  @include flex-center;
+  @include flex-column;
+  gap: $spacing-lg;
+  padding: $spacing-3xl;
+  text-align: center;
+  
+  .material-icons {
+    font-size: 64px;
+    color: var(--text-disabled);
+  }
+}
+
+.EmptyTitle {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-semibold;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.EmptyText {
+  font-size: $font-size-base;
+  color: var(--text-secondary);
+  margin: 0;
+  max-width: 400px;
+}
+
+// Loading State
+.Loading {
+  @include flex-center;
+  @include flex-column;
+  gap: $spacing-lg;
+  min-height: 60vh;
+  
+  .material-icons {
+    font-size: 48px;
+    color: var(--text-accent);
+    animation: rotate 1s linear infinite;
+  }
+}
+
+.LoadingText {
+  font-size: $font-size-lg;
+  color: var(--text-secondary);
+}
+
+// Error State
+.Error {
+  @include flex-center;
+  @include flex-column;
+  gap: $spacing-lg;
+  padding: $spacing-3xl;
+  text-align: center;
+  
+  .material-icons {
+    font-size: 64px;
+    color: var(--error);
+  }
+}
+
+.ErrorText {
+  font-size: $font-size-lg;
+  color: var(--error);
+  margin: 0;
+}
+
+// Delete Confirmation Modal
+.DeleteModal {
+  @include flex-center;
+  @include flex-column;
+  gap: $spacing-lg;
+  text-align: center;
+}
+
+.DeleteIcon {
+  width: 64px;
+  height: 64px;
+  @include flex-center;
+  background: rgba(239, 83, 80, 0.15);
+  border-radius: $border-radius-full;
+  
+  .material-icons {
+    font-size: 32px;
+    color: var(--error);
+  }
+}
+
+.DeleteTitle {
+  font-size: $font-size-xl;
+  font-weight: $font-weight-bold;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.DeleteText {
+  font-size: $font-size-base;
+  color: var(--text-secondary);
+  margin: 0;
+  max-width: 400px;
+}
+
+.DeleteActions {
+  @include flex-center;
+  gap: $spacing-md;
+  margin-top: $spacing-md;
+}
+
+.CancelButton {
+  @include button-reset;
+  @include glass-button;
+  padding: $spacing-sm $spacing-xl;
+}
+
+.ConfirmDeleteButton {
+  @include button-reset;
+  @include flex-center;
+  gap: $spacing-sm;
+  padding: $spacing-sm $spacing-xl;
+  font-weight: $font-weight-semibold;
+  color: var(--text-primary);
+  background: var(--error);
+  border-radius: $border-radius-md;
+  transition: all $transition-base;
+  
+  &:hover {
+    background: var(--action-delete-hover);
+    transform: translateY(-2px);
+  }
+  
+  &:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
+  }
+}
+
+// Back Button
+.BackButton {
+  @include button-reset;
+  @include flex-center;
+  gap: $spacing-sm;
+  padding: $spacing-sm $spacing-lg;
+  font-size: $font-size-base;
+  font-weight: $font-weight-medium;
+  color: var(--text-secondary);
+  background: transparent;
+  border: 1px solid var(--border-light);
+  border-radius: $border-radius-md;
+  transition: all $transition-base;
+  margin-bottom: $spacing-lg;
+  
+  &:hover {
+    color: var(--text-primary);
+    border-color: var(--border-medium);
+    background: var(--background-glass-hover);
+  }
+  
+  .material-icons {
+    font-size: 20px;
+  }
+}

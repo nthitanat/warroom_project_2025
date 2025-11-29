@@ -134,11 +134,170 @@
   }
 }
 
+// User Menu & Avatar
+.UserMenu {
+  position: relative;
+}
+
+.AvatarButton {
+  @include button-reset;
+  @include flex-center;
+  gap: $spacing-sm;
+  padding: $spacing-xs $spacing-sm;
+  border-radius: $border-radius-md;
+  transition: all $transition-base;
+  
+  &:hover {
+    background: var(--background-glass-hover);
+  }
+}
+
+.Avatar {
+  width: 36px;
+  height: 36px;
+  @include flex-center;
+  background: var(--avatar-bg);
+  border: 2px solid var(--avatar-border);
+  border-radius: $border-radius-full;
+  font-size: $font-size-base;
+  font-weight: $font-weight-bold;
+  color: var(--avatar-text);
+  text-transform: uppercase;
+}
+
 .UserName {
   font-size: $font-size-sm;
   font-weight: $font-weight-medium;
   color: var(--text-secondary);
-  padding: 0 $spacing-sm;
+  
+  @include media-down($breakpoint-md) {
+    display: none;
+  }
+}
+
+.DropdownIcon {
+  font-size: 20px;
+  color: var(--text-secondary);
+  transition: transform $transition-base;
+}
+
+.DropdownIconOpen {
+  transform: rotate(180deg);
+}
+
+// Dropdown Menu
+.Dropdown {
+  position: absolute;
+  top: calc(100% + $spacing-sm);
+  right: 0;
+  min-width: 240px;
+  background: var(--dropdown-bg);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1px solid var(--dropdown-border);
+  border-radius: $border-radius-lg;
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+  animation: fadeInUp 0.2s ease-out;
+  z-index: $z-index-dropdown;
+}
+
+.DropdownHeader {
+  @include flex-center;
+  justify-content: flex-start;
+  gap: $spacing-md;
+  padding: $spacing-lg;
+  background: var(--background-glass);
+}
+
+.DropdownAvatar {
+  width: 44px;
+  height: 44px;
+  @include flex-center;
+  background: var(--avatar-bg);
+  border: 2px solid var(--avatar-border);
+  border-radius: $border-radius-full;
+  font-size: $font-size-lg;
+  font-weight: $font-weight-bold;
+  color: var(--avatar-text);
+  text-transform: uppercase;
+}
+
+.DropdownUserInfo {
+  @include flex-column;
+  gap: $spacing-xs;
+}
+
+.DropdownUsername {
+  font-size: $font-size-base;
+  font-weight: $font-weight-semibold;
+  color: var(--text-primary);
+}
+
+.DropdownRole {
+  font-size: $font-size-xs;
+  color: var(--text-accent);
+  text-transform: capitalize;
+}
+
+.DropdownDivider {
+  height: 1px;
+  background: var(--dropdown-divider);
+}
+
+.DropdownSection {
+  padding: $spacing-sm;
+}
+
+.DropdownSectionTitle {
+  display: block;
+  padding: $spacing-xs $spacing-md;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  color: var(--text-disabled);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.DropdownItem {
+  @include button-reset;
+  @include flex-center;
+  justify-content: flex-start;
+  gap: $spacing-sm;
+  width: 100%;
+  padding: $spacing-sm $spacing-md;
+  font-size: $font-size-sm;
+  color: var(--text-primary);
+  border-radius: $border-radius-sm;
+  transition: all $transition-fast;
+  
+  &:hover {
+    background: var(--dropdown-item-hover);
+    color: var(--text-accent);
+  }
+  
+  .material-icons {
+    font-size: 20px;
+    color: var(--text-secondary);
+  }
+  
+  &:hover .material-icons {
+    color: var(--text-accent);
+  }
+}
+
+.DropdownItemLogout {
+  margin: $spacing-sm;
+  border-radius: $border-radius-md;
+  
+  &:hover {
+    background: rgba(239, 83, 80, 0.15);
+    color: var(--error);
+    
+    .material-icons {
+      color: var(--error);
+    }
+  }
 }
 
 .SignInButton {
@@ -241,6 +400,9 @@
 
 .MobileMenuItem {
   @include button-reset;
+  @include flex-center;
+  justify-content: flex-start;
+  gap: $spacing-sm;
   padding: $spacing-md;
   font-size: $font-size-base;
   font-weight: $font-weight-medium;
@@ -258,6 +420,15 @@
   &:active {
     transform: scale(0.98);
   }
+  
+  .material-icons {
+    font-size: 20px;
+    color: var(--text-secondary);
+  }
+  
+  &:hover .material-icons {
+    color: var(--primary-500);
+  }
 }
 
 .MobileDivider {
@@ -267,11 +438,58 @@
 }
 
 .MobileUserInfo {
+  @include flex-center;
+  justify-content: flex-start;
+  gap: $spacing-md;
   padding: $spacing-md;
-  font-size: $font-size-sm;
-  font-weight: $font-weight-medium;
-  color: var(--text-secondary);
-  text-align: center;
+}
+
+.MobileAvatar {
+  width: 48px;
+  height: 48px;
+  @include flex-center;
+  background: var(--avatar-bg);
+  border: 2px solid var(--avatar-border);
+  border-radius: $border-radius-full;
+  font-size: $font-size-lg;
+  font-weight: $font-weight-bold;
+  color: var(--avatar-text);
+  text-transform: uppercase;
+}
+
+.MobileUserDetails {
+  @include flex-column;
+  gap: $spacing-xs;
+}
+
+.MobileUsername {
+  font-size: $font-size-base;
+  font-weight: $font-weight-semibold;
+  color: var(--text-primary);
+}
+
+.MobileRole {
+  font-size: $font-size-xs;
+  color: var(--text-accent);
+  text-transform: capitalize;
+}
+
+.MobileSectionTitle {
+  display: block;
+  padding: $spacing-xs $spacing-md;
+  font-size: $font-size-xs;
+  font-weight: $font-weight-semibold;
+  color: var(--text-disabled);
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.MobileLogout {
+  color: var(--error);
+  
+  .material-icons {
+    color: var(--error);
+  }
 }
 
 .Banner {

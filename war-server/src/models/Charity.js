@@ -1,5 +1,6 @@
 const { getPool } = require('../config/database');
 const BaseModel = require('./BaseModel');
+const { generateUniqueId } = require('../utils/uniqueId');
 
 class Charity extends BaseModel {
   static tableName = 'charities';
@@ -12,7 +13,7 @@ class Charity extends BaseModel {
       columns: [
         {
           name: 'id',
-          type: 'INT AUTO_INCREMENT PRIMARY KEY',
+          type: 'VARCHAR(8) PRIMARY KEY',
           nullable: false
         },
         {
@@ -55,6 +56,12 @@ class Charity extends BaseModel {
           default: 'active'
         },
         {
+          name: 'display_order',
+          type: 'INT',
+          nullable: false,
+          default: 0
+        },
+        {
           name: 'startDate',
           type: 'TIMESTAMP',
           nullable: false,
@@ -90,6 +97,11 @@ class Charity extends BaseModel {
           name: 'idx_isActive',
           columns: ['isActive'],
           type: 'INDEX'
+        },
+        {
+          name: 'idx_display_order',
+          columns: ['display_order'],
+          type: 'INDEX'
         }
       ]
     };
@@ -97,12 +109,14 @@ class Charity extends BaseModel {
 
   /**
    * Ensure the charities table exists
+   * NOTE: This creates a new table structure. For migration from INT to VARCHAR ID,
+   * use the migration script in scripts/migrateCharityIds.js
    */
   static async ensureTable() {
     const pool = getPool();
     const createTableQuery = `
       CREATE TABLE IF NOT EXISTS ${this.tableName} (
-        id INT AUTO_INCREMENT PRIMARY KEY,
+        id VARCHAR(8) PRIMARY KEY,
         title VARCHAR(500) NOT NULL,
         description TEXT,
         expected_fund DECIMAL(15, 2) NOT NULL DEFAULT 0,
@@ -110,12 +124,14 @@ class Charity extends BaseModel {
         img VARCHAR(1000) NOT NULL,
         isActive BOOLEAN DEFAULT true,
         status ENUM('active', 'completed', 'paused') DEFAULT 'active',
+        display_order INT DEFAULT 0,
         startDate TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         endDate TIMESTAMP NULL,
         createdAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
         updatedAt TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
         INDEX idx_status (status),
-        INDEX idx_isActive (isActive)
+        INDEX idx_isActive (isActive),
+        INDEX idx_display_order (display_order)
       ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
     `;
     
@@ -143,10 +159,26 @@ class Charity extends BaseModel {
   }
 
   /**
-   * Create a new charity
+   * Check if an ID exists in the database
+   */
+  static async idExists(id) {
+    const pool = getPool();
+    const [rows] = await pool.query(
+      `SELECT id FROM ${this.tableName} WHERE id = ?`,
+      [id]
+    );
+    return rows.length > 0;
+  }
+
+  /**
+   * Create a new charity with unique random ID
    */
   static async create(charityData) {
     const pool = getPool();
+    
+    // Generate unique ID
+    const id = await generateUniqueId(pool, this.tableName);
+    
     const {
       title,
       description = '',
@@ -154,18 +186,30 @@ class Charity extends BaseModel {
       current_fund = 0,
       img,
       status = 'active',
+      display_order = 0,
       startDate = new Date(),
       endDate = null
     } = charityData;
     
-    const [result] = await pool.query(
+    await pool.query(
       `INSERT INTO ${this.tableName} 
-       (title, description, expected_fund, current_fund, img, status, startDate, endDate) 
-       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-      [title, description, expected_fund, current_fund, img, status, startDate, endDate]
+       (id, title, description, expected_fund, current_fund, img, status, display_order, startDate, endDate) 
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      [id, title, description, expected_fund, current_fund, img, status, display_order, startDate, endDate]
     );
     
-    return await this.findById(result.insertId);
+    return await this.findById(id);
+  }
+
+  /**
+   * Get next display order
+   */
+  static async getNextDisplayOrder() {
+    const pool = getPool();
+    const [rows] = await pool.query(
+      `SELECT MAX(display_order) as maxOrder FROM ${this.tableName}`
+    );
+    return (rows[0]?.maxOrder || 0) + 1;
   }
 
   /**
@@ -229,7 +273,7 @@ class Charity extends BaseModel {
       query += ' WHERE ' + conditions.join(' AND ');
     }
     
-    query += ' ORDER BY createdAt DESC';
+    query += ' ORDER BY display_order ASC, createdAt DESC';
     
     const [rows] = await pool.query(query, values);
     return rows;

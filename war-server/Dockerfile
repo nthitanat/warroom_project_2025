@@ -20,8 +20,8 @@ RUN if [ -f package-lock.json ]; then \
 # Copy application files
 COPY . .
 
-# Create public directory if it doesn't exist
-RUN mkdir -p public/analytics/tiles public/charities public/lessons
+# Create files directory if it doesn't exist
+RUN mkdir -p files/analytics/tiles files/charities files/lessons
 
 # Expose port
 EXPOSE 4000

@@ -1,5 +1,6 @@
 const { getPool } = require('../config/database');
 const BaseModel = require('./BaseModel');
+const { generateUniqueId } = require('../utils/uniqueId');
 
 class CharitySlide extends BaseModel {
   static tableName = 'charity_slides';
@@ -12,12 +13,12 @@ class CharitySlide extends BaseModel {
       columns: [
         {
           name: 'id',
-          type: 'INT AUTO_INCREMENT PRIMARY KEY',
+          type: 'VARCHAR(8) PRIMARY KEY',
           nullable: false
         },
         {
           name: 'charity_id',
-          type: 'INT',
+          type: 'VARCHAR(8)',
           nullable: false
         },
         {
@@ -84,13 +85,15 @@ class CharitySlide extends BaseModel {
 
   /**
    * Ensure the charity_slides table exists
+   * NOTE: This creates a new table structure. For migration from INT to VARCHAR ID,
+   * use the migration script in scripts/migrateCharityIds.js
    */
   static async ensureTable() {
     const pool = getPool();
     const createTableQuery = `
       CREATE TABLE IF NOT EXISTS ${this.tableName} (
-        id INT AUTO_INCREMENT PRIMARY KEY,
-        charity_id INT NOT NULL,
+        id VARCHAR(8) PRIMARY KEY,
+        charity_id VARCHAR(8) NOT NULL,
         img VARCHAR(1000) NOT NULL,
         description TEXT,
         display_order INT DEFAULT 0,
@@ -130,10 +133,26 @@ class CharitySlide extends BaseModel {
   }
 
   /**
-   * Create a new charity slide
+   * Check if an ID exists in the database
+   */
+  static async idExists(id) {
+    const pool = getPool();
+    const [rows] = await pool.query(
+      `SELECT id FROM ${this.tableName} WHERE id = ?`,
+      [id]
+    );
+    return rows.length > 0;
+  }
+
+  /**
+   * Create a new charity slide with unique random ID
    */
   static async create(slideData) {
     const pool = getPool();
+    
+    // Generate unique ID
+    const id = await generateUniqueId(pool, this.tableName);
+    
     const {
       charity_id,
       img,
@@ -141,14 +160,49 @@ class CharitySlide extends BaseModel {
       display_order = 0
     } = slideData;
     
-    const [result] = await pool.query(
+    await pool.query(
       `INSERT INTO ${this.tableName} 
-       (charity_id, img, description, display_order) 
-       VALUES (?, ?, ?, ?)`,
-      [charity_id, img, description, display_order]
+       (id, charity_id, img, description, display_order) 
+       VALUES (?, ?, ?, ?, ?)`,
+      [id, charity_id, img, description, display_order]
     );
     
-    return await this.findById(result.insertId);
+    return await this.findById(id);
+  }
+
+  /**
+   * Get next display order for a charity
+   */
+  static async getNextDisplayOrder(charityId) {
+    const pool = getPool();
+    const [rows] = await pool.query(
+      `SELECT MAX(display_order) as maxOrder FROM ${this.tableName} WHERE charity_id = ?`,
+      [charityId]
+    );
+    return (rows[0]?.maxOrder || 0) + 1;
+  }
+
+  /**
+   * Find slide by charity_id and display_order
+   */
+  static async findByOrder(charityId, displayOrder) {
+    const pool = getPool();
+    const [rows] = await pool.query(
+      `SELECT * FROM ${this.tableName} WHERE charity_id = ? AND display_order = ?`,
+      [charityId, displayOrder]
+    );
+    return rows[0] || null;
+  }
+
+  /**
+   * Shift all slide orders up by 1 starting from a given order (for inserting at a specific position)
+   */
+  static async shiftOrdersUp(charityId, fromOrder) {
+    const pool = getPool();
+    await pool.query(
+      `UPDATE ${this.tableName} SET display_order = display_order + 1 WHERE charity_id = ? AND display_order >= ?`,
+      [charityId, fromOrder]
+    );
   }
 
   /**

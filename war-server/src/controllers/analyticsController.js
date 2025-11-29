@@ -4,7 +4,7 @@ const fs = require('fs');
 // Serve analytics data JSON
 exports.getData = async (req, res) => {
   try {
-    const dataPath = path.join(__dirname, '../../public/analytics/analytics.json');
+    const dataPath = path.join(__dirname, '../../files/analytics/analytics.json');
     
     // Check if file exists
     if (!fs.existsSync(dataPath)) {
@@ -22,7 +22,7 @@ exports.getData = async (req, res) => {
 // Serve village info JSON
 exports.getVillageInfo = async (req, res) => {
   try {
-    const dataPath = path.join(__dirname, '../../public/analytics/village-info.json');
+    const dataPath = path.join(__dirname, '../../files/analytics/village-info.json');
     
     // Check if file exists
     if (!fs.existsSync(dataPath)) {
@@ -41,17 +41,17 @@ exports.getVillageInfo = async (req, res) => {
 exports.getTiles = async (req, res) => {
   try {
     const tilePath = req.params[0]; // Gets everything after /tiles/
-    const publicPath = path.join(__dirname, '../../public/analytics/tiles', tilePath);
+    const tilesPath = path.join(__dirname, '../../files/analytics/tiles', tilePath);
 
     // Check if file exists
-    if (!fs.existsSync(publicPath)) {
+    if (!fs.existsSync(tilesPath)) {
       return res.status(404).json({ message: 'Tile not found' });
     }
 
     // Set appropriate content type for PBF files
     res.setHeader('Content-Type', 'application/x-protobuf');
     res.setHeader('Content-Encoding', 'gzip');
-    res.sendFile(publicPath);
+    res.sendFile(tilesPath);
   } catch (error) {
     console.error('Get tiles error:', error);
     res.status(500).json({ message: 'Internal server error' });

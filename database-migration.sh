@@ -97,6 +97,10 @@ remote_mysql_query() {
         -o PreferredAuthentications=password \
         -o PubkeyAuthentication=no \
         -o LogLevel=ERROR \
+        -o ServerAliveInterval=60 \
+        -o ServerAliveCountMax=3 \
+        -o BatchMode=no \
+        -n \
         "$REMOTE_USER@$REMOTE_HOST" \
         "mysql -h $REMOTE_DB_HOST -P $REMOTE_DB_PORT -u $REMOTE_DB_USER -p'$REMOTE_DB_PASSWORD' $REMOTE_DB_NAME -N -e \"$query\"" 2>/dev/null
 }
@@ -110,6 +114,9 @@ remote_mysql_file() {
         -o PreferredAuthentications=password \
         -o PubkeyAuthentication=no \
         -o LogLevel=ERROR \
+        -o ServerAliveInterval=60 \
+        -o ServerAliveCountMax=3 \
+        -n \
         "$REMOTE_USER@$REMOTE_HOST" \
         "mysql -h $REMOTE_DB_HOST -P $REMOTE_DB_PORT -u $REMOTE_DB_USER -p'$REMOTE_DB_PASSWORD' $REMOTE_DB_NAME < $file" 2>/dev/null
 }
@@ -154,6 +161,197 @@ get_local_checksum() {
 get_remote_checksum() {
     local table=$1
     remote_mysql_query "CHECKSUM TABLE \\\`$table\\\`;" | awk '{print $2}'
+}
+
+# ============================================
+# Foreign key management functions
+# ============================================
+
+# Get all foreign key constraints from a database (with DELETE/UPDATE rules)
+get_all_foreign_keys() {
+    local is_local=$1
+    
+    # Query joins KEY_COLUMN_USAGE with REFERENTIAL_CONSTRAINTS to get DELETE/UPDATE rules
+    local query="SELECT 
+        k.CONSTRAINT_NAME, 
+        k.TABLE_NAME, 
+        k.COLUMN_NAME, 
+        k.REFERENCED_TABLE_NAME, 
+        k.REFERENCED_COLUMN_NAME,
+        COALESCE(r.DELETE_RULE, 'CASCADE'),
+        COALESCE(r.UPDATE_RULE, 'CASCADE')
+    FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE k
+    LEFT JOIN INFORMATION_SCHEMA.REFERENTIAL_CONSTRAINTS r
+        ON k.CONSTRAINT_NAME = r.CONSTRAINT_NAME 
+        AND k.TABLE_SCHEMA = r.CONSTRAINT_SCHEMA
+    WHERE k.TABLE_SCHEMA='%s' 
+    AND k.REFERENCED_TABLE_NAME IS NOT NULL;"
+    
+    if [ "$is_local" == "true" ]; then
+        local host="$LOCAL_DB_HOST"
+        if [[ "$LOCAL_DB_HOST" == "host.docker.internal" ]]; then
+            host="127.0.0.1"
+        fi
+        mysql -h "$host" -P "$LOCAL_DB_PORT" -u "$LOCAL_DB_USER" -p"$LOCAL_DB_PASSWORD" \
+            -N -e "$(printf "$query" "$LOCAL_DB_NAME")" 2>/dev/null
+    else
+        remote_mysql_query "$(printf "$query" "$REMOTE_DB_NAME")"
+    fi
+}
+
+# Drop all foreign key constraints on remote
+drop_all_remote_foreign_keys() {
+    log "${YELLOW}🔓 Dropping all foreign key constraints on remote...${NC}"
+    
+    local fk_list=$(get_all_foreign_keys "false")
+    local count=0
+    
+    if [ -z "$fk_list" ]; then
+        log "${CYAN}   No foreign keys found${NC}"
+        return
+    fi
+    
+    # Save FK definitions for later restoration
+    local fk_backup_file="$TEMP_DIR/fk_backup.sql"
+    echo "-- Foreign Key Backup" > "$fk_backup_file"
+    echo "SET FOREIGN_KEY_CHECKS=0;" >> "$fk_backup_file"
+    
+    while IFS=$'\t' read -r constraint_name table_name column_name ref_table ref_column; do
+        [ -z "$constraint_name" ] && continue
+        
+        # Save the ADD CONSTRAINT statement for restoration
+        echo "ALTER TABLE \`$table_name\` ADD CONSTRAINT \`$constraint_name\` FOREIGN KEY (\`$column_name\`) REFERENCES \`$ref_table\`(\`$ref_column\`) ON DELETE CASCADE ON UPDATE CASCADE;" >> "$fk_backup_file"
+        
+        # Drop the constraint
+        log "${CYAN}   Dropping: $table_name.$constraint_name${NC}"
+        remote_mysql_query "ALTER TABLE \\\`$table_name\\\` DROP FOREIGN KEY \\\`$constraint_name\\\`;" 2>/dev/null || true
+        count=$((count + 1))
+    done <<< "$fk_list"
+    
+    echo "SET FOREIGN_KEY_CHECKS=1;" >> "$fk_backup_file"
+    
+    log "${GREEN}✅ Dropped $count foreign key constraint(s)${NC}"
+}
+
+# Restore foreign keys from local schema to remote
+restore_remote_foreign_keys_from_local() {
+    log "${YELLOW}🔐 Restoring foreign key constraints on remote from local schema...${NC}"
+    
+    local fk_list=$(get_all_foreign_keys "true")
+    local count=0
+    local errors=0
+    
+    if [ -z "$fk_list" ]; then
+        log "${CYAN}   No foreign keys to restore${NC}"
+        return
+    fi
+    
+    while IFS=$'\t' read -r constraint_name table_name column_name ref_table ref_column delete_rule update_rule; do
+        [ -z "$constraint_name" ] && continue
+        
+        # Default rules if not provided
+        delete_rule=${delete_rule:-CASCADE}
+        update_rule=${update_rule:-CASCADE}
+        
+        log "${CYAN}   Adding: $table_name.$constraint_name → $ref_table($ref_column) [ON DELETE $delete_rule, ON UPDATE $update_rule]${NC}"
+        
+        # First try to drop if exists (in case of partial restore)
+        remote_mysql_query "ALTER TABLE \\\`$table_name\\\` DROP FOREIGN KEY \\\`$constraint_name\\\`;" 2>/dev/null || true
+        
+        # Add the constraint with original DELETE/UPDATE rules
+        local result
+        result=$(remote_mysql_query "ALTER TABLE \\\`$table_name\\\` ADD CONSTRAINT \\\`$constraint_name\\\` FOREIGN KEY (\\\`$column_name\\\`) REFERENCES \\\`$ref_table\\\`(\\\`$ref_column\\\`) ON DELETE $delete_rule ON UPDATE $update_rule;" 2>&1)
+        
+        if [ $? -eq 0 ]; then
+            count=$((count + 1))
+        else
+            log "${RED}   ❌ Failed to add $constraint_name: $result${NC}"
+            errors=$((errors + 1))
+        fi
+    done <<< "$fk_list"
+    
+    if [ $errors -eq 0 ]; then
+        log "${GREEN}✅ Restored $count foreign key constraint(s)${NC}"
+    else
+        log "${YELLOW}⚠️  Restored $count FK(s), $errors error(s)${NC}"
+    fi
+}
+
+# Drop all foreign key constraints on local
+drop_all_local_foreign_keys() {
+    log "${YELLOW}🔓 Dropping all foreign key constraints on local...${NC}"
+    
+    local host="$LOCAL_DB_HOST"
+    if [[ "$LOCAL_DB_HOST" == "host.docker.internal" ]]; then
+        host="127.0.0.1"
+    fi
+    
+    local fk_list=$(get_all_foreign_keys "true")
+    local count=0
+    
+    if [ -z "$fk_list" ]; then
+        log "${CYAN}   No foreign keys found${NC}"
+        return
+    fi
+    
+    while IFS=$'\t' read -r constraint_name table_name column_name ref_table ref_column; do
+        [ -z "$constraint_name" ] && continue
+        
+        log "${CYAN}   Dropping: $table_name.$constraint_name${NC}"
+        mysql -h "$host" -P "$LOCAL_DB_PORT" -u "$LOCAL_DB_USER" -p"$LOCAL_DB_PASSWORD" "$LOCAL_DB_NAME" \
+            -e "ALTER TABLE \`$table_name\` DROP FOREIGN KEY \`$constraint_name\`;" 2>/dev/null || true
+        count=$((count + 1))
+    done <<< "$fk_list"
+    
+    log "${GREEN}✅ Dropped $count foreign key constraint(s)${NC}"
+}
+
+# Restore foreign keys from remote schema to local
+restore_local_foreign_keys_from_remote() {
+    log "${YELLOW}🔐 Restoring foreign key constraints on local from remote schema...${NC}"
+    
+    local host="$LOCAL_DB_HOST"
+    if [[ "$LOCAL_DB_HOST" == "host.docker.internal" ]]; then
+        host="127.0.0.1"
+    fi
+    
+    local fk_list=$(get_all_foreign_keys "false")
+    local count=0
+    local errors=0
+    
+    if [ -z "$fk_list" ]; then
+        log "${CYAN}   No foreign keys to restore${NC}"
+        return
+    fi
+    
+    while IFS=$'\t' read -r constraint_name table_name column_name ref_table ref_column delete_rule update_rule; do
+        [ -z "$constraint_name" ] && continue
+        
+        # Default rules if not provided
+        delete_rule=${delete_rule:-CASCADE}
+        update_rule=${update_rule:-CASCADE}
+        
+        log "${CYAN}   Adding: $table_name.$constraint_name → $ref_table($ref_column) [ON DELETE $delete_rule, ON UPDATE $update_rule]${NC}"
+        
+        # First try to drop if exists
+        mysql -h "$host" -P "$LOCAL_DB_PORT" -u "$LOCAL_DB_USER" -p"$LOCAL_DB_PASSWORD" "$LOCAL_DB_NAME" \
+            -e "ALTER TABLE \`$table_name\` DROP FOREIGN KEY \`$constraint_name\`;" 2>/dev/null || true
+        
+        # Add the constraint with original DELETE/UPDATE rules
+        if mysql -h "$host" -P "$LOCAL_DB_PORT" -u "$LOCAL_DB_USER" -p"$LOCAL_DB_PASSWORD" "$LOCAL_DB_NAME" \
+            -e "ALTER TABLE \`$table_name\` ADD CONSTRAINT \`$constraint_name\` FOREIGN KEY (\`$column_name\`) REFERENCES \`$ref_table\`(\`$ref_column\`) ON DELETE $delete_rule ON UPDATE $update_rule;" 2>/dev/null; then
+            count=$((count + 1))
+        else
+            log "${RED}   ❌ Failed to add $constraint_name${NC}"
+            errors=$((errors + 1))
+        fi
+    done <<< "$fk_list"
+    
+    if [ $errors -eq 0 ]; then
+        log "${GREEN}✅ Restored $count foreign key constraint(s)${NC}"
+    else
+        log "${YELLOW}⚠️  Restored $count FK(s), $errors error(s)${NC}"
+    fi
 }
 
 # ============================================
@@ -275,6 +473,7 @@ sort_tables_by_dependencies() {
 
 sync_table_to_remote() {
     local table=$1
+    local full_sync=${2:-true}  # If true, delete all rows first (handles deleted rows)
     log "${YELLOW}📤 Syncing table '$table' data to remote...${NC}"
     
     local host="$LOCAL_DB_HOST"
@@ -282,13 +481,36 @@ sync_table_to_remote() {
         host="127.0.0.1"
     fi
     
-    # Export local table data
+    # Export local table data with proper options
     local dump_file="$TEMP_DIR/${table}_dump.sql"
-    mysqldump -h "$host" -P "$LOCAL_DB_PORT" -u "$LOCAL_DB_USER" -p"$LOCAL_DB_PASSWORD" \
-        --no-create-info --replace --skip-extended-insert "$LOCAL_DB_NAME" "$table" > "$dump_file" 2>/dev/null
     
-    # Check if dump has data
-    if [ ! -s "$dump_file" ]; then
+    # Start with FK check disable and optional DELETE
+    echo "SET FOREIGN_KEY_CHECKS=0;" > "$dump_file"
+    echo "SET NAMES utf8mb4;" >> "$dump_file"
+    
+    # For full sync, delete existing data first (handles deleted rows)
+    if [ "$full_sync" == "true" ]; then
+        echo "DELETE FROM \`$table\`;" >> "$dump_file"
+    fi
+    
+    # Dump with proper options:
+    # --single-transaction: Consistent snapshot without locking
+    # --quick: Don't buffer entire table in memory
+    # --default-character-set: Handle UTF8 properly
+    # --hex-blob: Handle binary data properly
+    mysqldump -h "$host" -P "$LOCAL_DB_PORT" -u "$LOCAL_DB_USER" -p"$LOCAL_DB_PASSWORD" \
+        --no-create-info \
+        --single-transaction \
+        --quick \
+        --default-character-set=utf8mb4 \
+        --hex-blob \
+        --skip-triggers \
+        "$LOCAL_DB_NAME" "$table" >> "$dump_file" 2>/dev/null
+    
+    echo "SET FOREIGN_KEY_CHECKS=1;" >> "$dump_file"
+    
+    # Check if dump has actual INSERT statements
+    if ! grep -q "INSERT INTO" "$dump_file" && [ "$full_sync" != "true" ]; then
         log "${YELLOW}   Table '$table' is empty, skipping data sync${NC}"
         return
     fi
@@ -308,6 +530,8 @@ sync_table_to_remote() {
         -o StrictHostKeyChecking=no \
         -o UserKnownHostsFile=/dev/null \
         -o LogLevel=ERROR \
+        -o ServerAliveInterval=60 \
+        -n \
         "$REMOTE_USER@$REMOTE_HOST" "rm -f /tmp/${table}_dump.sql" 2>/dev/null
     
     log "${GREEN}✅ Table '$table' data synced to remote${NC}"
@@ -315,6 +539,7 @@ sync_table_to_remote() {
 
 sync_table_to_local() {
     local table=$1
+    local full_sync=${2:-true}  # If true, delete all rows first (handles deleted rows)
     log "${YELLOW}📥 Syncing table '$table' data to local...${NC}"
     
     local host="$LOCAL_DB_HOST"
@@ -322,19 +547,41 @@ sync_table_to_local() {
         host="127.0.0.1"
     fi
     
-    # Export remote table data through SSH
+    # Export remote table data through SSH with proper options
     local dump_file="$TEMP_DIR/${table}_remote_dump.sql"
+    local header_file="$TEMP_DIR/${table}_header.sql"
+    
+    # Create header with FK check disable and optional DELETE
+    echo "SET FOREIGN_KEY_CHECKS=0;" > "$header_file"
+    echo "SET NAMES utf8mb4;" >> "$header_file"
+    if [ "$full_sync" == "true" ]; then
+        echo "DELETE FROM \`$table\`;" >> "$header_file"
+    fi
+    
     sshpass -p "$REMOTE_PASSWORD" ssh -p "$REMOTE_PORT" \
         -o StrictHostKeyChecking=no \
         -o UserKnownHostsFile=/dev/null \
         -o LogLevel=ERROR \
+        -o ServerAliveInterval=60 \
+        -n \
         "$REMOTE_USER@$REMOTE_HOST" \
         "mysqldump -h $REMOTE_DB_HOST -P $REMOTE_DB_PORT -u $REMOTE_DB_USER -p'$REMOTE_DB_PASSWORD' \
-        --no-create-info --replace --skip-extended-insert $REMOTE_DB_NAME $table" > "$dump_file" 2>/dev/null
+        --no-create-info \
+        --single-transaction \
+        --quick \
+        --default-character-set=utf8mb4 \
+        --hex-blob \
+        --skip-triggers \
+        $REMOTE_DB_NAME $table" > "$dump_file" 2>/dev/null
+    
+    # Combine header and dump
+    local final_file="$TEMP_DIR/${table}_final.sql"
+    cat "$header_file" "$dump_file" > "$final_file"
+    echo "SET FOREIGN_KEY_CHECKS=1;" >> "$final_file"
     
     # Import to local
-    if [ -s "$dump_file" ]; then
-        mysql -h "$host" -P "$LOCAL_DB_PORT" -u "$LOCAL_DB_USER" -p"$LOCAL_DB_PASSWORD" "$LOCAL_DB_NAME" < "$dump_file" 2>/dev/null
+    if [ -s "$dump_file" ] || [ "$full_sync" == "true" ]; then
+        mysql -h "$host" -P "$LOCAL_DB_PORT" -u "$LOCAL_DB_USER" -p"$LOCAL_DB_PASSWORD" "$LOCAL_DB_NAME" < "$final_file" 2>/dev/null
         log "${GREEN}✅ Table '$table' data synced to local${NC}"
     else
         log "${YELLOW}   Table '$table' is empty on remote${NC}"
@@ -378,6 +625,8 @@ sync_schema_to_remote() {
         -o PreferredAuthentications=password \
         -o PubkeyAuthentication=no \
         -o LogLevel=ERROR \
+        -o ServerAliveInterval=60 \
+        -n \
         "$REMOTE_USER@$REMOTE_HOST" \
         "mysql -h $REMOTE_DB_HOST -P $REMOTE_DB_PORT -u $REMOTE_DB_USER -p'$REMOTE_DB_PASSWORD' $REMOTE_DB_NAME < /tmp/${table}_schema.sql 2>&1")
     
@@ -414,6 +663,8 @@ sync_schema_to_remote() {
         -o StrictHostKeyChecking=no \
         -o UserKnownHostsFile=/dev/null \
         -o LogLevel=ERROR \
+        -o ServerAliveInterval=60 \
+        -n \
         "$REMOTE_USER@$REMOTE_HOST" "rm -f /tmp/${table}_schema.sql" 2>/dev/null
 }
 
@@ -432,6 +683,8 @@ sync_schema_to_local() {
         -o StrictHostKeyChecking=no \
         -o UserKnownHostsFile=/dev/null \
         -o LogLevel=ERROR \
+        -o ServerAliveInterval=60 \
+        -n \
         "$REMOTE_USER@$REMOTE_HOST" \
         "mysqldump -h $REMOTE_DB_HOST -P $REMOTE_DB_PORT -u $REMOTE_DB_USER -p'$REMOTE_DB_PASSWORD' \
         --no-data $REMOTE_DB_NAME $table" > "$schema_file" 2>/dev/null
@@ -702,7 +955,7 @@ show_sync_menu() {
     echo "4) View detailed diff"
     echo "5) Exit without syncing"
     echo ""
-    read -p "Enter your choice [1-5]: " SYNC_CHOICE
+    read -p "Enter your choice [1-5]: " SYNC_CHOICE < /dev/tty
     
     case $SYNC_CHOICE in
         1) sync_local_to_remote ;;
@@ -720,6 +973,9 @@ show_sync_menu() {
 sync_local_to_remote() {
     log ""
     log "${BLUE}📤 Syncing LOCAL → REMOTE...${NC}"
+    
+    # Step 1: Drop all foreign keys on remote to avoid constraint issues
+    drop_all_remote_foreign_keys
     
     # Collect all tables that need schema/data sync
     local -a all_tables_to_sync=()
@@ -744,25 +1000,15 @@ sync_local_to_remote() {
         fi
     done
     
-    # Sort tables by dependencies if we have tables to sync
+    # Sync schema changes (no need for dependency order now - FKs are dropped)
     if [ ${#all_tables_to_sync[@]} -gt 0 ]; then
-        log "${CYAN}Analyzing foreign key dependencies...${NC}"
-        
-        # Get sorted tables
-        local sorted_tables_str=$(sort_tables_by_dependencies "${all_tables_to_sync[@]}")
-        local -a sorted_tables=()
-        while IFS= read -r line; do
-            [ -n "$line" ] && sorted_tables+=("$line")
-        done <<< "$sorted_tables_str"
-        
-        log "${CYAN}Sync order (base tables first):${NC}"
-        for table in "${sorted_tables[@]}"; do
+        log "${CYAN}Tables to sync schema:${NC}"
+        for table in "${all_tables_to_sync[@]}"; do
             log "   → $table"
         done
         log ""
         
-        # Sync tables in dependency order
-        for table in "${sorted_tables[@]}"; do
+        for table in "${all_tables_to_sync[@]}"; do
             # Check if it's a new table (only in local)
             local is_new=false
             for t in "${G_TABLES_ONLY_LOCAL[@]}"; do
@@ -772,20 +1018,11 @@ sync_local_to_remote() {
                 fi
             done
             
-            # Check if it has schema differences
-            local has_schema_diff=false
-            for t in "${G_TABLES_SCHEMA_DIFF[@]}"; do
-                if [ "$t" == "$table" ]; then
-                    has_schema_diff=true
-                    break
-                fi
-            done
-            
             if $is_new; then
                 log "${YELLOW}Creating table '$table' on remote...${NC}"
                 sync_schema_to_remote "$table"
                 sync_table_to_remote "$table"
-            elif $has_schema_diff; then
+            else
                 log "${YELLOW}Updating schema for '$table' on remote...${NC}"
                 sync_schema_to_remote "$table"
                 sync_table_to_remote "$table"
@@ -823,12 +1060,18 @@ sync_local_to_remote() {
         fi
     done
     
+    # Step 2: Restore foreign keys from local schema
+    restore_remote_foreign_keys_from_local
+    
     log "${GREEN}✅ Sync LOCAL → REMOTE complete!${NC}"
 }
 
 sync_remote_to_local() {
     log ""
     log "${BLUE}📥 Syncing REMOTE → LOCAL...${NC}"
+    
+    # Step 1: Drop all foreign keys on local to avoid constraint issues
+    drop_all_local_foreign_keys
     
     # Collect all tables that need schema/data sync
     local -a all_tables_to_sync=()
@@ -853,25 +1096,15 @@ sync_remote_to_local() {
         fi
     done
     
-    # Sort tables by dependencies if we have tables to sync
+    # Sync schema changes (no need for dependency order now - FKs are dropped)
     if [ ${#all_tables_to_sync[@]} -gt 0 ]; then
-        log "${CYAN}Analyzing foreign key dependencies...${NC}"
-        
-        # Get sorted tables (use remote for dependency analysis)
-        local sorted_tables_str=$(sort_tables_by_dependencies "${all_tables_to_sync[@]}")
-        local -a sorted_tables=()
-        while IFS= read -r line; do
-            [ -n "$line" ] && sorted_tables+=("$line")
-        done <<< "$sorted_tables_str"
-        
-        log "${CYAN}Sync order (base tables first):${NC}"
-        for table in "${sorted_tables[@]}"; do
+        log "${CYAN}Tables to sync schema:${NC}"
+        for table in "${all_tables_to_sync[@]}"; do
             log "   → $table"
         done
         log ""
         
-        # Sync tables in dependency order
-        for table in "${sorted_tables[@]}"; do
+        for table in "${all_tables_to_sync[@]}"; do
             # Check if it's a new table (only in remote)
             local is_new=false
             for t in "${G_TABLES_ONLY_REMOTE[@]}"; do
@@ -881,20 +1114,11 @@ sync_remote_to_local() {
                 fi
             done
             
-            # Check if it has schema differences
-            local has_schema_diff=false
-            for t in "${G_TABLES_SCHEMA_DIFF[@]}"; do
-                if [ "$t" == "$table" ]; then
-                    has_schema_diff=true
-                    break
-                fi
-            done
-            
             if $is_new; then
                 log "${YELLOW}Creating table '$table' locally...${NC}"
                 sync_schema_to_local "$table"
                 sync_table_to_local "$table"
-            elif $has_schema_diff; then
+            else
                 log "${YELLOW}Updating schema for '$table' locally...${NC}"
                 sync_schema_to_local "$table"
                 sync_table_to_local "$table"
@@ -932,6 +1156,9 @@ sync_remote_to_local() {
         fi
     done
     
+    # Step 2: Restore foreign keys from remote schema
+    restore_local_foreign_keys_from_remote
+    
     log "${GREEN}✅ Sync REMOTE → LOCAL complete!${NC}"
 }
 
@@ -946,7 +1173,7 @@ interactive_sync() {
         echo "  1) Push to remote"
         echo "  2) Delete from local"
         echo "  3) Skip"
-        read -p "  Choice [1-3]: " choice
+        read -p "  Choice [1-3]: " choice < /dev/tty
         case $choice in
             1)
                 sync_schema_to_remote "$table"
@@ -966,7 +1193,7 @@ interactive_sync() {
         echo "  1) Pull to local"
         echo "  2) Delete from remote"
         echo "  3) Skip"
-        read -p "  Choice [1-3]: " choice
+        read -p "  Choice [1-3]: " choice < /dev/tty
         case $choice in
             1)
                 sync_schema_to_local "$table"
@@ -986,7 +1213,7 @@ interactive_sync() {
         echo "  1) Push local schema → remote"
         echo "  2) Pull remote schema → local"
         echo "  3) Skip"
-        read -p "  Choice [1-3]: " choice
+        read -p "  Choice [1-3]: " choice < /dev/tty
         case $choice in
             1)
                 sync_schema_to_remote "$table"
@@ -1019,7 +1246,7 @@ interactive_sync() {
         echo "  1) Push local → remote"
         echo "  2) Pull remote → local"
         echo "  3) Skip"
-        read -p "  Choice [1-3]: " choice
+        read -p "  Choice [1-3]: " choice < /dev/tty
         case $choice in
             1) sync_table_to_remote "$table" ;;
             2) sync_table_to_local "$table" ;;
@@ -1035,7 +1262,7 @@ interactive_sync() {
         echo "  1) Push local → remote"
         echo "  2) Pull remote → local"
         echo "  3) Skip"
-        read -p "  Choice [1-3]: " choice
+        read -p "  Choice [1-3]: " choice < /dev/tty
         case $choice in
             1) sync_table_to_remote "$table" ;;
             2) sync_table_to_local "$table" ;;

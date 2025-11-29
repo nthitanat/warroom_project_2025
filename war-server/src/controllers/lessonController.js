@@ -140,7 +140,7 @@ exports.getLessonThumbnail = async (req, res) => {
     }
 
     // Construct the path to the thumbnail folder
-    const thumbnailDir = path.join(__dirname, '../../public/lessons/thumbnails', lessonId);
+    const thumbnailDir = path.join(__dirname, '../../files/lessons/thumbnails', lessonId);
     
     // Check if directory exists
     if (!fs.existsSync(thumbnailDir)) {
@@ -195,7 +195,7 @@ exports.getAuthorAvatar = async (req, res) => {
     }
 
     // Construct the path to the author avatar folder
-    const avatarDir = path.join(__dirname, '../../public/lessons/authors', authorId);
+    const avatarDir = path.join(__dirname, '../../files/lessons/authors', authorId);
     
     // Check if directory exists
     if (!fs.existsSync(avatarDir)) {

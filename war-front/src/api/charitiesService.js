@@ -39,3 +39,17 @@ export const updateCharity = (id, data) =>
 // Delete charity (admin only)
 export const deleteCharity = (id) => 
   axiosInstance.delete(`/charities/${id}`);
+
+// ===== Charity Slides API =====
+
+// Create new charity slide (admin only)
+export const createCharitySlide = (charityId, data) => 
+  axiosInstance.post(`/charities/${charityId}/slides`, data);
+
+// Update charity slide (admin only)
+export const updateCharitySlide = (slideId, data) => 
+  axiosInstance.put(`/charities/slides/${slideId}`, data);
+
+// Delete charity slide (admin only)
+export const deleteCharitySlide = (slideId) => 
+  axiosInstance.delete(`/charities/slides/${slideId}`);

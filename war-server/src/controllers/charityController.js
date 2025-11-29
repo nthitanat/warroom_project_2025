@@ -87,16 +87,30 @@ exports.createCharity = async (req, res) => {
   try {
     const charityData = req.body;
 
-    // Validate required fields
-    const requiredFields = ['title', 'expected_fund', 'img'];
+    // Validate required fields (img is auto-generated from ID)
+    const requiredFields = ['title', 'expected_fund'];
     for (const field of requiredFields) {
       if (!charityData[field]) {
         return res.status(400).json({ message: `${field} is required` });
       }
     }
 
-    // MySQL auto-increments ID
-    const charity = await Charity.create(charityData);
+    // Get next display order if not provided
+    if (!charityData.display_order) {
+      charityData.display_order = await Charity.getNextDisplayOrder();
+    }
+
+    // Create charity with unique ID (img will be set to ID after creation)
+    const charity = await Charity.create({
+      ...charityData,
+      img: charityData.img || 'pending' // Temporary, will be updated
+    });
+
+    // Update img to match the generated ID (for folder path consistency)
+    if (!charityData.img) {
+      await Charity.update(charity.id, { img: charity.id });
+      charity.img = charity.id;
+    }
 
     res.status(201).json({
       message: 'Charity created successfully',
@@ -156,7 +170,7 @@ exports.getCharitySlideImage = async (req, res) => {
     }
 
     // Construct the path to the slide folder
-    const slideDir = path.join(__dirname, '../../public/charities/slides', slideId);
+    const slideDir = path.join(__dirname, '../../files/charities/slides', slideId);
     
     // Check if directory exists
     if (!fs.existsSync(slideDir)) {
@@ -211,7 +225,7 @@ exports.getCharityThumbnail = async (req, res) => {
     }
 
     // Construct the path to the thumbnail folder
-    const thumbnailDir = path.join(__dirname, '../../public/charities/thumbnails', charityId);
+    const thumbnailDir = path.join(__dirname, '../../files/charities/thumbnails', charityId);
     
     // Check if directory exists
     if (!fs.existsSync(thumbnailDir)) {
@@ -250,6 +264,105 @@ exports.getCharityThumbnail = async (req, res) => {
     res.sendFile(imagePath);
   } catch (error) {
     console.error('Get charity thumbnail error:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+// Create charity slide (Admin only)
+exports.createCharitySlide = async (req, res) => {
+  try {
+    const charityId = req.params.id;
+    
+    // Get next display order if not provided, or handle duplicate
+    let displayOrder = req.body.display_order;
+    if (displayOrder === undefined || displayOrder === null) {
+      displayOrder = await CharitySlide.getNextDisplayOrder(charityId);
+    } else {
+      // Check if the order already exists for this charity
+      const existingSlide = await CharitySlide.findByOrder(charityId, parseInt(displayOrder));
+      if (existingSlide) {
+        // Shift all slides at and after this order up by 1
+        await CharitySlide.shiftOrdersUp(charityId, parseInt(displayOrder));
+      }
+    }
+
+    const slideData = { 
+      ...req.body, 
+      charity_id: charityId,
+      display_order: parseInt(displayOrder),
+      img: req.body.img || 'pending' // Temporary, will be updated
+    };
+
+    const slide = await CharitySlide.create(slideData);
+
+    // Update img to match the generated ID (for folder path consistency)
+    if (!req.body.img) {
+      await CharitySlide.update(slide.id, { img: slide.id });
+      slide.img = slide.id;
+    }
+
+    res.status(201).json({
+      message: 'Charity slide created successfully',
+      slide
+    });
+  } catch (error) {
+    console.error('Create charity slide error:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+// Update charity slide (Admin only)
+exports.updateCharitySlide = async (req, res) => {
+  try {
+    const slideId = req.params.slideId;
+    const updateData = { ...req.body };
+    
+    // Get current slide to check charity_id and current order
+    const currentSlide = await CharitySlide.findById(slideId);
+    if (!currentSlide) {
+      return res.status(404).json({ message: 'Slide not found' });
+    }
+
+    // Handle display_order swap if provided
+    if (updateData.display_order !== undefined && updateData.display_order !== currentSlide.display_order) {
+      const newOrder = parseInt(updateData.display_order);
+      const oldOrder = currentSlide.display_order;
+      const charityId = currentSlide.charity_id;
+
+      // Find if another slide has the target order
+      const existingSlide = await CharitySlide.findByOrder(charityId, newOrder);
+      
+      if (existingSlide && existingSlide.id !== slideId) {
+        // Swap orders: give the existing slide the current slide's old order
+        await CharitySlide.update(existingSlide.id, { display_order: oldOrder });
+      }
+    }
+
+    const slide = await CharitySlide.update(slideId, updateData);
+
+    res.json({
+      message: 'Charity slide updated successfully',
+      slide
+    });
+  } catch (error) {
+    console.error('Update charity slide error:', error);
+    res.status(500).json({ message: 'Internal server error' });
+  }
+};
+
+// Delete charity slide (Admin only)
+exports.deleteCharitySlide = async (req, res) => {
+  try {
+    const slideId = req.params.slideId;
+    const deleted = await CharitySlide.delete(slideId);
+
+    if (!deleted) {
+      return res.status(404).json({ message: 'Slide not found' });
+    }
+
+    res.json({ message: 'Charity slide deleted successfully' });
+  } catch (error) {
+    console.error('Delete charity slide error:', error);
     res.status(500).json({ message: 'Internal server error' });
   }
 };
